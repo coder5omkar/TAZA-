@@ -1,0 +1,1239 @@
+﻿/* ==========================================================================
+   MyVegFruitShop — template interactions + i18n (English / हिंदी / मराठी)
+   - language preference: compact row in Account (persisted, ?lang=en|hi|mr)
+   - quantity multipliers (home price table) + live cart totals
+   - favourite (heart) toggles, order-history filter chips
+   - chat send with canned reply (messages screen)
+   - tiny toast feedback for demo-only actions
+   ========================================================================== */
+
+(function () {
+  'use strict';
+
+  var $ = function (sel, root) { return (root || document).querySelector(sel); };
+  var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
+  var money = function (n) { return '₹' + Math.round(n); };
+  var esc = function (s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  };
+
+  /* ---------- i18n dictionary ---------- */
+
+  var I18N = {
+    en: {
+      hello: 'Hello, Hannah',
+      delivery_note: 'Order before 10 PM — fresh delivery tomorrow morning!',
+      vegetables: 'Vegetables',
+      fruits: 'Fruits',
+      tab_home: 'Home',
+      tab_history: 'History',
+      tab_message: 'Message',
+      tab_account: 'Account',
+      veg_tomato: 'Tomato',
+      veg_potato: 'Potato',
+      veg_onion: 'Onion',
+      veg_spinach: 'Spinach',
+      veg_carrot: 'Carrot',
+      veg_cucumber: 'Cucumber',
+      veg_capsicum: 'Capsicum',
+      veg_brinjal: 'Brinjal',
+      veg_corn: 'Sweet Corn',
+      veg_pumpkin: 'Pumpkin',
+      veg_broccoli: 'Broccoli',
+      veg_mushroom: 'Mushroom',
+      veg_garlic: 'Garlic',
+      veg_chilli: 'Green Chilli',
+      veg_lettuce: 'Lettuce',
+      veg_cabbage: 'Cabbage',
+      veg_coriander: 'Coriander',
+      veg_sweet_potato: 'Sweet Potato',
+      fruit_apple: 'Apple',
+      fruit_banana: 'Banana',
+      fruit_mango: 'Mango',
+      fruit_grapes: 'Grapes',
+      fruit_orange: 'Orange',
+      fruit_lemon: 'Lemon',
+      fruit_watermelon: 'Watermelon',
+      fruit_strawberry: 'Strawberry',
+      fruit_peach: 'Peach',
+      fruit_pineapple: 'Pineapple',
+      fruit_kiwi: 'Kiwi',
+      fruit_pear: 'Pear',
+      fruit_melon: 'Melon',
+      fruit_cherry: 'Cherry',
+      fruit_coconut: 'Coconut',
+      fruit_avocado: 'Avocado',
+      unit_kg: ' /kg',
+      unit_bunch: ' /bunch',
+      unit_pack: ' /pack',
+      unit_piece: ' /piece',
+      unit_dozen: ' /dozen',
+      my_cart: 'My Cart',
+      fresh_fiji_apples: 'Fresh Fiji Apples',
+      organic_spinach: 'Organic Spinach',
+      organic_lettuce: 'Organic Lettuce',
+      one_bunch: '1 Bunch',
+      three_pieces: '3 Pieces',
+      subtotal: 'Subtotal',
+      delivery: 'Delivery',
+      total: 'Total',
+      delivery_address: 'Delivery Address',
+      addr_home: 'Home',
+      addr_office: 'Office',
+      place_order: 'Place Order',
+      order_placed: 'Order placed ✓',
+      order_delivery: 'delivery',
+      err_signin: 'Please sign in to place your order',
+      err_address: 'Choose a delivery address',
+      err_items: 'Some items are no longer available',
+      err_generic: 'Could not place the order — try again',
+      items_word: 'Items',
+      status_pending: 'Pending',
+      history_empty: 'No orders yet',
+      history_empty_sub: 'Your placed orders will appear here',
+      history_signin: 'Sign in to see your orders',
+      loading_orders: 'Loading your orders…',
+      history_title: 'Order History',
+      filter_all: 'All',
+      filter_delivered: 'Delivered',
+      filter_ongoing: 'Ongoing',
+      filter_cancelled: 'Cancelled',
+      status_delivered: 'Delivered',
+      status_ongoing: 'On the way',
+      status_cancelled: 'Cancelled',
+      status_confirmed: 'Confirmed',
+      status_rejected: 'Rejected',
+      date_1: '15th Oct 2026',
+      date_2: '14th Oct 2026',
+      date_3: '14th Oct 2026',
+      date_4: '15th Oct 2026',
+      items_1: '1 Item',
+      items_2: '2 Items',
+      items_3: '3 Items',
+      items_4: '4 Items',
+      reorder: 'Reorder',
+      chat_contact: 'Store Support',
+      chat_online: 'Online',
+      chat_notice: 'Response may be delayed',
+      chat_today: 'Today',
+      chat_ph: 'Type a message',
+      chat_b1: 'Hello Hannah! 👋 How can we help you today?',
+      chat_b2: 'Hi! Can I change my delivery slot for order #VG-2398?',
+      chat_b3: 'Of course. Which slot would you prefer?',
+      chat_b4: 'Tomorrow between 8–10 AM, please.',
+      chat_b5: 'Done ✅ Your order will arrive tomorrow, 8–10 AM.',
+      chat_auto_reply: 'Thanks for your message! Our team will reply as soon as possible.',
+      chat_hint: 'Send us a message — we usually reply within minutes.',
+      account_title: 'Account',
+      profile_name: 'Hannah',
+      stat_orders: 'Orders',
+      stat_favourites: 'Favourites',
+      stat_addresses: 'Addresses',
+      lang_label: 'Language',
+      menu_my_orders: 'My Orders',
+      menu_addresses: 'Delivery Addresses',
+      menu_payments: 'Payment Methods',
+      menu_help: 'Help & Support',
+      menu_logout: 'Log Out',
+      slot_title: 'Delivery Slot',
+      slot_morning: 'Morning (8–10 AM)',
+      slot_evening: 'Evening (7–10 PM)',
+      slot_sub: 'Order before 10 PM · delivered next morning',
+      pay_title: 'Payment Method',
+      pay_cod: 'Cash on Delivery',
+      pay_cod_sub: 'Pay when your order arrives',
+      pay_upi_sub: 'PhonePe · GPay · Paytm & more',
+      cart_empty: 'Your bag is empty',
+      cart_empty_sub: 'Add fresh vegetables & fruits to get started',
+      browse: 'Browse products',
+      login_welcome: 'Welcome',
+      login_sub: 'Log in to order fresh vegetables & fruits',
+      login_user_ph: 'Username',
+      login_pass_ph: 'Password',
+      remember_me: 'Remember me',
+      forgot_password: 'Forgot Password?',
+      login_btn: 'Log In',
+      or_continue: 'or continue with',
+      no_account: 'Don’t have an account?',
+      sign_up: 'Sign Up',
+      toast_login: 'Logging you in…',
+      toast_checkout: 'Placing your order…',
+      toast_added: 'Added to bag ✓',
+      toast_removed: 'Removed from bag',
+      toast_reorder: 'Items added to bag ✓',
+      toast_demo: 'This section isn’t wired in this template yet'
+    },
+
+    hi: {
+      hello: 'नमस्ते, हन्ना',
+      delivery_note: 'रात 10 बजे से पहले ऑर्डर करें — कल सुबह ताज़ा डिलीवरी!',
+      vegetables: 'सब्ज़ियाँ',
+      fruits: 'फल',
+      tab_home: 'होम',
+      tab_history: 'इतिहास',
+      tab_message: 'संदेश',
+      tab_account: 'खाता',
+      veg_tomato: 'टमाटर',
+      veg_potato: 'आलू',
+      veg_onion: 'प्याज़',
+      veg_spinach: 'पालक',
+      veg_carrot: 'गाजर',
+      veg_cucumber: 'खीरा',
+      veg_capsicum: 'शिमला मिर्च',
+      veg_brinjal: 'बैंगन',
+      veg_corn: 'मक्का',
+      veg_pumpkin: 'कद्दू',
+      veg_broccoli: 'ब्रोकली',
+      veg_mushroom: 'मशरूम',
+      veg_garlic: 'लहसुन',
+      veg_chilli: 'हरी मिर्च',
+      veg_lettuce: 'सलाद पत्ता',
+      veg_cabbage: 'पत्तागोभी',
+      veg_coriander: 'धनिया',
+      veg_sweet_potato: 'शकरकंद',
+      fruit_apple: 'सेब',
+      fruit_banana: 'केला',
+      fruit_mango: 'आम',
+      fruit_grapes: 'अंगूर',
+      fruit_orange: 'संतरा',
+      fruit_lemon: 'नींबू',
+      fruit_watermelon: 'तरबूज़',
+      fruit_strawberry: 'स्ट्रॉबेरी',
+      fruit_peach: 'आड़ू',
+      fruit_pineapple: 'अनानास',
+      fruit_kiwi: 'कीवी',
+      fruit_pear: 'नाशपाती',
+      fruit_melon: 'खरबूजा',
+      fruit_cherry: 'चेरी',
+      fruit_coconut: 'नारियल',
+      fruit_avocado: 'एवोकाडो',
+      unit_kg: ' /किलो',
+      unit_bunch: ' /गड्डी',
+      unit_pack: ' /पैक',
+      unit_piece: ' /नग',
+      unit_dozen: ' /दर्जन',
+      my_cart: 'मेरा कार्ट',
+      fresh_fiji_apples: 'ताज़े फ़िजी सेब',
+      organic_spinach: 'जैविक पालक',
+      organic_lettuce: 'जैविक सलाद पत्ता',
+      one_bunch: '1 गड्डी',
+      three_pieces: '3 पीस',
+      subtotal: 'उप-योग',
+      delivery: 'डिलीवरी',
+      total: 'कुल',
+      delivery_address: 'डिलीवरी पता',
+      addr_home: 'घर',
+      addr_office: 'ऑफ़िस',
+      place_order: 'ऑर्डर करें',
+      order_placed: 'ऑर्डर हो गया ✓',
+      order_delivery: 'डिलीवरी',
+      err_signin: 'ऑर्डर करने के लिए लॉग इन करें',
+      err_address: 'डिलीवरी पता चुनें',
+      err_items: 'कुछ आइटम अब उपलब्ध नहीं हैं',
+      err_generic: 'ऑर्डर नहीं हो सका — फिर कोशिश करें',
+      items_word: 'आइटम',
+      status_pending: 'प्रतीक्षा में',
+      history_empty: 'अभी कोई ऑर्डर नहीं',
+      history_empty_sub: 'आपके ऑर्डर यहाँ दिखेंगे',
+      history_signin: 'अपने ऑर्डर देखने के लिए लॉग इन करें',
+      loading_orders: 'आपके ऑर्डर लोड हो रहे हैं…',
+      history_title: 'ऑर्डर इतिहास',
+      filter_all: 'सभी',
+      filter_delivered: 'डिलीवर हुए',
+      filter_ongoing: 'चल रहे',
+      filter_cancelled: 'रद्द',
+      status_delivered: 'डिलिवर हुआ',
+      status_ongoing: 'रास्ते में',
+      status_cancelled: 'रद्द',
+      status_confirmed: 'कन्फर्म हुआ',
+      status_rejected: 'रद्द किया गया',
+      date_1: '15 अक्टूबर 2026',
+      date_2: '14 अक्टूबर 2026',
+      date_3: '14 अक्टूबर 2026',
+      date_4: '15 अक्टूबर 2026',
+      items_1: '1 आइटम',
+      items_2: '2 आइटम',
+      items_3: '3 आइटम',
+      items_4: '4 आइटम',
+      reorder: 'फिर से ऑर्डर करें',
+      chat_contact: 'स्टोर सहायता',
+      chat_online: 'ऑनलाइन',
+      chat_notice: 'जवाब में देरी हो सकती है',
+      chat_today: 'आज',
+      chat_ph: 'संदेश लिखें',
+      chat_b1: 'नमस्ते हन्ना! 👋 हम आपकी क्या मदद कर सकते हैं?',
+      chat_b2: 'नमस्ते! क्या मैं ऑर्डर #VG-2398 का डिलीवरी स्लॉट बदल सकती हूँ?',
+      chat_b3: 'बिल्कुल। आप कौन सा स्लॉट चाहेंगी?',
+      chat_b4: 'कल सुबह 8–10 बजे, कृपया।',
+      chat_b5: 'हो गया ✅ आपका ऑर्डर कल सुबह 8–10 बजे आ जाएगा।',
+      chat_auto_reply: 'आपके संदेश के लिए धन्यवाद! हमारी टीम जल्द ही जवाब देगी।',
+      chat_hint: 'हमें संदेश भेजें — हम आमतौर पर मिनटों में जवाब देते हैं।',
+      account_title: 'खाता',
+      profile_name: 'हन्ना',
+      stat_orders: 'ऑर्डर',
+      stat_favourites: 'पसंदीदा',
+      stat_addresses: 'पते',
+      lang_label: 'भाषा',
+      menu_my_orders: 'मेरे ऑर्डर',
+      menu_addresses: 'डिलीवरी पते',
+      menu_payments: 'भुगतान तरीके',
+      menu_help: 'सहायता और समर्थन',
+      menu_logout: 'लॉग आउट',
+      slot_title: 'डिलीवरी समय',
+      slot_morning: 'सुबह (8–10 बजे)',
+      slot_evening: 'शाम (7–10 बजे)',
+      slot_sub: 'रात 10 बजे से पहले ऑर्डर = अगली सुबह डिलीवरी',
+      pay_title: 'भुगतान विधि',
+      pay_cod: 'कैश ऑन डिलीवरी',
+      pay_cod_sub: 'ऑर्डर मिलने पर भुगतान करें',
+      pay_upi_sub: 'PhonePe · GPay · Paytm और अन्य',
+      cart_empty: 'आपका बैग खाली है',
+      cart_empty_sub: 'शुरू करने के लिए ताज़ी सब्ज़ियाँ और फल जोड़ें',
+      browse: 'उत्पाद देखें',
+      login_welcome: 'स्वागत है',
+      login_sub: 'ताज़ी सब्ज़ियाँ और फल ऑर्डर करने के लिए लॉग इन करें',
+      login_user_ph: 'उपयोगकर्ता नाम',
+      login_pass_ph: 'पासवर्ड',
+      remember_me: 'मुझे याद रखें',
+      forgot_password: 'पासवर्ड भूल गए?',
+      login_btn: 'लॉग इन करें',
+      or_continue: 'या इसके साथ जारी रखें',
+      no_account: 'खाता नहीं है?',
+      sign_up: 'साइन अप करें',
+      toast_login: 'लॉग इन किया जा रहा है…',
+      toast_checkout: 'ऑर्डर किया जा रहा है…',
+      toast_added: 'बैग में जोड़ा गया ✓',
+      toast_removed: 'बैग से हटाया',
+      toast_reorder: 'आइटम बैग में जोड़े गए ✓',
+      toast_demo: 'यह सेक्शन अभी टेम्पलेट में जोड़ा नहीं गया है'
+    },
+
+    mr: {
+      hello: 'नमस्कार, हन्ना',
+      delivery_note: 'रात्री 10 पर्यंत ऑर्डर करा — उद्या सकाळी ताजे वितरण!',
+      vegetables: 'भाज्या',
+      fruits: 'फळे',
+      tab_home: 'होम',
+      tab_history: 'इतिहास',
+      tab_message: 'संदेश',
+      tab_account: 'खाते',
+      veg_tomato: 'टोमॅटो',
+      veg_potato: 'बटाटा',
+      veg_onion: 'कांदा',
+      veg_spinach: 'पालक',
+      veg_carrot: 'गाजर',
+      veg_cucumber: 'काकडी',
+      veg_capsicum: 'शिमला मिरची',
+      veg_brinjal: 'वांगे',
+      veg_corn: 'मका',
+      veg_pumpkin: 'भोपळा',
+      veg_broccoli: 'ब्रोकोली',
+      veg_mushroom: 'मशरूम',
+      veg_garlic: 'लसूण',
+      veg_chilli: 'हिरवी मिरची',
+      veg_lettuce: 'लेट्यूस',
+      veg_cabbage: 'कोबी',
+      veg_coriander: 'कोथिंबीर',
+      veg_sweet_potato: 'रताळे',
+      fruit_apple: 'सफरचंद',
+      fruit_banana: 'केळे',
+      fruit_mango: 'आंबा',
+      fruit_grapes: 'द्राक्षे',
+      fruit_orange: 'संत्री',
+      fruit_lemon: 'लिंबू',
+      fruit_watermelon: 'टरबूज',
+      fruit_strawberry: 'स्ट्रॉबेरी',
+      fruit_peach: 'पीच',
+      fruit_pineapple: 'अननस',
+      fruit_kiwi: 'कीवी',
+      fruit_pear: 'नाशपाती',
+      fruit_melon: 'खरबूज',
+      fruit_cherry: 'चेरी',
+      fruit_coconut: 'नारळ',
+      fruit_avocado: 'ॲवोकॅडो',
+      unit_kg: ' /किलो',
+      unit_bunch: ' /गड्डी',
+      unit_pack: ' /पॅक',
+      unit_piece: ' /नग',
+      unit_dozen: ' /डझन',
+      my_cart: 'माझे कार्ट',
+      fresh_fiji_apples: 'ताजी फिजी सफरचंद',
+      organic_spinach: 'सेंद्रिय पालक',
+      organic_lettuce: 'सेंद्रिय लेट्यूस',
+      one_bunch: '1 गड्डी',
+      three_pieces: '3 नग',
+      subtotal: 'उप-एकूण',
+      delivery: 'वितरण',
+      total: 'एकूण',
+      delivery_address: 'वितरण पत्ता',
+      addr_home: 'घर',
+      addr_office: 'ऑफिस',
+      place_order: 'ऑर्डर करा',
+      order_placed: 'ऑर्डर झाली ✓',
+      order_delivery: 'वितरण',
+      err_signin: 'ऑर्डर करण्यासाठी लॉग इन करा',
+      err_address: 'वितरण पत्ता निवडा',
+      err_items: 'काही वस्तू आता उपलब्ध नाहीत',
+      err_generic: 'ऑर्डर झाली नाही — पुन्हा प्रयत्न करा',
+      items_word: 'वस्तू',
+      status_pending: 'प्रलंबित',
+      history_empty: 'अजून ऑर्डर नाही',
+      history_empty_sub: 'तुमच्या ऑर्डर इथे दिसतील',
+      history_signin: 'तुमच्या ऑर्डर पाहण्यासाठी लॉग इन करा',
+      loading_orders: 'तुमच्या ऑर्डर लोड होत आहेत…',
+      history_title: 'ऑर्डर इतिहास',
+      filter_all: 'सर्व',
+      filter_delivered: 'डिलिव्हर झाले',
+      filter_ongoing: 'सुरू असलेले',
+      filter_cancelled: 'रद्द',
+      status_delivered: 'डिलिव्हर झाले',
+      status_ongoing: 'मार्गात',
+      status_cancelled: 'रद्द',
+      status_confirmed: 'कन्फर्म झाले',
+      status_rejected: 'रद्द केले',
+      date_1: '15 ऑक्टोबर 2026',
+      date_2: '14 ऑक्टोबर 2026',
+      date_3: '14 ऑक्टोबर 2026',
+      date_4: '15 ऑक्टोबर 2026',
+      items_1: '1 वस्तू',
+      items_2: '2 वस्तू',
+      items_3: '3 वस्तू',
+      items_4: '4 वस्तू',
+      reorder: 'पुन्हा ऑर्डर करा',
+      chat_contact: 'स्टोअर सपोर्ट',
+      chat_online: 'ऑनलाइन',
+      chat_notice: 'उत्तरास उशीर होऊ शकतो',
+      chat_today: 'आज',
+      chat_ph: 'संदेश लिहा',
+      chat_b1: 'नमस्कार हन्ना! 👋 आम्ही तुम्हाला कशी मदत करू शकतो?',
+      chat_b2: 'नमस्कार! मी ऑर्डर #VG-2398 चा डिलिव्हरी स्लॉट बदलू शकते का?',
+      chat_b3: 'अर्थातच. तुम्हाला कोणता स्लॉट हवा आहे?',
+      chat_b4: 'उद्या सकाळी 8–10 दरम्यान, कृपया.',
+      chat_b5: 'झाले ✅ तुमची ऑर्डर उद्या सकाळी 8–10 दरम्यान येईल.',
+      chat_auto_reply: 'तुमच्या संदेशाबद्दल धन्यवाद! आमची टीम लवकरच उत्तर देईल.',
+      chat_hint: 'आम्हाला संदेश पाठवा — आम्ही सहसा काही मिनिटांत उत्तर देतो.',
+      account_title: 'खाते',
+      profile_name: 'हन्ना',
+      stat_orders: 'ऑर्डर',
+      stat_favourites: 'आवडते',
+      stat_addresses: 'पत्ते',
+      lang_label: 'भाषा',
+      menu_my_orders: 'माझ्या ऑर्डर्स',
+      menu_addresses: 'वितरण पत्ते',
+      menu_payments: 'पेमेंट पद्धती',
+      menu_help: 'मदत आणि समर्थन',
+      menu_logout: 'लॉग आउट',
+      slot_title: 'वितरण वेळ',
+      slot_morning: 'सकाळ (8–10)',
+      slot_evening: 'संध्याकाळ (7–10)',
+      slot_sub: 'रात्री 10 पर्यंत ऑर्डर = पुढील सकाळी वितरण',
+      pay_title: 'पेमेंट पद्धत',
+      pay_cod: 'कॅश ऑन डिलिव्हरी',
+      pay_cod_sub: 'ऑर्डर मिळाल्यावर पैसे द्या',
+      pay_upi_sub: 'PhonePe · GPay · Paytm आणि अधिक',
+      cart_empty: 'तुमची बॅग रिकामी आहे',
+      cart_empty_sub: 'सुरू करण्यासाठी ताज्या भाज्या आणि फळे जोडा',
+      browse: 'उत्पादने पहा',
+      login_welcome: 'स्वागत आहे',
+      login_sub: 'ताज्या भाज्या आणि फळे ऑर्डर करण्यासाठी लॉग इन करा',
+      login_user_ph: 'वापरकर्तानाव',
+      login_pass_ph: 'पासवर्ड',
+      remember_me: 'मला लक्षात ठेवा',
+      forgot_password: 'पासवर्ड विसरला?',
+      login_btn: 'लॉग इन करा',
+      or_continue: 'किंवा यासह सुरू ठेवा',
+      no_account: 'खाते नाही?',
+      sign_up: 'साइन अप करा',
+      toast_login: 'लॉग इन केले जात आहे…',
+      toast_checkout: 'ऑर्डर दिली जात आहे…',
+      toast_added: 'बॅगमध्ये जोडले ✓',
+      toast_removed: 'बॅगमधून काढले',
+      toast_reorder: 'वस्तू बॅगमध्ये जोडल्या ✓',
+      toast_demo: 'हा विभाग अद्याप टेम्पलेटमध्ये जोडलेला नाही'
+    }
+  };
+
+  var LANG_STORAGE_KEY = 'vegshop-lang';
+  var LANGS = ['en', 'hi', 'mr'];
+
+  /* pages can lock their language (e.g. the login screen is English-only) */
+  var lockLang = document.documentElement.getAttribute('data-lang-lock');
+  if (lockLang && LANGS.indexOf(lockLang) === -1) lockLang = null;
+
+  /* URL param (?lang=hi) wins on load — handy for testing & sharing links */
+  var currentLang = lockLang || (function () {
+    var fromUrl = null;
+    try { fromUrl = new URLSearchParams(window.location.search).get('lang'); } catch (e) { /* noop */ }
+    if (fromUrl && LANGS.indexOf(fromUrl) !== -1) return fromUrl;
+    try {
+      var saved = localStorage.getItem(LANG_STORAGE_KEY);
+      if (saved && LANGS.indexOf(saved) !== -1) return saved;
+    } catch (e) { /* noop */ }
+    return 'en';
+  })();
+
+  function t(key) {
+    var dict = I18N[currentLang] || I18N.en;
+    if (dict[key] != null) return dict[key];
+    return I18N.en[key] != null ? I18N.en[key] : key;
+  }
+
+  function applyLanguage(lang) {
+    if (lockLang) lang = lockLang;
+    if (LANGS.indexOf(lang) === -1) lang = 'en';
+    currentLang = lang;
+    if (!lockLang) {
+      try { localStorage.setItem(LANG_STORAGE_KEY, lang); } catch (e) { /* noop */ }
+    }
+
+    document.documentElement.lang = lang;
+
+    $$('[data-i18n]').forEach(function (el) {
+      el.textContent = t(el.getAttribute('data-i18n'));
+    });
+    $$('[data-i18n-placeholder]').forEach(function (el) {
+      el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+    });
+    $$('.lang').forEach(function (btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+  }
+
+  $$('.lang').forEach(function (btn) {
+    btn.addEventListener('click', function () { applyLanguage(btn.getAttribute('data-lang')); });
+  });
+
+  /* ---------- toast ---------- */
+
+  function toast(message, ms) {
+    var screen = $('.screen');
+    if (!screen) return;
+    var el = $('.toast', screen);
+    if (!el) {
+      el = document.createElement('div');
+      el.className = 'toast';
+      screen.appendChild(el);
+    }
+    el.textContent = message;
+    el.classList.add('show');
+    clearTimeout(el._timer);
+    el._timer = setTimeout(function () { el.classList.remove('show'); }, ms || 1700);
+  }
+
+  $$('[data-toast-key], [data-toast]').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      if (el.tagName === 'A') e.preventDefault(); // demo links
+      var key = el.getAttribute('data-toast-key');
+      toast(key ? t(key) : el.getAttribute('data-toast'));
+    });
+  });
+
+  /* ---------- cart totals ---------- */
+
+  function updateCartTotals() {
+    var items = $$('.cart-item');
+    if (!items.length) return;
+
+    var subtotal = 0;
+    items.forEach(function (item) {
+      subtotal += parseFloat(item.dataset.price) * parseInt(item.dataset.qty, 10);
+    });
+    var delivery = subtotal > 0 ? 3 : 0;
+
+    var set = function (id, value) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = value;
+    };
+    set('subtotal', money(subtotal));
+    set('delivery', money(delivery));
+    set('total', money(subtotal + delivery));
+  }
+
+  /* ---------- bag (shared between home & cart) ---------- */
+
+  var BAG_KEY = 'vegshop-bag';
+
+  function getBag() {
+    try { return JSON.parse(localStorage.getItem(BAG_KEY)) || []; } catch (e) { return []; }
+  }
+  function saveBag(bag) {
+    try { localStorage.setItem(BAG_KEY, JSON.stringify(bag)); } catch (e) { /* noop */ }
+  }
+  function bagCount(bag) {
+    return bag.reduce(function (n, it) { return n + it.qty; }, 0);
+  }
+  function findBagItem(bag, id) {
+    var found = null;
+    bag.forEach(function (it) { if (it.id === id) found = it; });
+    return found;
+  }
+  function mergeBag(id, qty, emoji, price, unitKey) {
+    var bag = getBag();
+    var item = findBagItem(bag, id);
+    if (item) {
+      item.qty = Math.min(99, item.qty + qty);
+    } else {
+      bag.push({ id: id, qty: Math.min(99, qty), emoji: emoji || '🧺', price: price || 0, unit: unitKey || 'unit_pack' });
+    }
+    saveBag(bag);
+    updateFabs();
+  }
+  function updateFabs() {
+    var count = bagCount(getBag());
+    $$('.tab-fab').forEach(function (fab) {
+      var el = $('.bag-count', fab);
+      if (!el) {
+        el = document.createElement('span');
+        el.className = 'bag-count';
+        fab.appendChild(el);
+      }
+      el.textContent = count;
+      el.hidden = count === 0;
+    });
+  }
+  function setBagItem(id, qty, sourceRow) {
+    var bag = getBag();
+    if (qty <= 0) {
+      bag = bag.filter(function (it) { return it.id !== id; });
+      saveBag(bag);
+      updateFabs();
+      return;
+    }
+    var item = findBagItem(bag, id);
+    if (!item) {
+      var emoji = '';
+      var price = 0;
+      var unit = 'unit_pack';
+      if (sourceRow) {
+        var e = $('.r-emoji', sourceRow);
+        var p = $('.price span', sourceRow);
+        emoji = e ? e.textContent.trim() : '';
+        price = parseFloat(sourceRow.dataset.price) || 0;
+        unit = p && p.getAttribute('data-i18n') ? p.getAttribute('data-i18n') : 'unit_pack';
+      }
+      item = { id: id, qty: qty, emoji: emoji, price: price, unit: unit };
+      bag.push(item);
+    } else {
+      item.qty = qty;
+    }
+    saveBag(bag);
+    updateFabs();
+  }
+  function refreshStepperState(stepper, qty, min) {
+    if (!stepper) return;
+    var minus = $('.step[data-step="-1"]', stepper);
+    if (minus) minus.disabled = qty <= min;
+  }
+
+  /* ---------- quantity steppers (delegated — also covers rendered cart rows) ---------- */
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.step');
+    if (!btn || btn.disabled) return;
+    var stepper = btn.closest('.stepper');
+    var qtyEl = stepper ? $('.qty', stepper) : null;
+    if (!qtyEl) return;
+
+    var current = parseInt(qtyEl.textContent, 10) || 0;
+    var cartItem = stepper.closest('.cart-item');
+    var rateRow = stepper.closest('.rate-row');
+    var min = cartItem ? 1 : 0;
+    var next = Math.min(99, Math.max(min, current + parseInt(btn.dataset.step, 10)));
+
+    /* cart: minus from 1 removes the item */
+    if (cartItem && next === current) {
+      setBagItem(cartItem.dataset.id, 0);
+      renderCart();
+      toast(t('toast_removed'));
+      return;
+    }
+    if (next === current) return;
+
+    qtyEl.textContent = next;
+    refreshStepperState(stepper, next, min);
+
+    if (cartItem) {
+      cartItem.dataset.qty = next;
+      setBagItem(cartItem.dataset.id, next);
+      updateCartTotals();
+    }
+
+    if (rateRow) {
+      var h4 = rateRow.querySelector('h4');
+      if (h4) setBagItem(h4.getAttribute('data-i18n'), next, rateRow);
+
+      var rowTotal = $('.row-total', rateRow);
+      if (rowTotal) {
+        if (next > 1) {
+          rowTotal.textContent = '= ' + money(parseFloat(rateRow.dataset.price) * next);
+          rowTotal.hidden = false;
+        } else {
+          rowTotal.hidden = true;
+        }
+      }
+      if (current === 0 && next === 1) toast(t('toast_added'));
+    }
+  });
+
+  /* ---------- cart rendering (from the shared bag) ---------- */
+
+  var STEP_MINUS_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg>';
+  var STEP_PLUS_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>';
+
+  function renderCart() {
+    var list = $('#cartList');
+    if (!list) return;
+
+    var content = $('.cart-content');
+    var bar = $('.checkout-bar');
+    var bag = getBag();
+
+    if (!bag.length) {
+      if (content) content.classList.add('is-empty');
+      if (bar) bar.hidden = true;
+      list.innerHTML = '';
+      return;
+    }
+
+    if (content) content.classList.remove('is-empty');
+    if (bar) bar.hidden = false;
+
+    list.innerHTML = bag.map(function (it) {
+      return '<li class="cart-item" data-id="' + it.id + '" data-price="' + it.price + '" data-qty="' + it.qty + '">' +
+        '<div class="c-thumb" aria-hidden="true">' + it.emoji + '</div>' +
+        '<div class="c-info">' +
+        '<h4 data-i18n="' + it.id + '">' + it.id + '</h4>' +
+        '<p class="price"><b>₹' + Math.round(it.price) + '</b><span data-i18n="' + it.unit + '"></span></p>' +
+        '</div>' +
+        '<div class="stepper">' +
+        '<button class="step" data-step="-1" aria-label="Decrease quantity">' + STEP_MINUS_SVG + '</button>' +
+        '<span class="qty">' + it.qty + '</span>' +
+        '<button class="step plus" data-step="1" aria-label="Increase quantity">' + STEP_PLUS_SVG + '</button>' +
+        '</div>' +
+        '</li>';
+    }).join('');
+
+    applyLanguage(currentLang);
+    $$('.cart-item .stepper').forEach(function (stepper) {
+      refreshStepperState(stepper, parseInt($('.qty', stepper).textContent, 10), 1);
+    });
+    updateCartTotals();
+  }
+
+  /* ---------- home rows ↔ bag ---------- */
+
+  function initHomeRows() {
+    var rows = $$('.rate-row[data-price]');
+    if (!rows.length) return;
+    var bag = getBag();
+    rows.forEach(function (row) {
+      var h4 = row.querySelector('h4');
+      if (!h4) return;
+      var item = findBagItem(bag, h4.getAttribute('data-i18n'));
+      var qty = item ? item.qty : 0;
+      var qtyEl = $('.qty', row);
+      if (qtyEl) qtyEl.textContent = qty;
+      refreshStepperState($('.stepper', row), qty, 0);
+    });
+  }
+
+  /* ---------- bag init (runs on every page) ---------- */
+
+  function initBag() {
+    if ($('#cartList')) {
+      /* ?bag=demo seeds a sample bag (handy for previews & demos) */
+      var demo = null;
+      try { demo = new URLSearchParams(window.location.search).get('bag'); } catch (e) { /* noop */ }
+      if (demo === 'demo' && getBag().length === 0) {
+        saveBag([
+          { id: 'fresh_fiji_apples', qty: 2, emoji: '🍎', price: 2, unit: 'unit_pack' },
+          { id: 'organic_spinach', qty: 1, emoji: '🥬', price: 3, unit: 'unit_bunch' },
+          { id: 'organic_lettuce', qty: 3, emoji: '🥬', price: 2, unit: 'unit_bunch' }
+        ]);
+      }
+      renderCart();
+    }
+    initHomeRows();
+    updateFabs();
+  }
+
+  /* ---------- product tabs (Vegetables / Fruits) ---------- */
+
+  var productTabs = $$('.tabs .tab');
+  if (productTabs.length) {
+    var productPanes = { veg: $('#vegList'), fruits: $('#fruitList') };
+    productTabs.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        productTabs.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var target = btn.getAttribute('data-tab');
+        Object.keys(productPanes).forEach(function (key) {
+          if (productPanes[key]) productPanes[key].hidden = (key !== target);
+        });
+      });
+    });
+
+    /* ?tab=fruits opens the Fruits list directly (handy for testing/sharing) */
+    var urlTab = null;
+    try { urlTab = new URLSearchParams(window.location.search).get('tab'); } catch (e) { /* noop */ }
+    if (urlTab === 'fruits' && productTabs[1]) productTabs[1].click();
+  }
+
+  /* ---------- selectable option groups (address / slot / payment) ---------- */
+
+  $$('.addr-option').forEach(function (opt) {
+    opt.addEventListener('click', function () {
+      var group = opt.closest('section') || document;
+      $$('.addr-option', group).forEach(function (o) { o.classList.remove('active'); });
+      opt.classList.add('active');
+      var input = $('input', opt);
+      if (input) input.checked = true;
+    });
+  });
+
+  /* ---------- place order (cart → backend) ---------- */
+
+  var placeBtn = $('#placeOrderBtn');
+
+  function showLastOrder(order) {
+    var el = $('#orderSuccess');
+    if (!el || !order || !order.id) return;
+    var title = $('#orderSuccessTitle');
+    var text = $('#orderSuccessText');
+    if (title) title.textContent = t('order_placed');
+    if (text) {
+      var str = order.id;
+      if (order.deliveryDate) str += ' · ' + t('order_delivery') + ' ' + order.deliveryDate;
+      text.textContent = str;
+    }
+    el.hidden = false;
+  }
+
+  function restoreLastOrder() {
+    var last = null;
+    try { last = JSON.parse(sessionStorage.getItem('taza-last-order') || 'null'); } catch (e) { /* noop */ }
+    /* ?last=TS261001&date=2026-10-17 renders the banner directly (for previews/testing) */
+    var urlId = null;
+    try { urlId = new URLSearchParams(window.location.search).get('last'); } catch (e) { /* noop */ }
+    if (urlId) last = { id: urlId, deliveryDate: new URLSearchParams(window.location.search).get('date') || '' };
+    if (last && last.id) showLastOrder(last);
+  }
+
+  function setPlaceBusy(busy) {
+    if (!placeBtn) return;
+    placeBtn.disabled = busy;
+    placeBtn.classList.toggle('is-busy', busy);
+  }
+
+  if (placeBtn) {
+    placeBtn.addEventListener('click', function () {
+      var bag = getBag();
+      if (!bag.length) { toast(t('cart_empty')); return; }
+
+      /* static demo mode (no backend running) */
+      if (!window.TAZA) { toast(t('toast_checkout')); return; }
+
+      if (!window.TAZA.token()) {
+        toast(t('err_signin'), 2600);
+        setTimeout(function () { window.location.href = 'login.html'; }, 1500);
+        return;
+      }
+
+      var addrEl = $('.address-card .addr-option.active .addr-text');
+      var address = addrEl ? addrEl.textContent.trim() : '';
+      if (!address) { toast(t('err_address'), 2600); return; }
+
+      var slotEl = $('.slot-card .addr-option.active');
+      var payEl = $('.pay-card .addr-option.active');
+      var slot = slotEl && slotEl.getAttribute('data-slot') ? slotEl.getAttribute('data-slot') : 'morning';
+      var payment = payEl && payEl.getAttribute('data-pay') ? payEl.getAttribute('data-pay') : 'upi';
+
+      setPlaceBusy(true);
+      toast(t('toast_checkout'), 1200);
+
+      window.TAZA.getProducts().then(function (res) {
+        /* map the local bag (i18n keys) to the live catalogue by name */
+        var byName = {};
+        (res.products || []).forEach(function (p) { byName[String(p.name).toLowerCase()] = p; });
+
+        var items = [];
+        bag.forEach(function (b) {
+          var en = (I18N.en && I18N.en[b.id]) ? String(I18N.en[b.id]).toLowerCase() : '';
+          var p = byName[en];
+          if (p) items.push({ productId: p.id, qty: b.qty });
+        });
+
+        if (!items.length) throw new Error(t('err_items'));
+        return window.TAZA.placeOrder({ items: items, slot: slot, payment: payment, address: address });
+      }).then(function (res) {
+        var order = res.order || {};
+        saveBag([]);
+        updateFabs();
+        renderCart();
+        setPlaceBusy(false);
+
+        try { sessionStorage.setItem('taza-last-order', JSON.stringify(order)); } catch (e) { /* noop */ }
+        showLastOrder(order);
+        toast(t('order_placed') + ' · ' + order.id + ' · ' + t('order_delivery') + ' ' + order.deliveryDate, 4200);
+      }).catch(function (err) {
+        setPlaceBusy(false);
+        toast((err && err.message) ? err.message : t('err_generic'), 3200);
+      });
+    });
+  }
+
+  restoreLastOrder();
+
+  /* ---------- order history (customer, live from the API) ---------- */
+
+  var orderListEl = $('#orderList');
+  var liveOrders = {};
+
+  if (orderListEl) {
+    var LOCALES = { en: 'en-IN', hi: 'hi-IN', mr: 'mr-IN' };
+    var STATUS_VIEW = {
+      pending:   { cls: 'way',    key: 'status_pending' },
+      confirmed: { cls: 'conf',   key: 'status_confirmed' },
+      on_way:    { cls: 'conf',   key: 'status_ongoing' },
+      delivered: { cls: 'ok',     key: 'status_delivered' },
+      rejected:  { cls: 'cancel', key: 'status_rejected' }
+    };
+    var UNIT_KEYS = { kg: 'unit_kg', bunch: 'unit_bunch', pack: 'unit_pack', piece: 'unit_piece', dozen: 'unit_dozen' };
+    var REORDER_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6" /><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" /></svg>';
+
+    function fmtDate(str) {
+      var d = new Date(String(str || '').replace(' ', 'T'));
+      if (isNaN(d.getTime())) return String(str || '');
+      return d.toLocaleDateString(LOCALES[currentLang] || 'en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    function orderCard(o) {
+      var st = STATUS_VIEW[o.status] || STATUS_VIEW.pending;
+      var thumbs = (o.items || []).slice(0, 3).map(function (it) {
+        return '<span class="o-thumb">' + (it.emoji || '🧺') + '</span>';
+      }).join('');
+      return '<article class="order-card" data-id="' + o.id + '">' +
+        '<div class="order-head">' +
+        '<div>' +
+        '<h4>' + o.id + '</h4>' +
+        '<p class="o-date">' + fmtDate(o.placed_at) + ' · ' + (o.items ? o.items.length : 0) + ' ' + t('items_word') + '</p>' +
+        '</div>' +
+        '<span class="status ' + st.cls + '" data-i18n="' + st.key + '">' + t(st.key) + '</span>' +
+        '</div>' +
+        '<div class="order-thumbs" aria-hidden="true">' + thumbs + '</div>' +
+        '<div class="order-foot">' +
+        '<p class="o-total">₹' + o.amount + '</p>' +
+        '<button class="reorder" data-reorder="' + o.id + '">' + REORDER_SVG + '<span data-i18n="reorder">' + t('reorder') + '</span></button>' +
+        '</div>' +
+        '</article>';
+    }
+
+    function showOrderState(state) {
+      orderListEl.hidden = state !== 'list';
+      var loading = $('#orderLoading'); if (loading) loading.hidden = state !== 'loading';
+      var empty = $('#orderEmpty'); if (empty) empty.classList.toggle('show', state === 'empty');
+      var signin = $('#orderSignin'); if (signin) signin.classList.toggle('show', state === 'signin');
+    }
+
+    function loadOrders() {
+      showOrderState('loading');
+      window.TAZA.myOrders().then(function (res) {
+        var orders = res.orders || [];
+        liveOrders = {};
+        orders.forEach(function (o) { liveOrders[o.id] = o; });
+        if (!orders.length) { showOrderState('empty'); return; }
+        orderListEl.innerHTML = orders.map(orderCard).join('');
+        showOrderState('list');
+      }).catch(function (err) {
+        if (err && err.status === 401) { showOrderState('signin'); return; }
+        toast((err && err.message) ? err.message : t('err_generic'), 3000);
+        showOrderState('list');
+      });
+    }
+
+    window.TAZA.available().then(function (ok) {
+      if (!ok) return;                    /* static demo (file://) — keep the demo cards */
+      if (!window.TAZA.token()) { showOrderState('signin'); return; }
+      loadOrders();
+    });
+
+    /* reorder: put a past order's items back into the bag */
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-reorder]');
+      if (!btn) return;
+      var order = liveOrders[btn.getAttribute('data-reorder')];
+      if (!order) return;
+
+      window.TAZA.getProducts().then(function (res) {
+        var byName = {};
+        (res.products || []).forEach(function (p) { byName[String(p.name).toLowerCase()] = p; });
+        var added = 0;
+        (order.items || []).forEach(function (it) {
+          var p = byName[String(it.name).toLowerCase()];
+          if (!p) return;
+          var idKey = null;
+          Object.keys(I18N.en).forEach(function (k) { if (I18N.en[k] === p.name) idKey = k; });
+          if (!idKey) return;
+          mergeBag(idKey, it.qty, p.emoji, p.rate, UNIT_KEYS[p.unit] || 'unit_pack');
+          added++;
+        });
+        if (added) toast(t('toast_reorder'), 2200);
+      }).catch(function () { /* noop */ });
+    });
+  }
+
+  /* ---------- favourite hearts ---------- */
+
+  $$('.heart').forEach(function (btn) {
+    btn.addEventListener('click', function () { btn.classList.toggle('on'); });
+  });
+
+  /* ---------- single-select chip groups (order filters) ---------- */
+
+  $$('.filters').forEach(function (list) {
+    list.addEventListener('click', function (e) {
+      var chip = e.target.closest('.fchip');
+      if (!chip) return;
+      $$('.fchip', list).forEach(function (c) { c.classList.remove('active'); });
+      chip.classList.add('active');
+    });
+  });
+
+  /* ---------- chat (messages screen) ---------- */
+
+  var chatInput = $('#chatInput');
+  var chatSend = $('#chatSend');
+  var chatContent = $('.chat-content');
+
+  if (chatInput && chatSend && chatContent) {
+    var chatLive = false;
+    var chatLastCount = -1;
+
+    var pad2 = function (n) { return n < 10 ? '0' + n : '' + n; };
+    var clock = function (dateLike) {
+      var d = dateLike ? new Date(String(dateLike).replace(' ', 'T')) : new Date();
+      if (isNaN(d.getTime())) d = new Date();
+      var h = d.getHours();
+      var m = d.getMinutes();
+      return (h % 12 || 12) + ':' + pad2(m) + ' ' + (h >= 12 ? 'PM' : 'AM');
+    };
+
+    var appendBubble = function (cls, text, time) {
+      var bubble = document.createElement('div');
+      bubble.className = 'bubble ' + cls;
+      var p = document.createElement('p');
+      p.textContent = text;
+      var timeEl = document.createElement('time');
+      timeEl.textContent = time || '';
+      bubble.appendChild(p);
+      bubble.appendChild(timeEl);
+      chatContent.appendChild(bubble);
+      chatContent.scrollTop = chatContent.scrollHeight;
+    };
+
+    var pollChat = function () {
+      window.TAZA.myChat().then(function (res) {
+        var msgs = res.messages || [];
+        if (msgs.length === chatLastCount) return;
+        chatLastCount = msgs.length;
+        chatContent.innerHTML = '';
+        if (!msgs.length) {
+          appendBubble('them', t('chat_hint'), '');
+          return;
+        }
+        msgs.forEach(function (m) {
+          appendBubble(m.sender === 'admin' ? 'them' : 'me', m.text, clock(m.created_at));
+        });
+      }).catch(function () { /* keep the current thread on transient errors */ });
+    };
+
+    var sendChatMessage = function () {
+      var text = chatInput.value.trim();
+      if (!text) return;
+      chatInput.value = '';
+
+      if (chatLive) {
+        window.TAZA.sendChat(text).then(function () {
+          chatLastCount = -1;           /* force a refresh */
+          pollChat();
+        }).catch(function (err) {
+          toast((err && err.message) ? err.message : t('err_generic'), 2600);
+        });
+        return;
+      }
+
+      /* static demo: local bubble + canned reply */
+      appendBubble('me', text, clock());
+      setTimeout(function () { appendBubble('them', t('chat_auto_reply'), ''); }, 1200);
+    };
+
+    chatSend.addEventListener('click', sendChatMessage);
+    chatInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') sendChatMessage();
+    });
+
+    if (window.TAZA) {
+      window.TAZA.available().then(function (ok) {
+        if (!ok) return;                       /* static demo chat stays */
+        if (!window.TAZA.token()) {
+          chatContent.innerHTML = '';
+          appendBubble('them', t('history_signin'), '');
+          chatInput.disabled = true;
+          chatSend.disabled = true;
+          return;
+        }
+        chatLive = true;
+        chatContent.innerHTML = '';
+        pollChat();
+        setInterval(pollChat, 8000);
+      });
+    }
+  }
+
+  /* ---------- login: show / hide password ---------- */
+
+  var passInput = $('#passwordInput');
+  var passToggle = $('#togglePass');
+  if (passInput && passToggle) {
+    passToggle.addEventListener('click', function () {
+      var show = passInput.type === 'password';
+      passInput.type = show ? 'text' : 'password';
+      passToggle.classList.toggle('on', show);
+    });
+  }
+
+  /* ---------- single login portal: role-based redirect ---------- */
+  /* With the backend running: POST /api/auth/login decides by the account's
+     role. Without it (pure static demo): the built-in list below applies. */
+
+  var loginForm = $('#loginForm');
+  if (loginForm) {
+    loginForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var userEl = $('#loginUser');
+      var user = userEl ? userEl.value.trim().toLowerCase() : '';
+      var pass = passInput ? passInput.value : '';
+
+      function go(admin) {
+        setTimeout(function () {
+          window.location.href = admin ? '../admin/index.html' : 'index.html';
+        }, 900);
+      }
+
+      /* demo fallback (static templates without the API) */
+      function demoLogin() {
+        var ADMIN_LOGINS = {
+          'hannah@vegfruit.shop': 'hannah@123',
+          'vikram@store.com': 'vikram@654',
+          'admin@taza-phal-sabzi.com': 'admin@123'
+        };
+        var isAdmin = Object.prototype.hasOwnProperty.call(ADMIN_LOGINS, user);
+        if (isAdmin && pass !== ADMIN_LOGINS[user]) {
+          toast('Incorrect password for this admin account');
+          return;
+        }
+        toast(isAdmin ? 'Welcome back, admin — opening the admin panel…' : 'Welcome — opening the store…');
+        go(isAdmin);
+      }
+
+      if (window.TAZA) {
+        window.TAZA.login(user, pass).then(function (data) {
+          window.TAZA.setSession(data.token, data.user);
+          var isAdmin = data.user.role === 'admin';
+          toast('Welcome, ' + data.user.name + ' — opening ' + (isAdmin ? 'the admin panel…' : 'the store…'));
+          go(isAdmin);
+        }).catch(function (err) {
+          if (err && err.status) {        /* real API answered */
+            toast(err.message || 'Sign in failed');
+            return;
+          }
+          demoLogin();                    /* API unreachable — static demo */
+        });
+        return;
+      }
+
+      demoLogin();
+    });
+  }
+
+  /* ---------- home catalogue (live from the API) ---------- */
+
+  function nameKeyFor(name) {
+    var key = null;
+    Object.keys(I18N.en).forEach(function (k) { if (I18N.en[k] === name) key = k; });
+    return key;
+  }
+
+  function rateRowHtml(p) {
+    var key = nameKeyFor(p.name);
+    var nameHtml = key ? '<h4 data-i18n="' + key + '">' + esc(p.name) + '</h4>' : '<h4>' + esc(p.name) + '</h4>';
+    var unitKey = 'unit_' + (p.unit === 'piece' ? 'piece' : p.unit);
+    return '<div class="rate-row" data-price="' + p.rate + '">' +
+      '<div class="r-top"><span class="r-emoji" aria-hidden="true">' + esc(p.emoji) + '</span>' + nameHtml + '</div>' +
+      '<div class="r-bottom">' +
+      '<div><p class="price r-price"><b>' + money(p.rate) + '</b><span data-i18n="' + unitKey + '"> /' + esc(p.unit) + '</span></p><em class="row-total" hidden></em></div>' +
+      '<div class="stepper mini">' +
+      '<button class="step" data-step="-1" aria-label="Decrease quantity">' + STEP_MINUS_SVG + '</button>' +
+      '<span class="qty">0</span>' +
+      '<button class="step plus" data-step="1" aria-label="Increase quantity">' + STEP_PLUS_SVG + '</button>' +
+      '</div></div></div>';
+  }
+
+  function fillTable(sel, products) {
+    var table = $(sel);
+    if (!table) return;
+    var cols = $$('.rate-col', table);
+    if (cols.length < 2 || !products.length) return;
+    var half = Math.ceil(products.length / 2);
+    cols[0].innerHTML = products.slice(0, half).map(rateRowHtml).join('');
+    cols[1].innerHTML = products.slice(half).map(rateRowHtml).join('');
+  }
+
+  if ($('#vegList') && window.TAZA) {
+    window.TAZA.available().then(function (ok) {
+      if (!ok) return;                         /* static demo tables stay */
+      window.TAZA.getProducts().then(function (res) {
+        var products = res.products || [];
+        fillTable('#vegList', products.filter(function (p) { return p.cat === 'veg'; }));
+        fillTable('#fruitList', products.filter(function (p) { return p.cat === 'fruits'; }));
+        applyLanguage(currentLang);
+        initHomeRows();                        /* restore bag quantities */
+      }).catch(function () { /* keep static tables */ });
+    });
+  }
+
+  /* ---------- account (live profile + logout) ---------- */
+
+  if ($('.profile-card') && window.TAZA) {
+    var logoutLink = $('.menu-item.danger');
+    if (logoutLink) {
+      logoutLink.addEventListener('click', function () { window.TAZA.clearSession(); });
+    }
+
+    window.TAZA.available().then(function (ok) {
+      if (!ok || !window.TAZA.token()) return;
+
+      window.TAZA.me().then(function (res) {
+        var u = res.user;
+        if (!u) return;
+        var nameEl = $('.pf-info h4');
+        var mailEl = $('.pf-info p');
+        if (nameEl) { nameEl.textContent = u.name; nameEl.removeAttribute('data-i18n'); }
+        if (mailEl) mailEl.textContent = u.email || '';
+      }).catch(function () { /* noop */ });
+
+      window.TAZA.myOrders().then(function (res) {
+        var stat = $('.stats .stat b');
+        if (stat && res.orders) stat.textContent = res.orders.length;
+      }).catch(function () { /* noop */ });
+    });
+  }
+
+  /* ---------- initial paint ---------- */
+
+  applyLanguage(currentLang);
+  updateCartTotals();
+  initBag();
+})();

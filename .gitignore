@@ -1,0 +1,33 @@
+# ============================================================
+# TAZA-PHAL-SABZI.COM — git ignore
+# ============================================================
+
+# dependencies
+node_modules/
+
+# environment / secrets (NEVER commit .env)
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+logs/
+
+# local MySQL reset helper output
+mysql-reset-*.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# editors / IDEs
+.vscode/
+.idea/
+*.swp
+
+# temp files
+*.tmp
+*.bak

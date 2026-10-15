@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TAZA Admin — Settings</title>
+  <link rel="icon" href="logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" id="adminSidebar" data-active="settings"></aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div>
+          <h1>Settings</h1>
+          <p class="sub">Store, delivery slot and payment preferences</p>
+        </div>
+        <div class="admin-chip"><img src="logo.svg" alt="" /><span>Hannah · Super Admin</span></div>
+      </header>
+
+      <main class="content">
+        <section class="card settings-card">
+          <div class="card-head">
+            <div>
+              <h2>Store Settings</h2>
+              <p class="hint">These values appear in the customer app</p>
+            </div>
+          </div>
+          <form class="settings-form" id="settingsForm">
+            <label class="field">
+              <span>Store name</span>
+              <input class="input" id="stStoreName" value="TAZA-PHAL-SABZI.COM" />
+            </label>
+
+            <div class="two-col">
+              <label class="field">
+                <span>Support phone</span>
+                <input class="input" id="stPhone" value="+91 98200 11001" />
+              </label>
+              <label class="field">
+                <span>Delivery fee (₹)</span>
+                <input class="input" id="stFee" type="number" min="0" step="1" value="3" />
+              </label>
+            </div>
+
+            <div class="field">
+              <span>Delivery slots shown to customers</span>
+              <div class="stack-checks">
+                <label class="check"><input type="checkbox" id="stMorning" checked /> Morning (8–10 AM)</label>
+                <label class="check"><input type="checkbox" id="stEvening" checked /> Evening (7–10 PM)</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <span>Payment methods</span>
+              <div class="stack-checks">
+                <label class="check"><input type="checkbox" id="stUpi" checked /> UPI</label>
+                <label class="check"><input type="checkbox" id="stCod" checked /> Cash on Delivery</label>
+              </div>
+            </div>
+
+            <div>
+              <button class="btn primary" type="submit">Save Settings</button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script src="../templates/api.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

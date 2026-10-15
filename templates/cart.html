@@ -1,0 +1,185 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyVegFruitShop — My Cart</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="phone">
+    <div class="screen">
+
+      <div class="statusbar">
+        <span>9:41</span>
+        <span class="sb-icons" aria-hidden="true">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor">
+            <rect x="0" y="7" width="3" height="4" rx="1" />
+            <rect x="4.5" y="5" width="3" height="6" rx="1" />
+            <rect x="9" y="2.5" width="3" height="8.5" rx="1" />
+            <rect x="13.5" y="0" width="3" height="11" rx="1" />
+          </svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+            <path d="M1 3.4a10.5 10.5 0 0 1 14 0" />
+            <path d="M3.4 6a7 7 0 0 1 9.2 0" />
+            <path d="M5.8 8.6a3.6 3.6 0 0 1 4.4 0" />
+            <circle cx="8" cy="11" r="0.9" fill="currentColor" stroke="none" />
+          </svg>
+          <svg width="25" height="11" viewBox="0 0 25 11">
+            <rect x="0.5" y="0.5" width="21" height="10" rx="3" fill="none" stroke="currentColor" opacity="0.5" />
+            <rect x="2.5" y="2.5" width="15" height="6" rx="1.5" fill="currentColor" />
+            <path d="M23.5 3.8v3.4a2 2 0 0 0 0-3.4z" fill="currentColor" opacity="0.5" />
+          </svg>
+        </span>
+      </div>
+
+      <header class="topbar">
+        <a class="icon-btn" href="index.html" aria-label="Back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+        </a>
+        <h1 data-i18n="my_cart">My Cart</h1>
+        <button class="icon-btn heart" aria-label="Save cart to favourites">
+          <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+        </button>
+      </header>
+
+      <main class="content cart-content">
+
+        <!-- last order confirmation -->
+        <div class="order-success" id="orderSuccess" hidden>
+          <span class="os-ico" aria-hidden="true">✅</span>
+          <div>
+            <b id="orderSuccessTitle">Order placed ✓</b>
+            <span class="os-text" id="orderSuccessText"></span>
+          </div>
+        </div>
+
+        <!-- empty state -->
+        <div class="cart-empty">
+          <span class="ce-emoji" aria-hidden="true">🧺</span>
+          <h3 data-i18n="cart_empty">Your bag is empty</h3>
+          <p data-i18n="cart_empty_sub">Add fresh vegetables &amp; fruits to get started</p>
+          <a class="btn-primary empty-cta" href="index.html" data-i18n="browse">Browse products</a>
+        </div>
+
+        <!-- bag items (rendered from the quantities selected on Home) -->
+        <ul class="cart-list" id="cartList"></ul>
+
+        <!-- delivery address -->
+        <section class="address-card">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            <span data-i18n="delivery_address">Delivery Address</span>
+          </h3>
+
+          <label class="addr-option active">
+            <input type="radio" name="delivery-address" checked hidden />
+            <span class="addr-radio" aria-hidden="true"></span>
+            <span class="addr-body">
+              <span class="addr-type" data-i18n="addr_home">Home</span>
+              <span class="addr-text">12, Green Park Society, MG Road, Pune 411001</span>
+            </span>
+          </label>
+
+          <label class="addr-option">
+            <input type="radio" name="delivery-address" hidden />
+            <span class="addr-radio" aria-hidden="true"></span>
+            <span class="addr-body">
+              <span class="addr-type" data-i18n="addr_office">Office</span>
+              <span class="addr-text">4th Floor, Tech Plaza, Baner Road, Pune 411045</span>
+            </span>
+          </label>
+        </section>
+
+        <!-- delivery slot -->
+        <section class="slot-card">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 2" />
+            </svg>
+            <span data-i18n="slot_title">Delivery Slot</span>
+          </h3>
+
+          <label class="addr-option active" data-slot="morning">
+            <input type="radio" name="delivery-slot" checked hidden />
+            <span class="addr-radio" aria-hidden="true"></span>
+            <span class="addr-body">
+              <span class="addr-type" data-i18n="slot_morning">Morning (8–10 AM)</span>
+              <span class="addr-text" data-i18n="slot_sub">Delivered fresh to your door</span>
+            </span>
+          </label>
+
+          <label class="addr-option" data-slot="evening">
+            <input type="radio" name="delivery-slot" hidden />
+            <span class="addr-radio" aria-hidden="true"></span>
+            <span class="addr-body">
+              <span class="addr-type" data-i18n="slot_evening">Evening (7–10 PM)</span>
+              <span class="addr-text" data-i18n="slot_sub">Delivered fresh to your door</span>
+            </span>
+          </label>
+        </section>
+
+        <!-- payment -->
+        <section class="pay-card">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2" />
+              <path d="M1 10h22" />
+            </svg>
+            <span data-i18n="pay_title">Payment Method</span>
+          </h3>
+
+          <label class="addr-option active" data-pay="upi">
+            <input type="radio" name="payment" checked hidden />
+            <span class="addr-radio" aria-hidden="true"></span>
+            <span class="addr-body">
+              <span class="addr-type">UPI</span>
+              <span class="addr-text" data-i18n="pay_upi_sub">PhonePe · GPay · Paytm &amp; more</span>
+            </span>
+          </label>
+
+          <label class="addr-option" data-pay="cod">
+            <input type="radio" name="payment" hidden />
+            <span class="addr-radio" aria-hidden="true"></span>
+            <span class="addr-body">
+              <span class="addr-type" data-i18n="pay_cod">Cash on Delivery</span>
+              <span class="addr-text" data-i18n="pay_cod_sub">Pay when your order arrives</span>
+            </span>
+          </label>
+        </section>
+
+        <!-- order summary -->
+        <!-- Values are recomputed by app.js from the item data-price / data-qty attributes.
+             (The mockup's printed totals didn't match its own item prices, so we keep the
+             maths honest — adjust the data attributes to change the amounts.) -->
+        <section class="summary">
+          <div class="s-row"><span data-i18n="subtotal">Subtotal</span><b id="subtotal">₹13</b></div>
+          <div class="s-row"><span data-i18n="delivery">Delivery</span><b id="delivery">₹3</b></div>
+          <div class="s-divider"></div>
+          <div class="s-total"><span data-i18n="total">Total</span><b id="total">₹16</b></div>
+        </section>
+      </main>
+
+      <div class="checkout-bar">
+        <button class="btn-primary" id="placeOrderBtn" type="button">
+          <span class="btn-bag" aria-hidden="true"><img src="bag.svg" alt="" /></span>
+          <span data-i18n="place_order">Place Order</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+  <script src="api.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

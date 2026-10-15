@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TAZA Admin — Orders</title>
+  <link rel="icon" href="logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" id="adminSidebar" data-active="orders"></aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div>
+          <h1>Orders</h1>
+          <p class="sub">Confirm or reject incoming customer orders</p>
+        </div>
+        <div class="admin-chip"><img src="logo.svg" alt="" /><span>Hannah · Super Admin</span></div>
+      </header>
+
+      <main class="content">
+        <div class="info-strip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <span>Order cutoff is <b>10:00 PM</b> — confirm or reject every order the <b>same day</b>, collect from the supplier and deliver within a day. Orders placed after 10 PM automatically move to the <b>next cycle (day after tomorrow)</b>. Order IDs run TS·YY·MM·NN (max 99 per day).</span>
+        </div>
+
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h2>All Orders</h2>
+              <p class="hint" id="ordersCount">8 orders</p>
+            </div>
+            <div class="chips" id="orderFilters">
+              <button class="chip active" data-filter="All">All</button>
+              <button class="chip" data-filter="Pending">Pending</button>
+              <button class="chip" data-filter="Confirmed">Confirmed</button>
+              <button class="chip" data-filter="On the way">On the way</button>
+              <button class="chip" data-filter="Delivered">Delivered</button>
+              <button class="chip" data-filter="Rejected">Rejected</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr><th>Order</th><th>Customer</th><th>Amount</th><th>Slot / Payment</th><th>Delivery</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="ordersBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script src="../templates/api.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

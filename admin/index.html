@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TAZA Admin — Dashboard</title>
+  <link rel="icon" href="logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" id="adminSidebar" data-active="dashboard"></aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div>
+          <h1>Dashboard</h1>
+          <p class="sub">Store overview — orders, users and catalogue at a glance</p>
+        </div>
+        <div class="admin-chip"><img src="logo.svg" alt="" /><span>Hannah · Super Admin</span></div>
+      </header>
+
+      <main class="content">
+        <div class="stats" id="stats"></div>
+
+        <!-- tonight's supplier list (orders placed before the 10 PM cutoff) -->
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h2>Tonight's Procurement — supplier list</h2>
+              <p class="hint" id="procMeta">Cutoff 10:00 PM · orders after 10 PM move to the day-after cycle</p>
+            </div>
+            <button class="btn primary small" data-act="proc-send">Mark sent to supplier</button>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr><th>Item</th><th>Total Qty</th><th>Unit</th><th>Est. Value</th></tr>
+              </thead>
+              <tbody id="procBody"></tbody>
+            </table>
+          </div>
+          <div class="proc-foot" id="procTotals"></div>
+        </section>
+
+        <div class="dash-grid">
+          <section class="card">
+            <div class="card-head">
+              <h2>Recent Orders</h2>
+              <a class="link" href="orders.html">View all →</a>
+            </div>
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr><th>Order</th><th>Customer</th><th>Amount</th><th>Status</th></tr>
+                </thead>
+                <tbody id="recentOrders"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <div class="side-col">
+            <section class="card pad">
+              <h2>Quick Actions</h2>
+              <a class="btn primary block" href="products.html">+ Add Product</a>
+              <a class="btn ghost block" href="orders.html">Review Pending Orders</a>
+              <a class="btn ghost block" href="users.html">Manage Users</a>
+            </section>
+
+            <section class="card pad">
+              <h2>Store Snapshot</h2>
+              <div id="snapList"></div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script src="../templates/api.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

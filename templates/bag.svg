@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Shop bag">
+  <defs>
+    <linearGradient id="bagBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5b83c7" />
+      <stop offset="0.55" stop-color="#456bb0" />
+      <stop offset="1" stop-color="#3a5fa8" />
+    </linearGradient>
+    <linearGradient id="bagHandle" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a73bb" />
+      <stop offset="1" stop-color="#3a5da2" />
+    </linearGradient>
+  </defs>
+
+  <!-- handles (drawn first, tops of the bag cover their ends) -->
+  <g fill="none" stroke="url(#bagHandle)" stroke-width="4.8" stroke-linecap="round">
+    <path d="M21.5 27 v-6 a5 5 0 0 1 10 0 V27" />
+    <path d="M30.5 27 v-5.5 a5 5 0 0 1 10 0 V27" />
+  </g>
+
+  <!-- bag body -->
+  <path d="M14.8 27.2 Q14.6 24.6 17.2 24.6 H46.8 Q49.4 24.6 49.2 27.2 L50.6 48.6 Q50.9 54.2 45.2 54.2 H18.8 Q13.1 54.2 13.4 48.6 Z" fill="url(#bagBlue)" />
+
+  <!-- soft highlights -->
+  <path d="M17.8 28 L16 47.5" stroke="#8ca9d9" stroke-width="2" stroke-linecap="round" opacity="0.55" fill="none" />
+  <path d="M18.5 26.8 H45.5" stroke="#7d9bd3" stroke-width="1.6" stroke-linecap="round" opacity="0.4" fill="none" />
+
+  <!-- printed cart -->
+  <g stroke="#f4f7fc" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M23.8 31.2 h2.9 l1.6 7.1 h9.4 l1.4 -5.2" />
+    <path d="M27 34.2 h10.6" />
+    <circle cx="30.2" cy="42.6" r="1.5" fill="#f4f7fc" />
+    <circle cx="37.4" cy="42.6" r="1.5" fill="#f4f7fc" />
+  </g>
+
+  <!-- print -->
+  <text x="32.3" y="51.5" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="7.6" font-weight="800" fill="#f4f7fc" letter-spacing="0.6">SHOP</text>
+</svg>

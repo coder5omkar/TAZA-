@@ -1,0 +1,746 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyVegFruitShop — Home</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="phone">
+    <div class="screen">
+
+      <main class="content">
+
+        <!-- ============ Header ============ -->
+        <section class="hero">
+
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="sb-icons" aria-hidden="true">
+              <!-- signal -->
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor">
+                <rect x="0" y="7" width="3" height="4" rx="1" />
+                <rect x="4.5" y="5" width="3" height="6" rx="1" />
+                <rect x="9" y="2.5" width="3" height="8.5" rx="1" />
+                <rect x="13.5" y="0" width="3" height="11" rx="1" />
+              </svg>
+              <!-- wifi -->
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+                <path d="M1 3.4a10.5 10.5 0 0 1 14 0" />
+                <path d="M3.4 6a7 7 0 0 1 9.2 0" />
+                <path d="M5.8 8.6a3.6 3.6 0 0 1 4.4 0" />
+                <circle cx="8" cy="11" r="0.9" fill="currentColor" stroke="none" />
+              </svg>
+              <!-- battery -->
+              <svg width="25" height="11" viewBox="0 0 25 11">
+                <rect x="0.5" y="0.5" width="21" height="10" rx="3" fill="none" stroke="currentColor" opacity="0.5" />
+                <rect x="2.5" y="2.5" width="15" height="6" rx="1.5" fill="currentColor" />
+                <path d="M23.5 3.8v3.4a2 2 0 0 0 0-3.4z" fill="currentColor" opacity="0.5" />
+              </svg>
+            </span>
+          </div>
+
+          <header class="home-top">
+            <div class="greet">
+              <img class="avatar-logo" src="logo.svg" alt="TAZA-PHAL-SABZI.COM — Eat Fresh" />
+              <div>
+                <p class="hello" data-i18n="hello">Hello, Hannah</p>
+                <p class="note" data-i18n="delivery_note">Order today, delivered tomorrow morning — fresh!</p>
+              </div>
+            </div>
+          </header>
+        </section>
+
+        <!-- ============ Vegetables / Fruits price tables ============ -->
+        <section class="block veg-section">
+          <div class="tabs" role="tablist">
+            <button class="tab active" data-tab="veg" data-i18n="vegetables">Vegetables</button>
+            <button class="tab" data-tab="fruits" data-i18n="fruits">Fruits</button>
+          </div>
+
+          <div class="rate-table theme-green" id="vegList">
+            <!-- left column: 10 items -->
+            <div class="rate-col">
+
+              <div class="rate-row" data-price="2">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍅</span>
+                  <h4 data-i18n="veg_tomato">Tomato</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹2</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="1">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🥔</span>
+                  <h4 data-i18n="veg_potato">Potato</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹1</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="2">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🧅</span>
+                  <h4 data-i18n="veg_onion">Onion</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹2</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="3">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🥬</span>
+                  <h4 data-i18n="veg_spinach">Spinach</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹3</b><span data-i18n="unit_bunch"> /bunch</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="2">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🥕</span>
+                  <h4 data-i18n="veg_carrot">Carrot</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹2</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="1">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🥒</span>
+                  <h4 data-i18n="veg_cucumber">Cucumber</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹1</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="3">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🫑</span>
+                  <h4 data-i18n="veg_capsicum">Capsicum</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹3</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="2">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍆</span>
+                  <h4 data-i18n="veg_brinjal">Brinjal</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹2</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="1">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🌽</span>
+                  <h4 data-i18n="veg_corn">Sweet Corn</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹1</b><span data-i18n="unit_piece"> /piece</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="1">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🎃</span>
+                  <h4 data-i18n="veg_pumpkin">Pumpkin</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹1</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- right column: 8 items -->
+            <div class="rate-col">
+
+              <div class="rate-row" data-price="3">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🥦</span>
+                  <h4 data-i18n="veg_broccoli">Broccoli</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹3</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="4">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍄</span>
+                  <h4 data-i18n="veg_mushroom">Mushroom</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹4</b><span data-i18n="unit_pack"> /pack</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="3">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🧄</span>
+                  <h4 data-i18n="veg_garlic">Garlic</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹3</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="2">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🌶️</span>
+                  <h4 data-i18n="veg_chilli">Green Chilli</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹2</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="2">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🥗</span>
+                  <h4 data-i18n="veg_lettuce">Lettuce</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹2</b><span data-i18n="unit_bunch"> /bunch</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="1">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🥬</span>
+                  <h4 data-i18n="veg_cabbage">Cabbage</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹1</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="1">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🌿</span>
+                  <h4 data-i18n="veg_coriander">Coriander</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹1</b><span data-i18n="unit_bunch"> /bunch</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="1">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍠</span>
+                  <h4 data-i18n="veg_sweet_potato">Sweet Potato</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹1</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- fruits list (hidden until the Fruits tab is selected) -->
+          <div class="rate-table theme-purple" id="fruitList" hidden>
+            <div class="rate-col">
+
+              <div class="rate-row" data-price="2">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍎</span>
+                  <h4 data-i18n="fruit_apple">Apple</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹2</b><span data-i18n="unit_pack"> /pack</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="2">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍌</span>
+                  <h4 data-i18n="fruit_banana">Banana</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹2</b><span data-i18n="unit_dozen"> /dozen</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="4">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🥭</span>
+                  <h4 data-i18n="fruit_mango">Mango</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹4</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="3">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍇</span>
+                  <h4 data-i18n="fruit_grapes">Grapes</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹3</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="2">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍊</span>
+                  <h4 data-i18n="fruit_orange">Orange</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹2</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="1">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍋</span>
+                  <h4 data-i18n="fruit_lemon">Lemon</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹1</b><span data-i18n="unit_piece"> /piece</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="1">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍉</span>
+                  <h4 data-i18n="fruit_watermelon">Watermelon</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹1</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="4">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍓</span>
+                  <h4 data-i18n="fruit_strawberry">Strawberry</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹4</b><span data-i18n="unit_pack"> /pack</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="rate-col">
+
+              <div class="rate-row" data-price="3">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍑</span>
+                  <h4 data-i18n="fruit_peach">Peach</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹3</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="2">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍍</span>
+                  <h4 data-i18n="fruit_pineapple">Pineapple</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹2</b><span data-i18n="unit_piece"> /piece</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="1">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🥝</span>
+                  <h4 data-i18n="fruit_kiwi">Kiwi</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹1</b><span data-i18n="unit_piece"> /piece</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="2">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍐</span>
+                  <h4 data-i18n="fruit_pear">Pear</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹2</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="2">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍈</span>
+                  <h4 data-i18n="fruit_melon">Melon</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹2</b><span data-i18n="unit_kg"> /kg</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="3">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🍒</span>
+                  <h4 data-i18n="fruit_cherry">Cherry</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹3</b><span data-i18n="unit_pack"> /pack</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="2">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🥥</span>
+                  <h4 data-i18n="fruit_coconut">Coconut</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹2</b><span data-i18n="unit_piece"> /piece</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rate-row" data-price="2">
+                <div class="r-top">
+                  <span class="r-emoji" aria-hidden="true">🥑</span>
+                  <h4 data-i18n="fruit_avocado">Avocado</h4>
+                </div>
+                <div class="r-bottom">
+                  <div>
+                    <p class="price r-price"><b>₹2</b><span data-i18n="unit_piece"> /piece</span></p>
+                    <em class="row-total" hidden></em>
+                  </div>
+                  <div class="stepper mini">
+                    <button class="step" data-step="-1" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg></button>
+                    <span class="qty">0</span>
+                    <button class="step plus" data-step="1" aria-label="Increase quantity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- ============ Bottom navigation ============ -->
+      <nav class="tabbar">
+        <a class="tab-item active" href="index.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <path d="M9 22V12h6v10" />
+          </svg>
+          <span data-i18n="tab_home">Home</span>
+        </a>
+
+        <a class="tab-item" href="history.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3 2" />
+          </svg>
+          <span data-i18n="tab_history">History</span>
+        </a>
+
+        <a class="tab-fab" href="cart.html" aria-label="Cart — shop bag">
+          <img src="bag.svg" alt="" width="36" height="36" />
+        </a>
+
+        <a class="tab-item" href="messages.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z" />
+          </svg>
+          <span data-i18n="tab_message">Message</span>
+        </a>
+
+        <a class="tab-item" href="account.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="7" r="4" />
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          </svg>
+          <span data-i18n="tab_account">Account</span>
+        </a>
+      </nav>
+
+    </div>
+  </div>
+  <script src="api.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TAZA Admin — Messages</title>
+  <link rel="icon" href="logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" id="adminSidebar" data-active="messages"></aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div>
+          <h1>Messages</h1>
+          <p class="sub">Reply to customers — replies appear in their app instantly</p>
+        </div>
+        <div class="admin-chip"><img src="logo.svg" alt="" /><span>Hannah · Super Admin</span></div>
+      </header>
+
+      <main class="content">
+        <section class="card chat-shell">
+          <aside class="chat-list">
+            <div class="chat-list-head">
+              <h2>Customer Chats</h2>
+            </div>
+            <div id="convList"></div>
+          </aside>
+
+          <section class="chat-pane">
+            <header class="chat-pane-head">
+              <span class="conv-avatar" id="chatAvatar">?</span>
+              <div>
+                <b id="chatName">—</b>
+                <span id="chatMeta">—</span>
+              </div>
+            </header>
+
+            <div class="chat-thread" id="chatThread"></div>
+
+            <form class="chat-inputbar" id="adminChatForm">
+              <input class="input" id="adminChatInput" placeholder="Type a reply to the customer…" autocomplete="off" />
+              <button class="btn primary" type="submit">Send</button>
+            </form>
+          </section>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script src="../templates/api.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TAZA Admin — Products</title>
+  <link rel="icon" href="logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" id="adminSidebar" data-active="products"></aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div>
+          <h1>Products</h1>
+          <p class="sub">Add vegetables &amp; fruits with their units and rates</p>
+        </div>
+        <div class="admin-chip"><img src="logo.svg" alt="" /><span>Hannah · Super Admin</span></div>
+      </header>
+
+      <main class="content">
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h2>Add Product</h2>
+              <p class="hint">Rates are whole rupees (₹) — units: kg · bunch · pack · piece · dozen</p>
+            </div>
+          </div>
+          <form class="form-grid" id="addProductForm">
+            <label class="field">
+              <span>Name</span>
+              <input class="input" id="npName" placeholder="e.g. Green Peas" />
+            </label>
+            <label class="field">
+              <span>Emoji</span>
+              <input class="input" id="npEmoji" value="🥬" maxlength="4" />
+            </label>
+            <label class="field">
+              <span>Category</span>
+              <select class="input" id="npCat">
+                <option value="veg">Vegetables</option>
+                <option value="fruits">Fruits</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Unit</span>
+              <select class="input" id="npUnit">
+                <option>kg</option>
+                <option>bunch</option>
+                <option>pack</option>
+                <option>piece</option>
+                <option>dozen</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Rate (₹)</span>
+              <input class="input" id="npRate" type="number" min="1" step="1" value="1" />
+            </label>
+            <button class="btn primary" type="submit">+ Add Product</button>
+          </form>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h2>Product Catalogue</h2>
+              <p class="hint" id="prodCount">34 products</p>
+            </div>
+            <div class="chips" id="productFilters">
+              <button class="chip active" data-filter="All">All</button>
+              <button class="chip" data-filter="veg">Vegetables</button>
+              <button class="chip" data-filter="fruits">Fruits</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr><th>Product</th><th>Category</th><th>Unit</th><th>Rate</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="productsBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script src="../templates/api.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
