@@ -552,10 +552,42 @@ input[type='search']::-webkit-search-cancel-button { display: none; }
 }
 .cart-content.is-empty .cart-empty { display: flex; }
 .cart-empty.show { display: flex; }
+
+/* bag actions: count + empty bag */
+.bag-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 4px;
+}
+.bag-n { font-size: 11.5px; font-weight: 600; color: var(--muted); }
+
+.empty-bag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 13px;
+  border-radius: 99px;
+  background: #fff;
+  border: 1.5px solid var(--line);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--muted);
+  transition: all 0.15s ease;
+}
+.empty-bag svg { width: 12px; height: 12px; }
+.empty-bag:active { transform: scale(0.95); }
+.empty-bag.confirm {
+  background: #fdeaea;
+  border-color: rgba(214, 69, 69, 0.35);
+  color: var(--danger);
+}
 .cart-content.is-empty .cart-list,
 .cart-content.is-empty .address-card,
 .cart-content.is-empty .slot-card,
 .cart-content.is-empty .pay-card,
+.cart-content.is-empty .bag-actions,
 .cart-content.is-empty .summary { display: none; }
 
 .ce-emoji { font-size: 52px; line-height: 1; margin-bottom: 4px; font-family: var(--emoji-font); }

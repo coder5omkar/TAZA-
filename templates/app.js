@@ -107,6 +107,9 @@
       order_delivery: 'delivery',
       open_order_title: 'Open order',
       open_order_text: 'New items will be added to this order',
+      empty_bag: 'Empty bag',
+      tap_confirm: 'Tap again to confirm',
+      bag_emptied: 'Bag emptied',
       err_signin: 'Please sign in to place your order',
       err_address: 'Choose a delivery address',
       err_items: 'Some items are no longer available',
@@ -271,6 +274,9 @@
       order_delivery: 'डिलीवरी',
       open_order_title: 'खुला ऑर्डर',
       open_order_text: 'नए आइटम इसी ऑर्डर में जोड़े जाएँगे',
+      empty_bag: 'बैग खाली करें',
+      tap_confirm: 'पुष्टि के लिए फिर टैप करें',
+      bag_emptied: 'बैग खाली हो गया',
       err_signin: 'ऑर्डर करने के लिए लॉग इन करें',
       err_address: 'डिलीवरी पता चुनें',
       err_items: 'कुछ आइटम अब उपलब्ध नहीं हैं',
@@ -435,6 +441,9 @@
       order_delivery: 'वितरण',
       open_order_title: 'सुरू असलेली ऑर्डर',
       open_order_text: 'नवीन वस्तू याच ऑर्डरमध्ये जोडल्या जातील',
+      empty_bag: 'बॅग रिकामी करा',
+      tap_confirm: 'खात्रीसाठी पुन्हा टॅप करा',
+      bag_emptied: 'बॅग रिकामी झाली',
       err_signin: 'ऑर्डर करण्यासाठी लॉग इन करा',
       err_address: 'वितरण पत्ता निवडा',
       err_items: 'काही वस्तू आता उपलब्ध नाहीत',
@@ -778,6 +787,9 @@
     if (content) content.classList.remove('is-empty');
     if (bar) bar.hidden = false;
 
+    var countEl = $('#bagCount');
+    if (countEl) countEl.textContent = bag.length + ' ' + t('items_word');
+
     list.innerHTML = bag.map(function (it) {
       return '<li class="cart-item" data-id="' + it.id + '" data-price="' + it.price + '" data-qty="' + it.qty + '">' +
         '<div class="c-thumb" aria-hidden="true">' + it.emoji + '</div>' +
@@ -997,6 +1009,35 @@
   }
 
   restoreLastOrder();
+
+  /* ---------- empty the whole bag (two-tap confirm) ---------- */
+
+  var emptyBtn = $('#emptyBag');
+  if (emptyBtn) {
+    var emptyTimer = null;
+    emptyBtn.addEventListener('click', function () {
+      var label = $('.empty-bag-label', emptyBtn);
+
+      if (!emptyBtn.classList.contains('confirm')) {
+        emptyBtn.classList.add('confirm');
+        if (label) label.textContent = t('tap_confirm');
+        clearTimeout(emptyTimer);
+        emptyTimer = setTimeout(function () {
+          emptyBtn.classList.remove('confirm');
+          if (label) label.textContent = t('empty_bag');
+        }, 2600);
+        return;
+      }
+
+      clearTimeout(emptyTimer);
+      emptyBtn.classList.remove('confirm');
+      if (label) label.textContent = t('empty_bag');
+      saveBag([]);
+      updateFabs();
+      renderCart();
+      toast(t('bag_emptied'));
+    });
+  }
 
   /* ---------- order history (customer, live from the API) ---------- */
 
