@@ -51,17 +51,17 @@
       <main class="content page-content">
 
         <!-- filter chips -->
-        <div class="filters" role="group" aria-label="Order filters">
-          <button class="fchip active" data-i18n="filter_all">All</button>
-          <button class="fchip" data-i18n="filter_delivered">Delivered</button>
-          <button class="fchip" data-i18n="filter_ongoing">Ongoing</button>
-          <button class="fchip" data-i18n="filter_cancelled">Cancelled</button>
+        <div class="filters" id="orderFilters" role="group" aria-label="Order filters">
+          <button class="fchip active" data-filter="all" data-i18n="filter_all">All</button>
+          <button class="fchip" data-filter="delivered" data-i18n="filter_delivered">Delivered</button>
+          <button class="fchip" data-filter="ongoing" data-i18n="filter_ongoing">Ongoing</button>
+          <button class="fchip" data-filter="cancelled" data-i18n="filter_cancelled">Cancelled</button>
         </div>
 
         <!-- orders: live from the API when signed in; static demo cards offline -->
         <div id="orderList">
 
-        <article class="order-card">
+        <article class="order-card" data-status="confirmed">
           <div class="order-head">
             <div>
               <h4>TS261011</h4>
@@ -85,7 +85,7 @@
           </div>
         </article>
 
-        <article class="order-card">
+        <article class="order-card" data-status="delivered">
           <div class="order-head">
             <div>
               <h4>TS261003</h4>
@@ -110,7 +110,7 @@
           </div>
         </article>
 
-        <article class="order-card">
+        <article class="order-card" data-status="delivered">
           <div class="order-head">
             <div>
               <h4>TS261002</h4>
@@ -134,7 +134,7 @@
           </div>
         </article>
 
-        <article class="order-card">
+        <article class="order-card" data-status="rejected">
           <div class="order-head">
             <div>
               <h4>TS261010</h4>

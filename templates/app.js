@@ -117,6 +117,7 @@
       history_empty_sub: 'Your placed orders will appear here',
       history_signin: 'Sign in to see your orders',
       loading_orders: 'Loading your orders…',
+      no_orders_filter: 'No orders in this filter',
       history_title: 'Order History',
       filter_all: 'All',
       filter_delivered: 'Delivered',
@@ -276,6 +277,7 @@
       history_empty_sub: 'आपके ऑर्डर यहाँ दिखेंगे',
       history_signin: 'अपने ऑर्डर देखने के लिए लॉग इन करें',
       loading_orders: 'आपके ऑर्डर लोड हो रहे हैं…',
+      no_orders_filter: 'इस फ़िल्टर में कोई ऑर्डर नहीं',
       history_title: 'ऑर्डर इतिहास',
       filter_all: 'सभी',
       filter_delivered: 'डिलीवर हुए',
@@ -435,6 +437,7 @@
       history_empty_sub: 'तुमच्या ऑर्डर इथे दिसतील',
       history_signin: 'तुमच्या ऑर्डर पाहण्यासाठी लॉग इन करा',
       loading_orders: 'तुमच्या ऑर्डर लोड होत आहेत…',
+      no_orders_filter: 'या फिल्टरमध्ये ऑर्डर नाहीत',
       history_title: 'ऑर्डर इतिहास',
       filter_all: 'सर्व',
       filter_delivered: 'डिलिव्हर झाले',
@@ -984,6 +987,9 @@
 
   var orderListEl = $('#orderList');
   var liveOrders = {};
+  var liveOrderArr = [];
+  var historyLive = false;
+  var historyFilter = 'all';
 
   if (orderListEl) {
     var LOCALES = { en: 'en-IN', hi: 'hi-IN', mr: 'mr-IN' };
@@ -1043,19 +1049,57 @@
       var signin = $('#orderSignin'); if (signin) signin.classList.toggle('show', state === 'signin');
     }
 
+    function orderMatchesFilter(o, f) {
+      if (f === 'delivered') return o.status === 'delivered';
+      if (f === 'ongoing') return o.status === 'pending' || o.status === 'confirmed' || o.status === 'on_way';
+      if (f === 'cancelled') return o.status === 'rejected';
+      return true;
+    }
+
+    function applyHistoryFilter(f) {
+      historyFilter = f || 'all';
+
+      if (historyLive) {
+        var list = liveOrderArr.filter(function (o) { return orderMatchesFilter(o, historyFilter); });
+        orderListEl.innerHTML = list.length
+          ? list.map(orderCard).join('')
+          : '<p class="oi-empty">' + t('no_orders_filter') + '</p>';
+        applyLanguage(currentLang);
+        return;
+      }
+
+      /* demo mode: show/hide the static cards by data-status */
+      $$('.order-card', orderListEl).forEach(function (card) {
+        var st = card.getAttribute('data-status') || '';
+        card.hidden = !orderMatchesFilter({ status: st }, historyFilter);
+      });
+    }
+
     function loadOrders() {
       showOrderState('loading');
       window.TAZA.myOrders().then(function (res) {
         var orders = res.orders || [];
         liveOrders = {};
+        liveOrderArr = orders;
+        historyLive = true;
         orders.forEach(function (o) { liveOrders[o.id] = o; });
         if (!orders.length) { showOrderState('empty'); return; }
-        orderListEl.innerHTML = orders.map(orderCard).join('');
         showOrderState('list');
+        applyHistoryFilter(historyFilter);
       }).catch(function (err) {
         if (err && err.status === 401) { showOrderState('signin'); return; }
         toast((err && err.message) ? err.message : t('err_generic'), 3000);
         showOrderState('list');
+      });
+    }
+
+    /* filter chips: actually filter the rendered list */
+    var orderFiltersEl = $('#orderFilters');
+    if (orderFiltersEl) {
+      orderFiltersEl.addEventListener('click', function (e) {
+        var chip = e.target.closest('.fchip');
+        if (!chip) return;
+        applyHistoryFilter(chip.getAttribute('data-filter') || 'all');
       });
     }
 

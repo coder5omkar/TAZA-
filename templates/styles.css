@@ -779,6 +779,13 @@ input[type='search']::-webkit-search-cancel-button { display: none; }
 .oi-amt { font-weight: 700; color: var(--green-strong); white-space: nowrap; }
 .oi-more .oi-name { color: var(--muted); }
 
+.oi-empty {
+  text-align: center;
+  padding: 24px 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
 .order-foot {
   display: flex;
   align-items: center;
