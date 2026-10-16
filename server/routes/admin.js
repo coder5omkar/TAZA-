@@ -3,6 +3,7 @@
    stats · users · products · procurement · settings
    ========================================================================== */
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const db = require('../db');
 const { requireAdmin } = require('../auth');
 const { wrap } = require('../util');
