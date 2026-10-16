@@ -61,7 +61,7 @@
         <!-- orders: live from the API when signed in; static demo cards offline -->
         <div id="orderList">
 
-        <article class="order-card" data-status="confirmed" data-order='{"id":"TS261011","status":"confirmed","placed":"15th Oct 2026","delivery":"16th Oct 2026","slot":"morning","payment":"upi","address":"12, Green Park Society, MG Road, Pune 411001","fee":3,"amount":8,"items":[{"name":"Spinach","qty":1,"rate":3},{"name":"Apple","qty":1,"rate":2}]}'>
+        <article class="order-card" data-status="confirmed" data-order='{"id":"TS261011","status":"confirmed","placed":"15th Oct 2026","delivery":"16th Oct 2026","slot":"morning","payment":"upi","address":"12, Green Park Society, MG Road, Pune 411001","fee":3,"amount":8,"items":[{"name":"Spinach","qty":1,"rate":3,"unit":"bunch"},{"name":"Apple","qty":1,"rate":2,"unit":"pack"}]}'>
           <div class="order-head">
             <div>
               <h4>TS261011</h4>
@@ -70,11 +70,14 @@
             <span class="status conf" data-i18n="status_confirmed">Confirmed</span>
           </div>
           <div class="order-items">
-            <div class="oi-line"><span class="oi-name"><span data-i18n="veg_spinach">Spinach</span> ×1</span><span class="oi-amt">₹3</span></div>
-            <div class="oi-line"><span class="oi-name"><span data-i18n="fruit_apple">Apple</span> ×1</span><span class="oi-amt">₹2</span></div>
+            <div class="oi-line"><span class="oi-name"><span data-i18n="veg_spinach">Spinach</span> ×1 <span data-i18n="u_bunch">bunch</span></span><span class="oi-amt">₹3</span></div>
+            <div class="oi-line"><span class="oi-name"><span data-i18n="fruit_apple">Apple</span> ×1 <span data-i18n="u_pack">pack</span></span><span class="oi-amt">₹2</span></div>
           </div>
           <div class="order-foot">
-            <p class="o-total">₹8</p>
+            <div class="of-left">
+              <p class="o-total">₹8</p>
+              <span class="pay-chip"><span data-i18n="paid_word">Paid</span> · <span data-i18n="pay_upi">UPI</span></span>
+            </div>
             <button class="reorder" data-toast-key="toast_reorder">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M23 4v6h-6" />
@@ -85,7 +88,7 @@
           </div>
         </article>
 
-        <article class="order-card" data-status="delivered" data-order='{"id":"TS261003","status":"delivered","placed":"14th Oct 2026","delivery":"15th Oct 2026","slot":"morning","payment":"upi","address":"12, Green Park Society, MG Road, Pune 411001","fee":3,"amount":9,"items":[{"name":"Potato","qty":1,"rate":1},{"name":"Spinach","qty":1,"rate":3},{"name":"Lettuce","qty":1,"rate":2}]}'>
+        <article class="order-card" data-status="delivered" data-order='{"id":"TS261003","status":"delivered","placed":"14th Oct 2026","delivery":"15th Oct 2026","slot":"morning","payment":"upi","address":"12, Green Park Society, MG Road, Pune 411001","fee":3,"amount":9,"items":[{"name":"Potato","qty":1,"rate":1,"unit":"kg"},{"name":"Spinach","qty":1,"rate":3,"unit":"bunch"},{"name":"Lettuce","qty":1,"rate":2,"unit":"bunch"}]}'>
           <div class="order-head">
             <div>
               <h4>TS261003</h4>
@@ -94,12 +97,15 @@
             <span class="status ok" data-i18n="status_delivered">Delivered</span>
           </div>
           <div class="order-items">
-            <div class="oi-line"><span class="oi-name"><span data-i18n="veg_potato">Potato</span> ×1</span><span class="oi-amt">₹1</span></div>
-            <div class="oi-line"><span class="oi-name"><span data-i18n="veg_spinach">Spinach</span> ×1</span><span class="oi-amt">₹3</span></div>
-            <div class="oi-line"><span class="oi-name"><span data-i18n="veg_lettuce">Lettuce</span> ×1</span><span class="oi-amt">₹2</span></div>
+            <div class="oi-line"><span class="oi-name"><span data-i18n="veg_potato">Potato</span> ×1 <span data-i18n="u_kg">kg</span></span><span class="oi-amt">₹1</span></div>
+            <div class="oi-line"><span class="oi-name"><span data-i18n="veg_spinach">Spinach</span> ×1 <span data-i18n="u_bunch">bunch</span></span><span class="oi-amt">₹3</span></div>
+            <div class="oi-line"><span class="oi-name"><span data-i18n="veg_lettuce">Lettuce</span> ×1 <span data-i18n="u_bunch">bunch</span></span><span class="oi-amt">₹2</span></div>
           </div>
           <div class="order-foot">
-            <p class="o-total">₹9</p>
+            <div class="of-left">
+              <p class="o-total">₹9</p>
+              <span class="pay-chip"><span data-i18n="paid_word">Paid</span> · <span data-i18n="pay_upi">UPI</span></span>
+            </div>
             <button class="reorder" data-toast-key="toast_reorder">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M23 4v6h-6" />
@@ -110,7 +116,7 @@
           </div>
         </article>
 
-        <article class="order-card" data-status="delivered" data-order='{"id":"TS261002","status":"delivered","placed":"14th Oct 2026","delivery":"15th Oct 2026","slot":"evening","payment":"cod","address":"12, Green Park Society, MG Road, Pune 411001","fee":3,"amount":7,"items":[{"name":"Apple","qty":1,"rate":2},{"name":"Carrot","qty":1,"rate":2}]}'>
+        <article class="order-card" data-status="delivered" data-order='{"id":"TS261002","status":"delivered","placed":"14th Oct 2026","delivery":"15th Oct 2026","slot":"evening","payment":"cod","address":"12, Green Park Society, MG Road, Pune 411001","fee":3,"amount":7,"items":[{"name":"Apple","qty":1,"rate":2,"unit":"pack"},{"name":"Ginger","qty":2,"rate":1,"unit":"100 g"}]}'>
           <div class="order-head">
             <div>
               <h4>TS261002</h4>
@@ -119,11 +125,14 @@
             <span class="status ok" data-i18n="status_delivered">Delivered</span>
           </div>
           <div class="order-items">
-            <div class="oi-line"><span class="oi-name"><span data-i18n="fruit_apple">Apple</span> ×1</span><span class="oi-amt">₹2</span></div>
-            <div class="oi-line"><span class="oi-name"><span data-i18n="veg_carrot">Carrot</span> ×1</span><span class="oi-amt">₹2</span></div>
+            <div class="oi-line"><span class="oi-name"><span data-i18n="fruit_apple">Apple</span> ×1 <span data-i18n="u_pack">pack</span></span><span class="oi-amt">₹2</span></div>
+            <div class="oi-line"><span class="oi-name"><span data-i18n="veg_ginger">Ginger</span> ×200 <span data-i18n="u_g">g</span></span><span class="oi-amt">₹2</span></div>
           </div>
           <div class="order-foot">
-            <p class="o-total">₹7</p>
+            <div class="of-left">
+              <p class="o-total">₹7</p>
+              <span class="pay-chip cod" data-i18n="cod_word">COD</span>
+            </div>
             <button class="reorder" data-toast-key="toast_reorder">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M23 4v6h-6" />
@@ -134,7 +143,7 @@
           </div>
         </article>
 
-        <article class="order-card" data-status="rejected" data-order='{"id":"TS261010","status":"rejected","placed":"15th Oct 2026","delivery":"—","slot":"morning","payment":"upi","address":"12, Green Park Society, MG Road, Pune 411001","fee":3,"amount":8,"items":[{"name":"Grapes","qty":1,"rate":3},{"name":"Kiwi","qty":2,"rate":1}]}'>
+        <article class="order-card" data-status="rejected" data-order='{"id":"TS261010","status":"rejected","placed":"15th Oct 2026","delivery":"—","slot":"morning","payment":"upi","address":"12, Green Park Society, MG Road, Pune 411001","fee":3,"amount":8,"items":[{"name":"Grapes","qty":1,"rate":3,"unit":"kg"},{"name":"Kiwi","qty":2,"rate":1,"unit":"piece"}]}'>
           <div class="order-head">
             <div>
               <h4>TS261010</h4>
@@ -143,11 +152,14 @@
             <span class="status cancel" data-i18n="status_rejected">Rejected</span>
           </div>
           <div class="order-items">
-            <div class="oi-line"><span class="oi-name"><span data-i18n="fruit_grapes">Grapes</span> ×1</span><span class="oi-amt">₹3</span></div>
-            <div class="oi-line"><span class="oi-name"><span data-i18n="fruit_kiwi">Kiwi</span> ×2</span><span class="oi-amt">₹2</span></div>
+            <div class="oi-line"><span class="oi-name"><span data-i18n="fruit_grapes">Grapes</span> ×1 <span data-i18n="u_kg">kg</span></span><span class="oi-amt">₹3</span></div>
+            <div class="oi-line"><span class="oi-name"><span data-i18n="fruit_kiwi">Kiwi</span> ×2 <span data-i18n="u_piece">piece</span></span><span class="oi-amt">₹2</span></div>
           </div>
           <div class="order-foot">
-            <p class="o-total">₹8</p>
+            <div class="of-left">
+              <p class="o-total">₹8</p>
+              <span class="pay-chip"><span data-i18n="paid_word">Paid</span> · <span data-i18n="pay_upi">UPI</span></span>
+            </div>
             <button class="reorder" data-toast-key="toast_reorder">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M23 4v6h-6" />

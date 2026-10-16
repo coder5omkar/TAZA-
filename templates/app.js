@@ -20,6 +20,23 @@
     var v = Math.round(Number(n) * 10) / 10;
     return Number.isInteger(v) ? String(v) : v.toFixed(1);
   };
+  /* order history: quantity + the unit exactly as stored (kg / bunch / 100 g …) */
+  var UNIT_WORD_KEYS = { bunch: 'u_bunch', pack: 'u_pack', piece: 'u_piece', dozen: 'u_dozen' };
+  var itemQtyHtml = function (it) {
+    var unit = it && it.unit != null ? String(it.unit) : '';
+    var qty = Number(it && it.qty) || 0;
+    if (unit === 'kg') return fmtQty(qty) + ' <span data-i18n="u_kg">' + t('u_kg') + '</span>';
+    if (unit === '100 g') return fmtQty(qty * 100) + ' <span data-i18n="u_g">' + t('u_g') + '</span>';
+    if (!unit) return fmtQty(qty);
+    var key = UNIT_WORD_KEYS[unit];
+    return fmtQty(qty) + (key ? ' <span data-i18n="' + key + '">' + t(key) + '</span>' : ' ' + esc(unit));
+  };
+  var payChipHtml = function (payment) {
+    return String(payment || '').toLowerCase() === 'cod'
+      ? '<span class="pay-chip cod" data-i18n="cod_word">' + t('cod_word') + '</span>'
+      : '<span class="pay-chip"><span data-i18n="paid_word">' + t('paid_word') +
+        '</span> · <span data-i18n="pay_upi">' + t('pay_upi') + '</span></span>';
+  };
   var esc = function (s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -83,6 +100,15 @@
       unit_piece: ' /piece',
       unit_dozen: ' /dozen',
       unit_100g: ' /100 g',
+      u_kg: 'kg',
+      u_g: 'g',
+      u_bunch: 'bunch',
+      u_pack: 'pack',
+      u_piece: 'piece',
+      u_dozen: 'dozen',
+      pay_upi: 'UPI',
+      paid_word: 'Paid',
+      cod_word: 'COD',
       sec_kg: 'KG · Weight',
       sec_bunch: 'Bunch (Judi)',
       sec_gram: 'Gram',
@@ -269,6 +295,15 @@
       unit_piece: ' /नग',
       unit_dozen: ' /दर्जन',
       unit_100g: ' /100 ग्राम',
+      u_kg: 'किलो',
+      u_g: 'ग्राम',
+      u_bunch: 'गड्डी',
+      u_pack: 'पैक',
+      u_piece: 'नग',
+      u_dozen: 'दर्जन',
+      pay_upi: 'UPI',
+      paid_word: 'भुगतान हुआ',
+      cod_word: 'COD',
       sec_kg: 'किलो · वज़न',
       sec_bunch: 'गड्डी (जुडी)',
       sec_gram: 'ग्राम',
@@ -455,6 +490,15 @@
       unit_piece: ' /नग',
       unit_dozen: ' /डझन',
       unit_100g: ' /100 ग्राम',
+      u_kg: 'किलो',
+      u_g: 'ग्राम',
+      u_bunch: 'गड्डी',
+      u_pack: 'पॅक',
+      u_piece: 'नग',
+      u_dozen: 'डझन',
+      pay_upi: 'UPI',
+      paid_word: 'पेमेंट झाले',
+      cod_word: 'COD',
       sec_kg: 'किलो · वजन',
       sec_bunch: 'गड्डी (जुडी)',
       sec_gram: 'ग्राम',
@@ -1162,7 +1206,7 @@
         var nameHtml = key
           ? '<span data-i18n="' + key + '">' + esc(it.name) + '</span>'
           : '<span>' + esc(it.name) + '</span>';
-        return '<div class="oi-line"><span class="oi-name">' + nameHtml + ' ×' + fmtQty(it.qty) + '</span>' +
+        return '<div class="oi-line"><span class="oi-name">' + nameHtml + ' ×' + itemQtyHtml(it) + '</span>' +
           '<span class="oi-amt">' + money(Number(it.rate) * Number(it.qty)) + '</span></div>';
       }).join('');
       if (items.length > MAX) {
@@ -1179,7 +1223,7 @@
         '</div>' +
         '<div class="order-items">' + lines + '</div>' +
         '<div class="order-foot">' +
-        '<p class="o-total">₹' + fmtQty(o.amount) + '</p>' +
+        '<div class="of-left"><p class="o-total">₹' + fmtQty(o.amount) + '</p>' + payChipHtml(o.payment) + '</div>' +
         '<button class="reorder" data-reorder="' + o.id + '">' + REORDER_SVG + '<span data-i18n="reorder">' + t('reorder') + '</span></button>' +
         '</div>' +
         '</article>';
@@ -1289,7 +1333,10 @@
       var meta = '';
       meta += smRow(t('sheet_placed'), fmtDate(order.placed));
       meta += smRow(t('slot_title'), order.slot === 'evening' ? t('slot_evening') : t('slot_morning'));
-      meta += smRow(t('sheet_payment'), String(order.payment || '').toUpperCase());
+      var payValue = String(order.payment || '').toLowerCase() === 'cod'
+        ? '<span data-i18n="cod_word">' + t('cod_word') + '</span> · <span data-i18n="pay_cod_sub">' + t('pay_cod_sub') + '</span>'
+        : '<span data-i18n="pay_upi">' + t('pay_upi') + '</span> · <span data-i18n="paid_word">' + t('paid_word') + '</span>';
+      meta += '<div class="sm-row"><span>' + esc(t('sheet_payment')) + '</span><b>' + payValue + '</b></div>';
       meta += smRow(t('order_delivery'), fmtDate(order.delivery));
       meta += smRow(t('delivery_address'), order.address || '—');
       $('#sheetMeta').innerHTML = meta;
@@ -1309,7 +1356,7 @@
         var nameHtml = key
           ? '<span data-i18n="' + key + '">' + esc(it.name) + '</span>'
           : '<span>' + esc(it.name) + '</span>';
-        return '<div class="oi-line"><span class="oi-name">' + nameHtml + ' ×' + fmtQty(it.qty) + '</span>' +
+        return '<div class="oi-line"><span class="oi-name">' + nameHtml + ' ×' + itemQtyHtml(it) + '</span>' +
           '<span class="oi-amt">' + money(amount) + '</span></div>';
       }).join('') || '<p class="oi-empty">—</p>';
 
@@ -1371,6 +1418,21 @@
 
     if (sheetBackdrop) sheetBackdrop.addEventListener('click', closeOrderSheet);
     if ($('#sheetClose')) $('#sheetClose').addEventListener('click', closeOrderSheet);
+
+    /* preview helper: ?order=TS… opens the details sheet for that order */
+    var orderParam = new URLSearchParams(location.search).get('order');
+    if (orderParam) {
+      setTimeout(function () {
+        var cards = $$('.order-card', orderListEl);
+        for (var i = 0; i < cards.length; i++) {
+          var data = cards[i].getAttribute('data-order') || '';
+          if (cards[i].getAttribute('data-id') === orderParam || data.indexOf('"id":"' + orderParam + '"') !== -1) {
+            cards[i].click();
+            break;
+          }
+        }
+      }, 600);
+    }
 
     window.TAZA.available().then(function (ok) {
       if (!ok) return;                    /* static demo (file://) — keep the demo cards */
