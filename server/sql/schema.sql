@@ -31,14 +31,14 @@ CREATE TABLE IF NOT EXISTS products (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- daily order counter for TS·YY·MM·NN ids (max 99 per day)
+-- daily order counter for TS·YY·MM·DD·NN ids (max 99 per day, key = YYMMDD)
 CREATE TABLE IF NOT EXISTS order_counters (
-  ym      CHAR(4) PRIMARY KEY,
+  ym      CHAR(6) PRIMARY KEY,
   last_no INT UNSIGNED NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS orders (
-  id            VARCHAR(12) PRIMARY KEY,           -- TS261001
+  id            VARCHAR(12) PRIMARY KEY,           -- TS·YY·MM·DD·NN e.g. TS26101605
   user_id       INT UNSIGNED NOT NULL,
   customer_name VARCHAR(80)  NOT NULL,             -- snapshot at order time
   address       VARCHAR(400) NOT NULL,

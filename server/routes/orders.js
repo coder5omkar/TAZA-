@@ -4,8 +4,9 @@
    - Cutoff 10:00 PM (configurable in settings). Before cutoff -> cycle
      'tomorrow' (procured tonight, delivered tomorrow). After cutoff ->
      'day-after' (delivered the day after tomorrow).
-   - Order ID: TS + YY + MM + NN  (e.g. TS261001 = 1st order of Oct 2026),
-     max 99 orders per day (counter locked inside the transaction).
+   - Order ID: TS + YY + MM + DD + NN  (e.g. TS26101605 = 5th order placed on
+     16 Oct 2026), daily counter resets each day, max 99 orders per day
+     (counter locked inside the transaction).
    ========================================================================== */
 const express = require('express');
 const db = require('../db');
@@ -122,17 +123,17 @@ router.post('/', requireAuth, wrap(async (req, res) => {
     d.setDate(d.getDate() + (beforeCutoff ? 1 : 2));
     const deliveryDate = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
 
-    /* 4. daily order number (max 99) */
-    const ym = String(now.getFullYear()).slice(2) + pad2(now.getMonth() + 1);
-    await conn.query('INSERT IGNORE INTO order_counters (ym, last_no) VALUES (?, 0)', [ym]);
-    const [[counter]] = await conn.query('SELECT last_no FROM order_counters WHERE ym = ? FOR UPDATE', [ym]);
+    /* 4. daily order number — TS·YY·MM·DD·NN, resets to 01 every day (max 99) */
+    const ymd = String(now.getFullYear()).slice(2) + pad2(now.getMonth() + 1) + pad2(now.getDate());
+    await conn.query('INSERT IGNORE INTO order_counters (ym, last_no) VALUES (?, 0)', [ymd]);
+    const [[counter]] = await conn.query('SELECT last_no FROM order_counters WHERE ym = ? FOR UPDATE', [ymd]);
     const nextNo = counter.last_no + 1;
     if (nextNo > 99) {
       await conn.rollback();
       return res.status(429).json({ error: "Today's capacity (99 orders) is full — please order tomorrow" });
     }
-    await conn.query('UPDATE order_counters SET last_no = ? WHERE ym = ?', [nextNo, ym]);
-    const orderId = 'TS' + ym + pad2(nextNo);
+    await conn.query('UPDATE order_counters SET last_no = ? WHERE ym = ?', [nextNo, ymd]);
+    const orderId = 'TS' + ymd + pad2(nextNo);
 
     /* 5. save the order + items */
     const [[user]] = await conn.query('SELECT name FROM users WHERE id = ?', [req.user.id]);

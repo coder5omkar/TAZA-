@@ -55,9 +55,10 @@ The templates are mobile-first, so everything renders full-bleed like a native a
 
 ## 3. How the business rules live in the API
 
-- **Order IDs** — `POST /api/orders` generates `TS·YY·MM·NN` inside a DB
-  transaction (row-locked daily counter). Example: `TS261001` = 1st order of
-  October 2026. **Maximum 99 orders/day** — the 100th request gets
+- **Order IDs** — `POST /api/orders` generates `TS·YY·MM·DD·NN` inside a DB
+  transaction (row-locked **daily** counter that resets to `01` each day).
+  Example: `TS26101605` = 5th order placed on 16 Oct 2026.
+  **Maximum 99 orders/day** — the 100th request gets
   `429 "Today's capacity (99 orders) is full"`.
 - **10 PM cutoff** — orders placed before `cutoff_hour` (22:00, in `settings`)
   get `cycle = 'tomorrow'` + delivery date = tomorrow; after the cutoff they get

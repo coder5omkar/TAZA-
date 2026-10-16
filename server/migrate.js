@@ -120,6 +120,66 @@ const ADDRESSES = [
   const [paidBackfill] = await conn.query("UPDATE orders SET paid = 1 WHERE status = 'delivered' AND paid = 0");
   if (paidBackfill.affectedRows) console.log('~ paid=1 backfilled for delivered orders:', paidBackfill.affectedRows);
 
+  /* v5: order ids -> TS·YY·MM·DD·NN (daily counter resets to 01 each day) */
+  const [[ymCol]] = await conn.query(
+    "SELECT CHARACTER_MAXIMUM_LENGTH len FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'order_counters' AND COLUMN_NAME = 'ym'"
+  );
+  if (Number(ymCol.len) < 6) {
+    await conn.query('ALTER TABLE order_counters MODIFY ym CHAR(6) NOT NULL');
+    console.log('~ order_counters.ym -> CHAR(6) (YYMMDD)');
+  }
+
+  /* renumber old-format ids (TS + YYMM + NN) day-wise, oldest order first */
+  const pad2 = function (n) { return String(n).padStart(2, '0'); };
+  const [allOrders] = await conn.query('SELECT id, placed_at FROM orders ORDER BY placed_at ASC, id ASC');
+  const perDay = {};
+  const rename = [];
+  allOrders.forEach(function (o) {
+    /* mysql2 may hand back a Date or a 'YYYY-MM-DD HH:MM:SS' string */
+    const d = (o.placed_at instanceof Date)
+      ? o.placed_at
+      : new Date(String(o.placed_at).replace(' ', 'T'));
+    if (isNaN(d.getTime())) {
+      console.log('! could not parse placed_at for', o.id, '->', String(o.placed_at));
+      return;
+    }
+    const ymd = String(d.getFullYear()).slice(2) + pad2(d.getMonth() + 1) + pad2(d.getDate());
+    perDay[ymd] = (perDay[ymd] || 0) + 1;
+    if (perDay[ymd] > 99) return;                       /* safety: never overflow */
+    const newId = 'TS' + ymd + pad2(perDay[ymd]);
+    if (newId !== o.id) rename.push([o.id, newId]);
+  });
+
+  if (rename.length) {
+    await conn.query('SET FOREIGN_KEY_CHECKS = 0');
+    const CHUNK = 50;
+    for (let i = 0; i < rename.length; i += CHUNK) {
+      const batch = rename.slice(i, i + CHUNK);
+      const oldIds = batch.map(function (b) { return conn.escape(b[0]); }).join(',');
+      const idCase = 'CASE id ' + batch.map(function (b) { return 'WHEN ' + conn.escape(b[0]) + ' THEN ' + conn.escape(b[1]); }).join(' ') + ' END';
+      await conn.query('UPDATE orders SET id = ' + idCase + ' WHERE id IN (' + oldIds + ')');
+      const fkCase = 'CASE order_id ' + batch.map(function (b) { return 'WHEN ' + conn.escape(b[0]) + ' THEN ' + conn.escape(b[1]); }).join(' ') + ' END';
+      await conn.query('UPDATE order_items SET order_id = ' + fkCase + ' WHERE order_id IN (' + oldIds + ')');
+    }
+    await conn.query('SET FOREIGN_KEY_CHECKS = 1');
+    console.log('~ order ids renumbered to TS·YY·MM·DD·NN:', rename.length);
+  }
+
+  /* seed today's counter so the next order continues the sequence */
+  const nowD = new Date();
+  const ymdToday = String(nowD.getFullYear()).slice(2) + pad2(nowD.getMonth() + 1) + pad2(nowD.getDate());
+  const [[todayCount]] = await conn.query('SELECT COUNT(*) n FROM orders WHERE DATE(placed_at) = CURDATE()');
+  if (todayCount.n > 0) {
+    await conn.query(
+      'INSERT INTO order_counters (ym, last_no) VALUES (?, ?) ON DUPLICATE KEY UPDATE last_no = GREATEST(last_no, VALUES(last_no))',
+      [ymdToday, Math.min(99, todayCount.n)]
+    );
+    console.log('~ daily counter for today (' + ymdToday + ') set to', Math.min(99, todayCount.n));
+  }
+  /* drop the old monthly counters — they are no longer used */
+  const [oldCounters] = await conn.query("DELETE FROM order_counters WHERE CHAR_LENGTH(ym) < 6");
+  if (oldCounters.affectedRows) console.log('~ removed old monthly counters:', oldCounters.affectedRows);
+
   /* backfill sections */
   const maps = [
     ['kg', SECTION_KG], ['bunch', SECTION_BUNCH], ['gram', SECTION_GRAM],

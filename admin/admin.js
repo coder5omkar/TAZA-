@@ -7,8 +7,8 @@
    - DEMO  : no backend / not signed in (e.g. opening the files directly)
              -> in-memory demo data so the design still demos standalone
 
-   Workflow rules: 10:00 PM cutoff, TS.YY.MM.NN order ids (max 99/day),
-   same-day confirm/reject, day-after cycle for late orders.
+   Workflow rules: 10:00 PM cutoff, TS·YY·MM·DD·NN order ids (01–99 per day,
+   resets daily), same-day confirm/reject, day-after cycle for late orders.
    ========================================================================== */
 
 (function () {
@@ -137,15 +137,15 @@
       { id: 'USR-1008', rawId: null, name: 'Rahul Singh', email: 'rahul@deliver.in', phone: '+91 98200 11008', address: '3, Workers Colony, Hadapsar, Pune 411028', role: 'delivery', password: 'rahul@135', status: 'active', joined: '14 Jul 2025' }
     ],
     orders: [
-      { id: 'TS261016', customer: 'Ravi Kumar', address: 'Flat 302, Sai Residency, Baner, Pune 411045', items: [{ name: 'Tomato', qty: 1, unit: 'kg' }, { name: 'Coriander', qty: 1, unit: 'bunch' }], amount: 6, slot: 'Morning 8–10 AM', payment: 'UPI', paid: false, placed: '15 Oct, 10:12 PM', delivery: '17 Oct', cycle: 'day-after', status: 'Pending' },
-      { id: 'TS261015', customer: 'Amit Patel', address: '21, Shanti Nagar, Wakad, Pune 411057', items: [{ name: 'Tomato', qty: 2, unit: 'kg' }, { name: 'Potato', qty: 1, unit: 'kg' }], amount: 8, slot: 'Morning 8–10 AM', payment: 'COD', paid: false, placed: '15 Oct, 8:42 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Pending' },
-      { id: 'TS261014', customer: 'Priya Sharma', address: '7, Rose Villa, Kothrud, Pune 411038', items: [{ name: 'Spinach', qty: 2, unit: 'bunch' }, { name: 'Carrot', qty: 1, unit: 'kg' }, { name: 'Apple', qty: 1, unit: 'pack' }, { name: 'Grapes', qty: 1, unit: 'kg' }, { name: 'Orange', qty: 1, unit: 'dozen' }], amount: 18, slot: 'Evening 7–10 PM', payment: 'UPI', paid: false, placed: '15 Oct, 8:10 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Pending' },
-      { id: 'TS261013', customer: 'Ravi Kumar', address: 'Flat 302, Sai Residency, Baner, Pune 411045', items: [{ name: 'Onion', qty: 1, unit: 'kg' }, { name: 'Capsicum', qty: 1, unit: 'kg' }, { name: 'Coriander', qty: 1, unit: 'bunch' }], amount: 9, slot: 'Morning 8–10 AM', payment: 'UPI', paid: false, placed: '15 Oct, 7:05 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Confirmed' },
-      { id: 'TS261012', customer: 'Neha Gupta', address: '88, Green Meadows, Hinjewadi, Pune 411057', items: [{ name: 'Tomato', qty: 1, unit: 'kg' }, { name: 'Brinjal', qty: 1, unit: 'kg' }, { name: 'Mango', qty: 1, unit: 'kg' }, { name: 'Banana', qty: 1, unit: 'dozen' }, { name: 'Cherry', qty: 1, unit: 'pack' }, { name: 'Melon', qty: 1, unit: 'piece' }], amount: 18, slot: 'Evening 7–10 PM', payment: 'UPI', paid: false, placed: '15 Oct, 6:30 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Confirmed' },
-      { id: 'TS261011', customer: 'Hannah', address: '12, Green Park Society, MG Road, Pune 411001', items: [{ name: 'Spinach', qty: 1, unit: 'bunch' }, { name: 'Apple', qty: 1, unit: 'pack' }], amount: 8, slot: 'Morning 8–10 AM', payment: 'COD', paid: false, placed: '15 Oct, 5:12 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'On the way' },
-      { id: 'TS261010', customer: 'Hannah', address: '12, Green Park Society, MG Road, Pune 411001', items: [{ name: 'Grapes', qty: 1, unit: 'kg' }, { name: 'Kiwi', qty: 2, unit: 'piece' }], amount: 8, slot: 'Morning 8–10 AM', payment: 'UPI', paid: false, placed: '15 Oct, 9:15 AM', delivery: '—', cycle: 'tomorrow', status: 'Rejected' },
-      { id: 'TS261003', customer: 'Hannah', address: '12, Green Park Society, MG Road, Pune 411001', items: [{ name: 'Potato', qty: 1, unit: 'kg' }, { name: 'Spinach', qty: 1, unit: 'bunch' }, { name: 'Lettuce', qty: 1, unit: 'bunch' }], amount: 9, slot: 'Morning 8–10 AM', payment: 'UPI', paid: true, placed: '14 Oct, 7:40 PM', delivery: '15 Oct', cycle: 'tomorrow', status: 'Delivered' },
-      { id: 'TS261002', customer: 'Hannah', address: '12, Green Park Society, MG Road, Pune 411001', items: [{ name: 'Apple', qty: 1, unit: 'pack' }, { name: 'Carrot', qty: 1, unit: 'kg' }], amount: 7, slot: 'Evening 7–10 PM', payment: 'COD', paid: true, placed: '14 Oct, 6:05 PM', delivery: '15 Oct', cycle: 'tomorrow', status: 'Delivered' }
+      { id: 'TS26101507', customer: 'Ravi Kumar', address: 'Flat 302, Sai Residency, Baner, Pune 411045', items: [{ name: 'Tomato', qty: 1, unit: 'kg' }, { name: 'Coriander', qty: 1, unit: 'bunch' }], amount: 6, slot: 'Morning 8–10 AM', payment: 'UPI', paid: false, placed: '15 Oct, 10:12 PM', delivery: '17 Oct', cycle: 'day-after', status: 'Pending' },
+      { id: 'TS26101506', customer: 'Amit Patel', address: '21, Shanti Nagar, Wakad, Pune 411057', items: [{ name: 'Tomato', qty: 2, unit: 'kg' }, { name: 'Potato', qty: 1, unit: 'kg' }], amount: 8, slot: 'Morning 8–10 AM', payment: 'COD', paid: false, placed: '15 Oct, 8:42 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Pending' },
+      { id: 'TS26101505', customer: 'Priya Sharma', address: '7, Rose Villa, Kothrud, Pune 411038', items: [{ name: 'Spinach', qty: 2, unit: 'bunch' }, { name: 'Carrot', qty: 1, unit: 'kg' }, { name: 'Apple', qty: 1, unit: 'pack' }, { name: 'Grapes', qty: 1, unit: 'kg' }, { name: 'Orange', qty: 1, unit: 'dozen' }], amount: 18, slot: 'Evening 7–10 PM', payment: 'UPI', paid: false, placed: '15 Oct, 8:10 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Pending' },
+      { id: 'TS26101504', customer: 'Ravi Kumar', address: 'Flat 302, Sai Residency, Baner, Pune 411045', items: [{ name: 'Onion', qty: 1, unit: 'kg' }, { name: 'Capsicum', qty: 1, unit: 'kg' }, { name: 'Coriander', qty: 1, unit: 'bunch' }], amount: 9, slot: 'Morning 8–10 AM', payment: 'UPI', paid: false, placed: '15 Oct, 7:05 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Confirmed' },
+      { id: 'TS26101503', customer: 'Neha Gupta', address: '88, Green Meadows, Hinjewadi, Pune 411057', items: [{ name: 'Tomato', qty: 1, unit: 'kg' }, { name: 'Brinjal', qty: 1, unit: 'kg' }, { name: 'Mango', qty: 1, unit: 'kg' }, { name: 'Banana', qty: 1, unit: 'dozen' }, { name: 'Cherry', qty: 1, unit: 'pack' }, { name: 'Melon', qty: 1, unit: 'piece' }], amount: 18, slot: 'Evening 7–10 PM', payment: 'UPI', paid: false, placed: '15 Oct, 6:30 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Confirmed' },
+      { id: 'TS26101502', customer: 'Hannah', address: '12, Green Park Society, MG Road, Pune 411001', items: [{ name: 'Spinach', qty: 1, unit: 'bunch' }, { name: 'Apple', qty: 1, unit: 'pack' }], amount: 8, slot: 'Morning 8–10 AM', payment: 'COD', paid: false, placed: '15 Oct, 5:12 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'On the way' },
+      { id: 'TS26101501', customer: 'Hannah', address: '12, Green Park Society, MG Road, Pune 411001', items: [{ name: 'Grapes', qty: 1, unit: 'kg' }, { name: 'Kiwi', qty: 2, unit: 'piece' }], amount: 8, slot: 'Morning 8–10 AM', payment: 'UPI', paid: false, placed: '15 Oct, 9:15 AM', delivery: '—', cycle: 'tomorrow', status: 'Rejected' },
+      { id: 'TS26101402', customer: 'Hannah', address: '12, Green Park Society, MG Road, Pune 411001', items: [{ name: 'Potato', qty: 1, unit: 'kg' }, { name: 'Spinach', qty: 1, unit: 'bunch' }, { name: 'Lettuce', qty: 1, unit: 'bunch' }], amount: 9, slot: 'Morning 8–10 AM', payment: 'UPI', paid: true, placed: '14 Oct, 7:40 PM', delivery: '15 Oct', cycle: 'tomorrow', status: 'Delivered' },
+      { id: 'TS26101401', customer: 'Hannah', address: '12, Green Park Society, MG Road, Pune 411001', items: [{ name: 'Apple', qty: 1, unit: 'pack' }, { name: 'Carrot', qty: 1, unit: 'kg' }], amount: 7, slot: 'Evening 7–10 PM', payment: 'COD', paid: true, placed: '14 Oct, 6:05 PM', delivery: '15 Oct', cycle: 'tomorrow', status: 'Delivered' }
     ],
     products: [
       { name: 'Potato', emoji: '🥔', cat: 'veg', unit: 'kg', rate: 1, section: 'kg' },
@@ -189,18 +189,18 @@
       { name: 'Cherry', emoji: '🍒', cat: 'fruits', unit: 'pack', rate: 3, section: 'pack' }
     ],
     conversations: [
-      { id: 'c1', name: 'Ravi Kumar', order: 'TS261013', online: true, unread: 2, messages: [
+      { id: 'c1', name: 'Ravi Kumar', order: 'TS26101504', online: true, unread: 2, messages: [
         { from: 'them', text: 'Hi, can I add 1 kg tomato to my order? 🙏', time: '8:05 PM' },
         { from: 'them', text: 'Also please deliver before 9 AM if possible.', time: '8:06 PM' }
       ] },
-      { id: 'c2', name: 'Priya Sharma', order: 'TS261014', online: true, unread: 1, messages: [
+      { id: 'c2', name: 'Priya Sharma', order: 'TS26101505', online: true, unread: 1, messages: [
         { from: 'them', text: 'Is the strawberry fresh today?', time: '7:58 PM' }
       ] },
-      { id: 'c3', name: 'Amit Patel', order: 'TS261015', online: false, unread: 0, messages: [
+      { id: 'c3', name: 'Amit Patel', order: 'TS26101506', online: false, unread: 0, messages: [
         { from: 'them', text: 'Please make sure the potatoes are not sprouted.', time: '6:40 PM' },
         { from: 'me', text: 'Sure, we will pick the freshest ones for you 🌿', time: '6:44 PM' }
       ] },
-      { id: 'c4', name: 'Neha Gupta', order: 'TS261012', online: false, unread: 0, messages: [
+      { id: 'c4', name: 'Neha Gupta', order: 'TS26101503', online: false, unread: 0, messages: [
         { from: 'them', text: 'Thank you for the quick delivery yesterday!', time: '10:02 AM' },
         { from: 'me', text: 'Happy to help 🌿 See you in tomorrow\'s cycle.', time: '10:05 AM' }
       ] }
