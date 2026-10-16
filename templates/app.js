@@ -1334,6 +1334,38 @@
     });
   }
 
+  /* ---------- red unread badge on the Message tab (all pages) ---------- */
+
+  var msgTabs = $$('.tab-item[href="messages.html"]');
+  if (msgTabs.length && window.TAZA) {
+    var applyMsgBadge = function (n) {
+      msgTabs.forEach(function (tab) {
+        var b = $('.tab-badge', tab);
+        if (!b) {
+          b = document.createElement('span');
+          b.className = 'tab-badge';
+          b.hidden = true;
+          tab.appendChild(b);
+        }
+        b.textContent = n;
+        b.hidden = !n;
+      });
+    };
+
+    var pollUnread = function () {
+      if (!window.TAZA.token()) { applyMsgBadge(0); return; }
+      window.TAZA.chatUnread().then(function (res) {
+        applyMsgBadge(res.unread || 0);
+      }).catch(function () { /* noop */ });
+    };
+
+    window.TAZA.available().then(function (ok) {
+      if (!ok) return;
+      pollUnread();
+      setInterval(pollUnread, 15000);
+    });
+  }
+
   /* ---------- initial paint ---------- */
 
   applyLanguage(currentLang);

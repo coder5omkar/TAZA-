@@ -74,6 +74,7 @@
     myOrders: function () { return request('GET', '/orders'); },
 
     myChat: function () { return request('GET', '/chat/my'); },
+    chatUnread: function () { return request('GET', '/chat/unread'); },
     sendChat: function (text) { return request('POST', '/chat/my', { text: text }); },
 
     orderStatus: function (id, status) { return request('PATCH', '/orders/' + encodeURIComponent(id) + '/status', { status: status }); },

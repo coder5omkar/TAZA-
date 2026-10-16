@@ -17,6 +17,16 @@ async function myConversation(userId) {
 
 /* ---------- customer side ---------- */
 
+/* GET /api/chat/unread — red-badge count for the customer app nav */
+router.get('/unread', requireAuth, wrap(async (req, res) => {
+  const [[r]] = await db.query(
+    "SELECT COUNT(*) AS n FROM messages m JOIN conversations c ON c.id = m.conversation_id " +
+    "WHERE c.user_id = ? AND m.sender = 'admin' AND m.read_by_customer = 0",
+    [req.user.id]
+  );
+  res.json({ unread: r.n });
+}));
+
 /* GET /api/chat/my */
 router.get('/my', requireAuth, wrap(async (req, res) => {
   const convId = await myConversation(req.user.id);
