@@ -208,9 +208,6 @@
       chat_hint: 'Send us a message — we usually reply within minutes.',
       account_title: 'Account',
       profile_name: 'Hannah',
-      stat_orders: 'Orders',
-      stat_favourites: 'Favourites',
-      stat_addresses: 'Addresses',
       lang_label: 'Language',
       menu_my_orders: 'My Orders',
       menu_addresses: 'Delivery Addresses',
@@ -400,9 +397,6 @@
       chat_hint: 'हमें संदेश भेजें — हम आमतौर पर मिनटों में जवाब देते हैं।',
       account_title: 'खाता',
       profile_name: 'हन्ना',
-      stat_orders: 'ऑर्डर',
-      stat_favourites: 'पसंदीदा',
-      stat_addresses: 'पते',
       lang_label: 'भाषा',
       menu_my_orders: 'मेरे ऑर्डर',
       menu_addresses: 'डिलीवरी पते',
@@ -592,9 +586,6 @@
       chat_hint: 'आम्हाला संदेश पाठवा — आम्ही सहसा काही मिनिटांत उत्तर देतो.',
       account_title: 'खाते',
       profile_name: 'हन्ना',
-      stat_orders: 'ऑर्डर',
-      stat_favourites: 'आवडते',
-      stat_addresses: 'पत्ते',
       lang_label: 'भाषा',
       menu_my_orders: 'माझ्या ऑर्डर्स',
       menu_addresses: 'वितरण पत्ते',
@@ -1823,10 +1814,6 @@
       window.TAZA.available().then(function (ok) {
         if (!ok || !window.TAZA.token()) return;
         window.TAZA.me().then(function (res) { paintProfile(res.user); }).catch(function () { /* noop */ });
-        window.TAZA.myOrders().then(function (res) {
-          var stat = $('.stats .stat b');
-          if (stat && res.orders) stat.textContent = res.orders.length;
-        }).catch(function () { /* noop */ });
       });
     }
 
