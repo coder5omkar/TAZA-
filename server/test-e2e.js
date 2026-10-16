@@ -1,8 +1,10 @@
 /* ==========================================================================
    Smoke test — run with the server running:  node server/test-e2e.js
-   Tests: health, login (admin+customer), catalogue, place order (TS id +
+   Uses a dedicated QA customer (qa.tester@taza.test) for all order flows, so
+   real customer orders are NEVER created or modified by the tests.
+   Tests: health, login (admin+QA customer), catalogue, place order (TS id +
    10 PM cycle), order listing, admin confirm, procurement, chat round-trip,
-   static pages. Prints PASS/FAIL for each step.
+   status changes, static pages. Prints PASS/FAIL for each step.
    ========================================================================== */
 
 const BASE = process.env.BASE || 'http://127.0.0.1:3000';
@@ -37,19 +39,27 @@ function check(name, ok, extra) {
   check('admin login', adminLogin.status === 200 && adminLogin.data.user.role === 'admin', adminLogin.data.user && adminLogin.data.user.role);
   const adminToken = adminLogin.data.token;
 
-  const custLogin = await req('POST', '/api/auth/login', { email: 'ravi.k@gmail.com', password: 'ravi@123' });
-  check('customer login', custLogin.status === 200 && custLogin.data.user.role === 'customer', custLogin.data.user && custLogin.data.user.role);
+  /* the tests use their own QA account — real customer orders are never touched */
+  const QA = { name: 'QA Tester', email: 'qa.tester@taza.test', password: 'qa12345' };
+  let custLogin = await req('POST', '/api/auth/login', { email: QA.email, password: QA.password });
+  if (custLogin.status !== 200) {
+    /* first run: register the account, then sign in */
+    await req('POST', '/api/auth/register', { name: QA.name, email: QA.email, password: QA.password, phone: '9000000000' });
+    custLogin = await req('POST', '/api/auth/login', { email: QA.email, password: QA.password });
+  }
+  check('customer login (dedicated QA account)', custLogin.status === 200 && custLogin.data.user.role === 'customer', custLogin.data.user && custLogin.data.user.role);
   const custToken = custLogin.data.token;
 
-  const badLogin = await req('POST', '/api/auth/login', { email: 'ravi.k@gmail.com', password: 'wrong' });
+  const badLogin = await req('POST', '/api/auth/login', { email: QA.email, password: 'wrong-password' });
   check('wrong password rejected', badLogin.status === 401);
 
   /* 3. catalogue */
   const prods = await req('GET', '/api/products');
   check('catalogue has 39 products (incl. 100g/gram items)', prods.status === 200 && prods.data.products.length >= 39, (prods.data.products || []).length + ' products');
 
-  /* 3b. cleanup: close any open orders from previous runs so checks are deterministic */
-  const openBefore = await req('GET', '/api/orders', null, adminToken);
+  /* 3b. cleanup: close only the QA account's own open orders so checks are
+        deterministic — real customers' orders are never modified */
+  const openBefore = await req('GET', '/api/orders', null, custToken);
   for (const ord of (openBefore.data.orders || [])) {
     if (ord.status === 'pending' || ord.status === 'confirmed') {
       await req('PATCH', '/api/orders/' + ord.id + '/status', { status: 'delivered' }, adminToken);
@@ -124,7 +134,7 @@ function check(name, ok, extra) {
   const c1 = await req('POST', '/api/chat/my', { text: 'Hi, is the spinach fresh today?' }, custToken);
   check('customer sends chat', c1.status === 201);
   const convs = await req('GET', '/api/chat/conversations', null, adminToken);
-  const conv = (convs.data.conversations || []).find(function (c) { return c.name === 'Ravi Kumar'; });
+  const conv = (convs.data.conversations || []).find(function (c) { return c.name === 'QA Tester'; });
   check('admin inbox shows conversation with unread', !!conv && conv.unread >= 1, conv ? 'unread ' + conv.unread : 'missing');
   let reply = { status: 0 };
   if (conv) reply = await req('POST', '/api/chat/conversations/' + conv.id, { text: 'Yes! Picked this morning 🌿' }, adminToken);
