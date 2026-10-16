@@ -54,6 +54,7 @@
   var I18N = {
     en: {
       hello: 'Hello, Hannah',
+      hello_plain: 'Hello',
       delivery_note: 'Order before 10 PM — fresh delivery tomorrow morning!',
       vegetables: 'Vegetables',
       fruits: 'Fruits',
@@ -112,9 +113,9 @@
       u_pack: 'pack',
       u_piece: 'piece',
       u_dozen: 'dozen',
-      pay_upi: 'UPI',
+      pay_upi: 'UPI on delivery',
       paid_word: 'Paid',
-      cod_word: 'COD',
+      cod_word: 'Cash',
       pay_at_delivery: 'Pay on delivery',
       pay_upi_at_door: 'Scan & pay when your order arrives',
       sec_kg: 'KG · Weight',
@@ -158,7 +159,7 @@
       current_address: 'Current address',
       pay_default_title: 'Payment Methods',
       pay_upi_tag: '3% discount',
-      upi_discount: 'UPI discount (3%)',
+      upi_discount: 'UPI on delivery discount (3%)',
       profile_saved: 'Profile updated ✓',
       address_saved: 'Address updated ✓',
       payment_saved: 'Default payment saved ✓',
@@ -227,7 +228,7 @@
       pay_title: 'Payment Method',
       pay_cod: 'Cash on Delivery',
       pay_cod_sub: 'Pay when your order arrives',
-      pay_upi_sub: 'Pay by UPI on delivery · 3% discount',
+      pay_upi_sub: 'PhonePe · GPay · Paytm · 3% discount',
       cart_empty: 'Your bag is empty',
       cart_empty_sub: 'Add fresh vegetables & fruits to get started',
       browse: 'Browse products',
@@ -251,6 +252,7 @@
 
     hi: {
       hello: 'नमस्ते, हन्ना',
+      hello_plain: 'नमस्ते',
       delivery_note: 'रात 10 बजे से पहले ऑर्डर करें — कल सुबह ताज़ा डिलीवरी!',
       vegetables: 'सब्ज़ियाँ',
       fruits: 'फल',
@@ -309,9 +311,9 @@
       u_pack: 'पैक',
       u_piece: 'नग',
       u_dozen: 'दर्जन',
-      pay_upi: 'UPI',
+      pay_upi: 'डिलीवरी पर UPI',
       paid_word: 'भुगतान हुआ',
-      cod_word: 'COD',
+      cod_word: 'कैश',
       pay_at_delivery: 'डिलीवरी पर भुगतान',
       pay_upi_at_door: 'ऑर्डर आने पर स्कैन करके भुगतान करें',
       sec_kg: 'किलो · वज़न',
@@ -355,7 +357,7 @@
       current_address: 'वर्तमान पता',
       pay_default_title: 'भुगतान तरीके',
       pay_upi_tag: '3% छूट',
-      upi_discount: 'UPI छूट (3%)',
+      upi_discount: 'डिलीवरी पर UPI छूट (3%)',
       profile_saved: 'प्रोफ़ाइल अपडेट हुई ✓',
       address_saved: 'पता अपडेट हुआ ✓',
       payment_saved: 'डिफ़ॉल्ट भुगतान सहेजा गया ✓',
@@ -424,7 +426,7 @@
       pay_title: 'भुगतान विधि',
       pay_cod: 'कैश ऑन डिलीवरी',
       pay_cod_sub: 'ऑर्डर मिलने पर भुगतान करें',
-      pay_upi_sub: 'डिलीवरी पर UPI से भुगतान · 3% छूट',
+      pay_upi_sub: 'PhonePe · GPay · Paytm · 3% छूट',
       cart_empty: 'आपका बैग खाली है',
       cart_empty_sub: 'शुरू करने के लिए ताज़ी सब्ज़ियाँ और फल जोड़ें',
       browse: 'उत्पाद देखें',
@@ -448,6 +450,7 @@
 
     mr: {
       hello: 'नमस्कार, हन्ना',
+      hello_plain: 'नमस्कार',
       delivery_note: 'रात्री 10 पर्यंत ऑर्डर करा — उद्या सकाळी ताजे वितरण!',
       vegetables: 'भाज्या',
       fruits: 'फळे',
@@ -506,9 +509,9 @@
       u_pack: 'पॅक',
       u_piece: 'नग',
       u_dozen: 'डझन',
-      pay_upi: 'UPI',
+      pay_upi: 'डिलिव्हरीवर UPI',
       paid_word: 'पेमेंट झाले',
-      cod_word: 'COD',
+      cod_word: 'कॅश',
       pay_at_delivery: 'डिलिव्हरीवर पेमेंट',
       pay_upi_at_door: 'ऑर्डर आल्यावर स्कॅन करून पेमेंट करा',
       sec_kg: 'किलो · वजन',
@@ -552,7 +555,7 @@
       current_address: 'सध्याचा पत्ता',
       pay_default_title: 'पेमेंट पद्धती',
       pay_upi_tag: '3% सूट',
-      upi_discount: 'UPI सूट (3%)',
+      upi_discount: 'डिलिव्हरीवर UPI सूट (3%)',
       profile_saved: 'प्रोफाइल अपडेट झाले ✓',
       address_saved: 'पत्ता अपडेट झाला ✓',
       payment_saved: 'डीफॉल्ट पेमेंट जतन केले ✓',
@@ -621,7 +624,7 @@
       pay_title: 'पेमेंट पद्धत',
       pay_cod: 'कॅश ऑन डिलिव्हरी',
       pay_cod_sub: 'ऑर्डर मिळाल्यावर पैसे द्या',
-      pay_upi_sub: 'डिलिव्हरीवर UPI ने पेमेंट · 3% सूट',
+      pay_upi_sub: 'PhonePe · GPay · Paytm · 3% सूट',
       cart_empty: 'तुमची बॅग रिकामी आहे',
       cart_empty_sub: 'सुरू करण्यासाठी ताज्या भाज्या आणि फळे जोडा',
       browse: 'उत्पादने पहा',
@@ -688,11 +691,37 @@
     $$('.lang').forEach(function (btn) {
       btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
     });
+
+    paintHello();
   }
 
   $$('.lang').forEach(function (btn) {
     btn.addEventListener('click', function () { applyLanguage(btn.getAttribute('data-lang')); });
   });
+
+  /* ---------- home greeting: show the signed-in customer's name ---------- */
+
+  var liveFirstName = null;
+
+  function paintHello() {
+    var el = $('.hello');
+    if (!el || !liveFirstName) return;
+    el.removeAttribute('data-i18n');
+    el.textContent = t('hello_plain') + ', ' + liveFirstName;
+  }
+
+  if ($('.hello') && window.TAZA) {
+    window.TAZA.available().then(function (ok) {
+      if (!ok || !window.TAZA.token()) return;
+      window.TAZA.me().then(function (res) {
+        var u = res.user;
+        if (u && u.name) {
+          liveFirstName = String(u.name).trim().split(' ')[0];
+          paintHello();
+        }
+      }).catch(function () { /* keep the demo greeting */ });
+    });
+  }
 
   /* ---------- toast ---------- */
 
@@ -1346,12 +1375,10 @@
       meta += smRow(t('sheet_placed'), fmtDate(order.placed));
       meta += smRow(t('slot_title'), order.slot === 'evening' ? t('slot_evening') : t('slot_morning'));
       var payValue = String(order.payment || '').toLowerCase() === 'cod'
-        ? '<span data-i18n="cod_word">' + t('cod_word') + '</span>'
+        ? '<span data-i18n="pay_cod">' + t('pay_cod') + '</span>'
         : '<span data-i18n="pay_upi">' + t('pay_upi') + '</span>';
-      if (order.status !== 'rejected') {
-        payValue += ' · ' + (order.paid
-          ? '<span data-i18n="paid_word">' + t('paid_word') + '</span>'
-          : '<span data-i18n="pay_at_delivery">' + t('pay_at_delivery') + '</span>');
+      if (order.paid) {
+        payValue += ' · <span data-i18n="paid_word">' + t('paid_word') + '</span>';
       }
       meta += '<div class="sm-row"><span>' + esc(t('sheet_payment')) + '</span><b>' + payValue + '</b></div>';
       meta += smRow(t('order_delivery'), fmtDate(order.delivery));

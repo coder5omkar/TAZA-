@@ -612,35 +612,100 @@ select.input { cursor: pointer; }
 
 /* ---------- responsive ---------- */
 
+/* ---------- mobile: admin is used from phones ---------- */
+
+.nav-toggle {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--bg);
+  place-items: center;
+  color: var(--ink);
+  flex: none;
+}
+.nav-toggle svg { width: 20px; height: 20px; }
+
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 19, 38, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 55;
+}
+.nav-backdrop.open { opacity: 1; pointer-events: auto; }
+
+.chat-back {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--bg);
+  place-items: center;
+  color: var(--ink);
+  flex: none;
+  margin-right: 2px;
+}
+.chat-back svg { width: 18px; height: 18px; }
+
 @media (max-width: 980px) {
-  .layout { flex-direction: column; }
+  .nav-toggle { display: grid; }
+
+  /* sidebar becomes a slide-in drawer */
   .sidebar {
-    width: 100%;
-    height: auto;
-    position: static;
-    flex-direction: row;
-    align-items: center;
-    overflow-x: auto;
-    padding: 10px 14px;
-    gap: 6px;
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 270px;
+    height: 100dvh;
+    flex-direction: column;
+    align-items: stretch;
+    overflow-y: auto;
+    padding: 18px 14px 16px;
+    gap: 4px;
+    border-right: 1px solid var(--line);
+    border-bottom: 0;
+    z-index: 60;
+    transform: translateX(-104%);
+    transition: transform 0.24s ease;
+    box-shadow: 18px 0 40px rgba(23, 19, 38, 0.18);
   }
-  .brand { padding: 0 12px 0 4px; flex: none; }
-  .brand div { display: none; }
-  .nav-item { flex: none; padding: 9px 12px; }
-  .spacer { display: none; }
-  .admin-user { display: none; }
+  .sidebar.open { transform: none; }
+  .brand { padding: 2px 8px 18px; }
+  .brand div { display: block; }
+  .nav-item { flex: none; padding: 11px 12px; }
+  .spacer { display: block; }
+  .admin-user { display: flex; }
+
+  .topbar { padding: 12px 16px; gap: 10px; }
+  .content { padding: 16px 16px 26px; }
   .dash-grid { grid-template-columns: 1fr; }
   .form-grid { grid-template-columns: 1fr 1fr; }
-  .chat-shell { grid-template-columns: 1fr; }
-  .chat-list { border-right: 0; border-bottom: 1px solid var(--line); max-height: 260px; overflow-y: auto; }
-  .topbar { padding: 14px 18px; }
-  .content { padding: 18px; }
+
+  /* expanded order panels stack vertically */
+  .od-grid { grid-template-columns: 1fr; gap: 16px; }
+
+  /* messages: full-screen thread with a back button */
+  .chat-shell { display: block; }
+  .chat-list { border-right: 0; border-bottom: 0; max-height: none; }
+  .chat-pane { display: none; }
+  .chat-shell.show-thread .chat-list { display: none; }
+  .chat-shell.show-thread .chat-pane { display: flex; min-height: 68vh; }
+  .chat-back { display: inline-grid; }
 }
 
 @media (max-width: 560px) {
   .form-grid,
   .two-col { grid-template-columns: 1fr; }
+  .admin-chip { padding: 6px 8px; }
   .admin-chip span { display: none; }
+  .topbar h1 { font-size: 16px; }
+  .topbar .sub { display: none; }
+  .stats { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .table th { padding: 10px 12px; }
+  .table td { padding: 11px 12px; }
+  .head-actions { justify-content: flex-start; }
 }

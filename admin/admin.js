@@ -251,6 +251,46 @@
       '<div class="spacer"></div>' +
       '<div class="admin-user"><img src="logo.svg" alt="" /><div><b id="sidebarAdminName">Admin</b><span>Super Admin</span></div></div>' +
       '<a class="nav-item logout" id="adminLogout" href="../templates/login.html">' + ICONS.logout + '<span>Log Out</span></a>';
+
+    /* mobile: hamburger button in the topbar + slide-in drawer (admin is used on phones) */
+    var topbar = $('.topbar');
+    if (topbar && !$('#navToggle')) {
+      var toggle = document.createElement('button');
+      toggle.id = 'navToggle';
+      toggle.className = 'nav-toggle';
+      toggle.setAttribute('aria-label', 'Open menu');
+      toggle.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18" /></svg>';
+      topbar.insertBefore(toggle, topbar.firstChild);
+
+      var backdrop = document.createElement('div');
+      backdrop.className = 'nav-backdrop';
+      backdrop.id = 'navBackdrop';
+      document.body.appendChild(backdrop);
+
+      var closeNav = function () {
+        el.classList.remove('open');
+        backdrop.classList.remove('open');
+      };
+      toggle.addEventListener('click', function () {
+        var open = el.classList.toggle('open');
+        backdrop.classList.toggle('open', open);
+      });
+      backdrop.addEventListener('click', closeNav);
+      el.addEventListener('click', function (e) {
+        if (e.target.closest('.nav-item')) closeNav();
+      });
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 980) closeNav();
+      });
+
+      /* preview helper: ?nav=1 opens the drawer (for mobile screenshots) */
+      try {
+        if (new URLSearchParams(location.search).get('nav') === '1') {
+          el.classList.add('open');
+          backdrop.classList.add('open');
+        }
+      } catch (e) { /* noop */ }
+    }
   }
 
   /* ---------------- shared bits ---------------- */
@@ -259,6 +299,11 @@
 
   function statusPill(status) {
     return '<span class="pill ' + (STATUS_CLASS[status] || '') + '">' + esc(status) + '</span>';
+  }
+
+  /* customer-facing wording: no bare "UPI" anywhere (no online redirect exists) */
+  function payLabel(payment) {
+    return String(payment).toUpperCase() === 'COD' ? 'Cash (COD)' : 'UPI on delivery';
   }
 
   function slotLabel(slot) { return slot === 'evening' ? 'Evening 7–10 PM' : 'Morning 8–10 AM'; }
@@ -341,7 +386,7 @@
       var fee = o.fee != null ? o.fee : 0;
       totals += '<div class="od-total"><span>Subtotal</span><b>' + money(sub) + '</b></div>';
       totals += '<div class="od-total"><span>Delivery</span><b>' + money(fee) + '</b></div>';
-      if (o.discount > 0) totals += '<div class="od-total"><span>UPI discount (3%)</span><b>−' + money(o.discount) + '</b></div>';
+      if (o.discount > 0) totals += '<div class="od-total"><span>UPI on delivery discount (3%)</span><b>−' + money(o.discount) + '</b></div>';
     }
     totals += '<div class="od-total grand"><span>' + (hasRates ? 'Total' : 'Order total') + '</span><b>' + money(o.amount) + '</b></div>';
 
@@ -360,7 +405,7 @@
       '<h4>Order details</h4>' +
       '<div class="od-meta">' +
       '<div class="kv"><span>Customer</span><b>' + esc(o.customer) + '</b></div>' +
-      '<div class="kv"><span>Payment</span><b>' + (o.payment === 'COD' ? 'COD' : 'UPI') + ' · ' + (o.paid ? 'paid' : 'pay at delivery') + '</b></div>' +
+      '<div class="kv"><span>Payment</span><b>' + payLabel(o.payment) + ' · ' + (o.paid ? 'paid' : 'unpaid') + '</b></div>' +
       '<div class="kv"><span>Placed</span><b>' + esc(o.placed) + '</b></div>' +
       '<div class="kv"><span>Delivery</span><b>' + esc(o.delivery) + '</b></div>' +
       '<div class="kv"><span>Address</span><b>' + esc(o.address || '—') + '</b></div>' +
@@ -386,7 +431,7 @@
         '<td><span class="row-chev" aria-hidden="true">›</span><b>' + esc(o.id) + '</b><span class="sub">placed ' + esc(o.placed) + '</span></td>' +
         '<td>' + esc(o.customer) + '<span class="sub">' + o.items.length + ' items</span></td>' +
         '<td class="amount">' + money(o.amount) + '</td>' +
-        '<td>' + esc(o.slot) + '<span class="sub">' + esc(o.payment) + ' · ' + (o.paid ? 'paid' : 'pay at delivery') + '</span></td>' +
+        '<td>' + esc(o.slot) + '<span class="sub">' + esc(payLabel(o.payment)) + (o.paid ? ' · paid' : '') + '</span></td>' +
         '<td>' + esc(o.delivery) + (o.cycle === 'day-after' ? ' <span class="pill pending">Next cycle</span>' : '') +
         '<span class="sub">' + (o.cycle === 'day-after' ? 'after 10 PM · day-after delivery' : (o.status === 'Rejected' ? 'rejected same day' : (o.status === 'Delivered' ? 'delivered ' + esc(o.delivery) : 'procure tonight · deliver tomorrow'))) + '</span></td>' +
         '<td>' + statusPill(o.status) + '</td>' +
@@ -508,7 +553,7 @@
         '<div class="kv"><span>Order cutoff</span><b>' + settings.cutoff_hour + ':00 PM daily</b></div>' +
         '<div class="kv"><span>Daily capacity</span><b>99 orders</b></div>' +
         '<div class="kv"><span>Delivery slots</span><b>' + (settings.morning_slot ? 'Morning' : '') + (settings.morning_slot && settings.evening_slot ? ' · ' : '') + (settings.evening_slot ? 'Evening' : '') + '</b></div>' +
-        '<div class="kv"><span>Payments</span><b>' + (settings.upi_enabled ? 'UPI' : '') + (settings.upi_enabled && settings.cod_enabled ? ' · ' : '') + (settings.cod_enabled ? 'COD' : '') + '</b></div>';
+        '<div class="kv"><span>Payments</span><b>' + (settings.upi_enabled ? 'UPI on delivery' : '') + (settings.upi_enabled && settings.cod_enabled ? ' · ' : '') + (settings.cod_enabled ? 'Cash (COD)' : '') + '</b></div>';
     }
   }
 
@@ -835,6 +880,9 @@
     var conv = null;
     state.conversations.forEach(function (c) { if (String(c.id) === String(id)) conv = c; });
     if (!conv) return;
+    /* mobile: switch to the full-screen thread view */
+    var shell = $('.chat-shell');
+    if (shell) shell.classList.add('show-thread');
 
     conv.unread = 0;
     var avatar = $('#chatAvatar');
@@ -957,6 +1005,13 @@
 
     var convEl = e.target.closest('.conv');
     if (convEl) { openConversation(convEl.getAttribute('data-conv')); return; }
+
+    /* mobile messages: back from the thread to the chat list */
+    if (e.target.closest('#chatBack')) {
+      var shellEl = $('.chat-shell');
+      if (shellEl) shellEl.classList.remove('show-thread');
+      return;
+    }
 
     /* tap an order row to expand its items-to-pack + status controls */
     var orderRow = e.target.closest('[data-order-row]');
