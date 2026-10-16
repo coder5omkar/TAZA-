@@ -143,6 +143,45 @@ curl -X POST http://localhost:3000/api/auth/login \
 6. **Restart** the app → open your domain. `/` redirects to the login screen;
    admins land in `/admin/index.html` after signing in.
 
+## 5b. Deploy to Railway (easiest, no server admin)
+
+`railway.toml` is already in the repo: it builds with Nixpacks and runs
+`npm run migrate && npm start` on every deploy (migrations are idempotent, and a
+**fresh database seeds itself automatically** on first boot).
+
+1. **Account** — [railway.app](https://railway.app) → *Login with GitHub*.
+   New accounts get a one-time **$5 trial credit (30 days)**; after that the
+   **Hobby plan is $5/month** and includes $5 of usage — enough for this app.
+   ⚠️ Never keep a live shop on the free $1/month plan: usage stops when the
+   credit runs out.
+2. **Project** — *New Project → Deploy from GitHub repo* → authorize Railway →
+   pick `coder5omkar/TAZA-`.
+3. **Database** — inside the project: *Create → Database → Add MySQL*.
+4. **Variables** — open the **web service** → *Variables → Raw Editor* and paste
+   (the `${{MySQL.*}}` references pull values from the MySQL service — adjust the
+   service name if yours differs):
+   ```
+   TZ=Asia/Kolkata
+   JWT_SECRET=<a long random string>
+   DB_HOST=${{MySQL.MYSQLHOST}}
+   DB_PORT=${{MySQL.MYSQLPORT}}
+   DB_USER=${{MySQL.MYSQLUSER}}
+   DB_PASSWORD=${{MySQL.MYSQLPASSWORD}}
+   DB_NAME=${{MySQL.MYSQLDATABASE}}
+   ```
+   (Or skip the DB_* lines entirely — the code also reads Railway's `MYSQL*`
+   variables / `MYSQL_URL` directly.)
+5. **Region** — web service → *Settings → Region*: **Southeast Asia (Singapore)**
+   (closest to India).
+6. **Domain** — web service → *Settings → Networking → Generate Domain*.
+7. **Verify** — `https://<domain>/api/health` → `"database":"up"`, then log in
+   at `/templates/login.html` (customer) and `/admin/index.html` (admin).
+   Full smoke test from your PC:
+   ```powershell
+   $env:BASE="https://<domain>"; npm test      # expect 28/28
+   ```
+8. **Change the seeded admin password** after the first login (Admin → Users).
+
 ## 6. Notes
 
 - Passwords are stored as **bcrypt hashes**. The admin UI's password-reveal is a

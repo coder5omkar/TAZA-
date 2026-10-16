@@ -10,7 +10,10 @@
 process.env.TZ = process.env.TZ || 'Asia/Kolkata';
 require('dotenv').config();
 
+const fs = require('fs');
+const path = require('path');
 const mysql = require('mysql2/promise');
+const dbConfig = require('./db-config');
 
 const SECTION_KG = ['Potato', 'Tomato', 'Onion', 'Cucumber', 'Sweet Potato', 'Carrot', 'Brinjal', 'Capsicum', 'Pumpkin', 'Broccoli', 'Cabbage',
   'Mango', 'Grapes', 'Orange', 'Watermelon', 'Peach', 'Pear', 'Melon'];
@@ -40,14 +43,16 @@ const ADDRESSES = [
 ];
 
 (async function () {
-  const conn = await mysql.createConnection({
-    host: process.env.DB_HOST || '127.0.0.1',
-    port: Number(process.env.DB_PORT || 3306),
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'taza_sabzi',
-    charset: 'utf8mb4'
-  });
+  const conn = await mysql.createConnection(Object.assign({
+    charset: 'utf8mb4',
+    multipleStatements: true
+  }, dbConfig.connectionOptions()));
+  await dbConfig.pinTimezone(conn);
+
+  /* fresh installs: create any missing tables first (schema.sql is idempotent) */
+  const schema = fs.readFileSync(path.join(__dirname, 'sql', 'schema.sql'), 'utf8');
+  await conn.query(schema);
+  console.log('~ schema ensured');
 
   const hasColumn = async function (table, col) {
     const [[r]] = await conn.query(
@@ -212,6 +217,17 @@ const ADDRESSES = [
     addr += r.affectedRows;
   }
   console.log('+ addresses set:', addr);
+
+  /* fresh database (e.g. first Railway deploy): seed catalogue + logins automatically */
+  const [[userCount]] = await conn.query('SELECT COUNT(*) c FROM users');
+  if (userCount.c === 0) {
+    console.log('~ fresh database — seeding the catalogue + logins…');
+    await conn.end();
+    require('child_process').execFileSync(process.execPath, [path.join(__dirname, 'seed.js')], { stdio: 'inherit', env: process.env });
+    console.log('');
+    console.log('Migration complete ✓ (database seeded)');
+    return;
+  }
 
   await conn.end();
   console.log('');

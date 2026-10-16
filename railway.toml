@@ -1,0 +1,12 @@
+# Railway deployment config for TAZA-PHAL-SABZI.COM
+# Nixpacks auto-detects Node.js from package.json.
+# The start command ensures the schema exists and runs idempotent migrations
+# before the server boots (a fresh database seeds itself automatically).
+
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "npm run migrate && npm start"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 5

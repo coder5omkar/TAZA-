@@ -11,10 +11,11 @@ const fs = require('fs');
 const path = require('path');
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
+const dbConfig = require('./db-config');
 
-const DB_NAME = (process.env.DB_NAME || 'taza_sabzi').replace(/[^a-zA-Z0-9_]/g, '');
-const DB_HOST = process.env.DB_HOST || '127.0.0.1';
-const DB_PORT = Number(process.env.DB_PORT || 3306);
+/* host/user/password from .env or Railway's MYSQL* variables */
+const CONNECT_OPTS = dbConfig.connectionOptions(false);   /* no database yet — created below */
+const DB_NAME = String(dbConfig.connectionOptions().database || 'taza_sabzi').replace(/[^a-zA-Z0-9_]/g, '') || 'taza_sabzi';
 
 const PRODUCTS = [
   /* [name, emoji, cat, section, unit, rate] — matches the landing page sections */
@@ -73,14 +74,11 @@ const USERS = [
 
 (async function () {
   /* connect without a database first so we can create it */
-  const conn = await mysql.createConnection({
-    host: DB_HOST,
-    port: DB_PORT,
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
+  const conn = await mysql.createConnection(Object.assign({
     multipleStatements: true,
     charset: 'utf8mb4'
-  });
+  }, CONNECT_OPTS));
+  await dbConfig.pinTimezone(conn);
 
   await conn.query('CREATE DATABASE IF NOT EXISTS `' + DB_NAME + '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
   await conn.changeUser({ database: DB_NAME });

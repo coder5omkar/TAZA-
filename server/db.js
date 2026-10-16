@@ -1,17 +1,22 @@
-/* MySQL connection pool (mysql2/promise) */
-require('dotenv').config();
-const mysql = require('mysql2/promise');
+/* MySQL connection pool (mysql2/promise)
+   - reads DB_* (.env) or Railway's MYSQL* variables — see db-config.js
+   - pins every pooled session to the shop timezone (IST) so CURDATE()/NOW()
+     behave the same locally and on Railway (which runs MySQL in UTC) */
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || '127.0.0.1',
-  port: Number(process.env.DB_PORT || 3306),
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'taza_sabzi',
+const mysql = require('mysql2/promise');
+const dbConfig = require('./db-config');
+
+const pool = mysql.createPool(Object.assign({
   waitForConnections: true,
   connectionLimit: Number(process.env.DB_POOL || 10),
   charset: 'utf8mb4',
   dateStrings: true
+}, dbConfig.connectionOptions()));
+
+/* SET time_zone on each new physical connection */
+const core = pool.pool || pool;      /* mysql2/promise exposes the core pool */
+core.on('connection', function (conn) {
+  conn.query("SET time_zone = '" + dbConfig.SHOP_TZ + "'");
 });
 
 module.exports = pool;
