@@ -110,6 +110,25 @@
       empty_bag: 'Empty bag',
       tap_confirm: 'Tap again to confirm',
       bag_emptied: 'Bag emptied',
+      edit_profile: 'Edit profile',
+      field_name: 'Name',
+      field_email: 'Email',
+      email_note: 'Email verification will be added soon',
+      save_btn: 'Save',
+      addr_flat: 'Flat / House No',
+      addr_floor: 'Floor',
+      addr_building: 'Building / Apartment',
+      addr_area: 'Area / Locality',
+      addr_city: 'City',
+      addr_pin: 'PIN code',
+      current_address: 'Current address',
+      pay_default_title: 'Payment Methods',
+      pay_upi_tag: '3% discount',
+      upi_discount: 'UPI discount (3%)',
+      profile_saved: 'Profile updated ✓',
+      address_saved: 'Address updated ✓',
+      payment_saved: 'Default payment saved ✓',
+      err_required: 'Name and email are required',
       err_signin: 'Please sign in to place your order',
       err_address: 'Choose a delivery address',
       err_items: 'Some items are no longer available',
@@ -174,7 +193,7 @@
       pay_title: 'Payment Method',
       pay_cod: 'Cash on Delivery',
       pay_cod_sub: 'Pay when your order arrives',
-      pay_upi_sub: 'PhonePe · GPay · Paytm & more',
+      pay_upi_sub: 'PhonePe · GPay · Paytm · 3% discount',
       cart_empty: 'Your bag is empty',
       cart_empty_sub: 'Add fresh vegetables & fruits to get started',
       browse: 'Browse products',
@@ -277,6 +296,25 @@
       empty_bag: 'बैग खाली करें',
       tap_confirm: 'पुष्टि के लिए फिर टैप करें',
       bag_emptied: 'बैग खाली हो गया',
+      edit_profile: 'प्रोफ़ाइल संपादित करें',
+      field_name: 'नाम',
+      field_email: 'ईमेल',
+      email_note: 'ईमेल सत्यापन जल्द जोड़ा जाएगा',
+      save_btn: 'सहेजें',
+      addr_flat: 'फ्लैट / मकान नंबर',
+      addr_floor: 'मंज़िल',
+      addr_building: 'बिल्डिंग / अपार्टमेंट',
+      addr_area: 'इलाका',
+      addr_city: 'शहर',
+      addr_pin: 'पिन कोड',
+      current_address: 'वर्तमान पता',
+      pay_default_title: 'भुगतान तरीके',
+      pay_upi_tag: '3% छूट',
+      upi_discount: 'UPI छूट (3%)',
+      profile_saved: 'प्रोफ़ाइल अपडेट हुई ✓',
+      address_saved: 'पता अपडेट हुआ ✓',
+      payment_saved: 'डिफ़ॉल्ट भुगतान सहेजा गया ✓',
+      err_required: 'नाम और ईमेल आवश्यक हैं',
       err_signin: 'ऑर्डर करने के लिए लॉग इन करें',
       err_address: 'डिलीवरी पता चुनें',
       err_items: 'कुछ आइटम अब उपलब्ध नहीं हैं',
@@ -341,7 +379,7 @@
       pay_title: 'भुगतान विधि',
       pay_cod: 'कैश ऑन डिलीवरी',
       pay_cod_sub: 'ऑर्डर मिलने पर भुगतान करें',
-      pay_upi_sub: 'PhonePe · GPay · Paytm और अन्य',
+      pay_upi_sub: 'PhonePe · GPay · Paytm · 3% छूट',
       cart_empty: 'आपका बैग खाली है',
       cart_empty_sub: 'शुरू करने के लिए ताज़ी सब्ज़ियाँ और फल जोड़ें',
       browse: 'उत्पाद देखें',
@@ -444,6 +482,25 @@
       empty_bag: 'बॅग रिकामी करा',
       tap_confirm: 'खात्रीसाठी पुन्हा टॅप करा',
       bag_emptied: 'बॅग रिकामी झाली',
+      edit_profile: 'प्रोफाइल संपादित करा',
+      field_name: 'नाव',
+      field_email: 'ईमेल',
+      email_note: 'ईमेल पडताळणी लवकरच जोडली जाईल',
+      save_btn: 'जतन करा',
+      addr_flat: 'फ्लॅट / घर क्र.',
+      addr_floor: 'मजला',
+      addr_building: 'इमारत / अपार्टमेंट',
+      addr_area: 'परिसर',
+      addr_city: 'शहर',
+      addr_pin: 'पिन कोड',
+      current_address: 'सध्याचा पत्ता',
+      pay_default_title: 'पेमेंट पद्धती',
+      pay_upi_tag: '3% सूट',
+      upi_discount: 'UPI सूट (3%)',
+      profile_saved: 'प्रोफाइल अपडेट झाले ✓',
+      address_saved: 'पत्ता अपडेट झाला ✓',
+      payment_saved: 'डीफॉल्ट पेमेंट जतन केले ✓',
+      err_required: 'नाव आणि ईमेल आवश्यक आहेत',
       err_signin: 'ऑर्डर करण्यासाठी लॉग इन करा',
       err_address: 'वितरण पत्ता निवडा',
       err_items: 'काही वस्तू आता उपलब्ध नाहीत',
@@ -508,7 +565,7 @@
       pay_title: 'पेमेंट पद्धत',
       pay_cod: 'कॅश ऑन डिलिव्हरी',
       pay_cod_sub: 'ऑर्डर मिळाल्यावर पैसे द्या',
-      pay_upi_sub: 'PhonePe · GPay · Paytm आणि अधिक',
+      pay_upi_sub: 'PhonePe · GPay · Paytm · 3% सूट',
       cart_empty: 'तुमची बॅग रिकामी आहे',
       cart_empty_sub: 'सुरू करण्यासाठी ताज्या भाज्या आणि फळे जोडा',
       browse: 'उत्पादने पहा',
@@ -618,13 +675,42 @@
     });
     var delivery = subtotal > 0 ? 3 : 0;
 
+    /* UPI orders get a 3% discount on the items subtotal */
+    var payEl = $('.pay-card .addr-option.active');
+    var pay = payEl && payEl.getAttribute('data-pay') ? payEl.getAttribute('data-pay') : 'upi';
+    var discount = pay === 'upi' && subtotal > 0 ? Math.round(subtotal * 0.03 * 10) / 10 : 0;
+
+    var upiRow = $('#upiRow');
+    var upiEl = $('#upiDiscount');
+    if (upiRow && upiEl) {
+      upiRow.hidden = !(discount > 0);
+      if (discount > 0) upiEl.textContent = '-' + money(discount);
+    }
+
     var set = function (id, value) {
       var el = document.getElementById(id);
       if (el) el.textContent = value;
     };
     set('subtotal', money(subtotal));
     set('delivery', money(delivery));
-    set('total', money(subtotal + delivery));
+    set('total', money(Math.round((subtotal - discount + delivery) * 10) / 10));
+  }
+
+  /* preselect a payment option (default method) */
+  function setPayOption(pay) {
+    var card = $('.pay-card');
+    if (!card) return;
+    $$('.addr-option', card).forEach(function (o) {
+      var active = o.getAttribute('data-pay') === pay;
+      o.classList.toggle('active', active);
+      var input = $('input', o);
+      if (input) input.checked = active;
+    });
+    updateCartTotals();
+  }
+
+  function localDefaultPay() {
+    try { return localStorage.getItem('taza-default-pay') || 'upi'; } catch (e) { return 'upi'; }
   }
 
   /* ---------- bag (shared between home & cart) ---------- */
@@ -881,6 +967,7 @@
       opt.classList.add('active');
       var input = $('input', opt);
       if (input) input.checked = true;
+      if (opt.closest('.pay-card')) updateCartTotals();
     });
   });
 
@@ -1227,9 +1314,11 @@
       }).join('') || '<p class="oi-empty">—</p>';
 
       var fee = order.fee != null ? Number(order.fee) : Math.max(0, Number(order.amount) - sub);
+      var discount = Number(order.discount || 0);
       $('#sheetTotals').innerHTML =
         '<div class="s-row"><span>' + esc(t('subtotal')) + '</span><b>' + money(sub) + '</b></div>' +
         '<div class="s-row"><span>' + esc(t('delivery')) + '</span><b>' + money(fee) + '</b></div>' +
+        (discount > 0 ? '<div class="s-row"><span>' + esc(t('upi_discount')) + '</span><b>-' + money(discount) + '</b></div>' : '') +
         '<div class="s-divider"></div>' +
         '<div class="s-total"><span>' + esc(t('total')) + '</span><b>' + money(Number(order.amount)) + '</b></div>';
 
@@ -1269,6 +1358,7 @@
           payment: o.payment,
           address: o.address,
           fee: Number(o.delivery_fee || 0),
+          discount: Number(o.discount || 0),
           amount: Number(o.amount),
           cycle: o.cycle,
           items: o.items || []
@@ -1575,31 +1665,197 @@
     });
   }
 
-  /* ---------- account (live profile + logout) ---------- */
+  /* ---------- account: live profile, edit sheets, logout ---------- */
 
-  if ($('.profile-card') && window.TAZA) {
+  if ($('.profile-card')) {
+    var acctUser = null;
+    var acctBackdrop = $('#acctBackdrop');
+    var acctSheets = ['sheetProfile', 'sheetAddress', 'sheetPayment'].map(function (id) {
+      return document.getElementById(id);
+    }).filter(Boolean);
+
+    function closeAcctSheets() {
+      if (!acctSheets.length) return;
+      acctSheets.forEach(function (s) {
+        s.classList.remove('open');
+        clearTimeout(s._t);
+        s._t = setTimeout(function () { s.hidden = true; }, 240);
+      });
+      if (acctBackdrop) {
+        acctBackdrop.classList.remove('open');
+        clearTimeout(acctBackdrop._t);
+        acctBackdrop._t = setTimeout(function () { acctBackdrop.hidden = true; }, 240);
+      }
+    }
+
+    function openAcctSheet(id) {
+      var s = document.getElementById(id);
+      if (!s) return;
+      acctSheets.forEach(function (x) {
+        x.hidden = x !== s;
+        x.classList.remove('open');
+      });
+      if (acctBackdrop) acctBackdrop.hidden = false;
+      s.hidden = false;
+      requestAnimationFrame(function () {
+        s.classList.add('open');
+        if (acctBackdrop) acctBackdrop.classList.add('open');
+      });
+    }
+
+    if (acctBackdrop) acctBackdrop.addEventListener('click', closeAcctSheets);
+    $$('.acct-sheet-close').forEach(function (b) { b.addEventListener('click', closeAcctSheets); });
+
     var logoutLink = $('.menu-item.danger');
-    if (logoutLink) {
+    if (logoutLink && window.TAZA) {
       logoutLink.addEventListener('click', function () { window.TAZA.clearSession(); });
     }
 
-    window.TAZA.available().then(function (ok) {
-      if (!ok || !window.TAZA.token()) return;
+    function paintProfile(user) {
+      if (!user) return;
+      acctUser = user;
+      var nameEl = $('.pf-info h4');
+      var mailEl = $('.pf-info p');
+      if (nameEl) { nameEl.textContent = user.name; nameEl.removeAttribute('data-i18n'); }
+      if (mailEl) mailEl.textContent = user.email || '';
+    }
 
-      window.TAZA.me().then(function (res) {
-        var u = res.user;
-        if (!u) return;
-        var nameEl = $('.pf-info h4');
-        var mailEl = $('.pf-info p');
-        if (nameEl) { nameEl.textContent = u.name; nameEl.removeAttribute('data-i18n'); }
-        if (mailEl) mailEl.textContent = u.email || '';
-      }).catch(function () { /* noop */ });
+    if (window.TAZA) {
+      window.TAZA.available().then(function (ok) {
+        if (!ok || !window.TAZA.token()) return;
+        window.TAZA.me().then(function (res) { paintProfile(res.user); }).catch(function () { /* noop */ });
+        window.TAZA.myOrders().then(function (res) {
+          var stat = $('.stats .stat b');
+          if (stat && res.orders) stat.textContent = res.orders.length;
+        }).catch(function () { /* noop */ });
+      });
+    }
 
-      window.TAZA.myOrders().then(function (res) {
-        var stat = $('.stats .stat b');
-        if (stat && res.orders) stat.textContent = res.orders.length;
-      }).catch(function () { /* noop */ });
-    });
+    /* pencil -> edit profile (name + email; verification added later) */
+    var pencil = $('.pf-edit');
+    if (pencil) {
+      pencil.addEventListener('click', function () {
+        if ($('#pfName')) {
+          $('#pfName').value = (acctUser && acctUser.name) || ($('.pf-info h4') ? $('.pf-info h4').textContent.trim() : '');
+        }
+        if ($('#pfEmail')) {
+          $('#pfEmail').value = (acctUser && acctUser.email) || ($('.pf-info p') ? $('.pf-info p').textContent.trim() : '');
+        }
+        openAcctSheet('sheetProfile');
+      });
+    }
+
+    var pfSave = $('#pfSave');
+    if (pfSave) {
+      pfSave.addEventListener('click', function () {
+        var name = $('#pfName') ? $('#pfName').value.trim() : '';
+        var email = $('#pfEmail') ? $('#pfEmail').value.trim() : '';
+        if (!name || !email) { toast(t('err_required'), 2600); return; }
+        if (window.TAZA && window.TAZA.token()) {
+          window.TAZA.updateMe({ name: name, email: email }).then(function (res) {
+            paintProfile(res.user);
+            closeAcctSheets();
+            toast(t('profile_saved'));
+          }).catch(function (err) { toast((err && err.message) ? err.message : t('err_generic'), 3200); });
+          return;
+        }
+        paintProfile({ name: name, email: email });
+        closeAcctSheets();
+        toast(t('profile_saved'));
+      });
+    }
+
+    /* delivery address sheet (flat / floor / building / area / city / pin) */
+    var btnAddress = $('#btnAddress');
+    if (btnAddress) {
+      btnAddress.addEventListener('click', function () {
+        var u = acctUser || {};
+        if ($('#adFlat')) $('#adFlat').value = u.address_flat || '';
+        if ($('#adFloor')) $('#adFloor').value = u.address_floor || '';
+        if ($('#adBuilding')) $('#adBuilding').value = u.address_building || '';
+        if ($('#adArea')) $('#adArea').value = u.address_area || '';
+        if ($('#adCity')) $('#adCity').value = u.address_city || '';
+        if ($('#adPin')) $('#adPin').value = u.address_pin || '';
+        var cur = $('#curAddress');
+        if (cur) cur.textContent = u.address || '—';
+        openAcctSheet('sheetAddress');
+      });
+    }
+
+    var adSave = $('#adSave');
+    if (adSave) {
+      adSave.addEventListener('click', function () {
+        var payload = {
+          flat: $('#adFlat') ? $('#adFlat').value.trim() : '',
+          floor: $('#adFloor') ? $('#adFloor').value.trim() : '',
+          building: $('#adBuilding') ? $('#adBuilding').value.trim() : '',
+          area: $('#adArea') ? $('#adArea').value.trim() : '',
+          city: $('#adCity') ? $('#adCity').value.trim() : '',
+          pin: $('#adPin') ? $('#adPin').value.trim() : ''
+        };
+        if (window.TAZA && window.TAZA.token()) {
+          window.TAZA.updateMe(payload).then(function (res) {
+            if (res.user) acctUser = res.user;
+            closeAcctSheets();
+            toast(t('address_saved'));
+          }).catch(function (err) { toast((err && err.message) ? err.message : t('err_generic'), 3200); });
+          return;
+        }
+        var composed = [payload.flat, payload.floor, payload.building, payload.area,
+          [payload.city, payload.pin].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+        if (acctUser) acctUser.address = composed;
+        closeAcctSheets();
+        toast(t('address_saved'));
+      });
+    }
+
+    /* payment sheet: default method (UPI gets 3% off) */
+    var btnPayment = $('#btnPayment');
+    if (btnPayment) {
+      btnPayment.addEventListener('click', function () {
+        var def = (acctUser && acctUser.default_payment) || localDefaultPay();
+        var upi = $('#payUpi');
+        var cod = $('#payCod');
+        if (upi && cod) {
+          upi.classList.toggle('active', def !== 'cod');
+          cod.classList.toggle('active', def === 'cod');
+          var ui = $('input', upi);
+          var ci = $('input', cod);
+          if (ui) ui.checked = def !== 'cod';
+          if (ci) ci.checked = def === 'cod';
+        }
+        openAcctSheet('sheetPayment');
+      });
+    }
+
+    var paySave = $('#paySave');
+    if (paySave) {
+      paySave.addEventListener('click', function () {
+        var cod = $('#payCod');
+        var pay = cod && cod.classList.contains('active') ? 'cod' : 'upi';
+        try { localStorage.setItem('taza-default-pay', pay); } catch (e) { /* noop */ }
+        if (window.TAZA && window.TAZA.token()) {
+          window.TAZA.updateMe({ default_payment: pay }).then(function (res) {
+            if (res.user) acctUser = res.user;
+            closeAcctSheets();
+            toast(t('payment_saved'));
+          }).catch(function (err) { toast((err && err.message) ? err.message : t('err_generic'), 3200); });
+          return;
+        }
+        closeAcctSheets();
+        toast(t('payment_saved'));
+      });
+    }
+
+    /* preview helper: ?sheet=profile|address|payment opens that sheet */
+    var sheetParam = new URLSearchParams(location.search).get('sheet');
+    if (sheetParam) {
+      setTimeout(function () {
+        if (sheetParam === 'profile' && pencil) pencil.click();
+        else if (sheetParam === 'address' && btnAddress) btnAddress.click();
+        else if (sheetParam === 'payment' && btnPayment) btnPayment.click();
+      }, 300);
+    }
   }
 
   /* ---------- red unread badge on the Message tab (all pages) ---------- */
@@ -1634,17 +1890,22 @@
     });
   }
 
-  /* ---------- cart: single delivery address taken from the account ---------- */
+  /* ---------- cart: single address + default payment from the account ---------- */
 
-  if ($('#deliveryAddress') && window.TAZA) {
-    window.TAZA.available().then(function (ok) {
-      if (!ok || !window.TAZA.token()) return;
-      window.TAZA.me().then(function (res) {
-        if (res.user && res.user.address) {
-          $('#deliveryAddress').textContent = res.user.address;
-        }
-      }).catch(function () { /* keep the default address */ });
-    });
+  if ($('#deliveryAddress')) {
+    if (window.TAZA) {
+      window.TAZA.available().then(function (ok) {
+        if (!ok || !window.TAZA.token()) { setPayOption(localDefaultPay()); return; }
+        window.TAZA.me().then(function (res) {
+          if (res.user && res.user.address) {
+            $('#deliveryAddress').textContent = res.user.address;
+          }
+          setPayOption((res.user && res.user.default_payment) || localDefaultPay());
+        }).catch(function () { setPayOption(localDefaultPay()); });
+      });
+    } else {
+      setPayOption(localDefaultPay());
+    }
   }
 
   /* ---------- initial paint ---------- */

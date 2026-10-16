@@ -60,12 +60,15 @@ router.post('/', requireAuth, wrap(async (req, res) => {
     const [[settings]] = await conn.query('SELECT delivery_fee, cutoff_hour FROM settings WHERE id = 1');
     const fee = settings ? settings.delivery_fee : 3;
     const cutoff = settings ? settings.cutoff_hour : 22;
-    const total = subtotal + fee;
+
+    /* UPI orders get a 3% discount on the items subtotal */
+    const discount = payment === 'upi' ? Math.round(subtotal * 0.03 * 10) / 10 : 0;
+    const total = Math.round((subtotal - discount + fee) * 10) / 10;
 
     /* 2b. merge into an open order (pending/confirmed, not yet delivered) instead
        of creating a new one — per store rule, same-day items join the open order */
     const [[openOrder]] = await conn.query(
-      "SELECT id, delivery_fee, cycle, delivery_date, status FROM orders " +
+      "SELECT id, delivery_fee, payment, cycle, delivery_date, status FROM orders " +
       "WHERE user_id = ? AND status IN ('pending', 'confirmed') AND delivery_date >= CURDATE() " +
       'ORDER BY delivery_date ASC, placed_at ASC LIMIT 1 FOR UPDATE',
       [req.user.id]
@@ -90,8 +93,10 @@ router.post('/', requireAuth, wrap(async (req, res) => {
         'SELECT COALESCE(SUM(qty * rate), 0) AS sub FROM order_items WHERE order_id = ?',
         [openOrder.id]
       );
-      const newAmount = Number(totals.sub) + Number(openOrder.delivery_fee);
-      await conn.query('UPDATE orders SET amount = ? WHERE id = ?', [newAmount, openOrder.id]);
+      const newSub = Number(totals.sub);
+      const newDiscount = openOrder.payment === 'upi' ? Math.round(newSub * 0.03 * 10) / 10 : 0;
+      const newAmount = Math.round((newSub - newDiscount + Number(openOrder.delivery_fee)) * 10) / 10;
+      await conn.query('UPDATE orders SET amount = ?, discount = ? WHERE id = ?', [newAmount, newDiscount, openOrder.id]);
 
       await conn.commit();
       return res.status(200).json({
@@ -99,6 +104,7 @@ router.post('/', requireAuth, wrap(async (req, res) => {
         order: {
           id: openOrder.id,
           amount: newAmount,
+          discount: newDiscount,
           cycle: openOrder.cycle,
           deliveryDate: openOrder.delivery_date,
           status: openOrder.status,
@@ -130,9 +136,9 @@ router.post('/', requireAuth, wrap(async (req, res) => {
     /* 5. save the order + items */
     const [[user]] = await conn.query('SELECT name FROM users WHERE id = ?', [req.user.id]);
     await conn.query(
-      'INSERT INTO orders (id, user_id, customer_name, address, slot, payment, delivery_fee, amount, cycle, delivery_date) ' +
-      'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [orderId, req.user.id, user ? user.name : 'Customer', address.slice(0, 380), slot, payment, fee, total, cycle, deliveryDate]
+      'INSERT INTO orders (id, user_id, customer_name, address, slot, payment, delivery_fee, discount, amount, cycle, delivery_date) ' +
+      'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [orderId, req.user.id, user ? user.name : 'Customer', address.slice(0, 380), slot, payment, fee, discount, total, cycle, deliveryDate]
     );
     for (const l of lines) {
       await conn.query(
@@ -143,7 +149,7 @@ router.post('/', requireAuth, wrap(async (req, res) => {
 
     await conn.commit();
     res.status(201).json({
-      order: { id: orderId, amount: total, cycle: cycle, deliveryDate: deliveryDate, status: 'pending', items: lines }
+      order: { id: orderId, amount: total, discount: discount, cycle: cycle, deliveryDate: deliveryDate, status: 'pending', items: lines }
     });
   } catch (e) {
     await conn.rollback();
@@ -157,7 +163,7 @@ router.post('/', requireAuth, wrap(async (req, res) => {
 router.get('/', requireAuth, wrap(async (req, res) => {
   const params = [];
   let sql =
-    'SELECT o.id, o.user_id, o.customer_name, o.address, o.slot, o.payment, o.delivery_fee, ' +
+    'SELECT o.id, o.user_id, o.customer_name, o.address, o.slot, o.payment, o.delivery_fee, o.discount, ' +
     'o.amount, o.cycle, o.delivery_date, o.status, o.placed_at FROM orders o';
 
   const where = [];

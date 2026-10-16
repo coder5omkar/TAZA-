@@ -62,6 +62,9 @@ The templates are mobile-first, so everything renders full-bleed like a native a
 - **10 PM cutoff** — orders placed before `cutoff_hour` (22:00, in `settings`)
   get `cycle = 'tomorrow'` + delivery date = tomorrow; after the cutoff they get
   `cycle = 'day-after'` + delivery date = the day after tomorrow.
+- **UPI discount** — orders paid by UPI get **3% off the items subtotal**
+  (the delivery fee is not discounted). Saved in `orders.discount`; merging
+  new items recomputes it. COD orders keep `discount = 0`.
 - **Supplier list** — `GET /api/admin/procurement` aggregates item × qty × value
   for all live orders in the `tomorrow` cycle (the 10 PM handover list).
 - **Same-day confirm/reject** — `PATCH /api/orders/:id/status` with
@@ -74,8 +77,9 @@ The templates are mobile-first, so everything renders full-bleed like a native a
 | `POST /api/auth/login` | public | email + password → token + user (role decides panel) |
 | `POST /api/auth/register` | public | create a customer account |
 | `GET /api/auth/me` | auth | current user |
+| `PATCH /api/auth/me` | auth | edit own name / email / address parts / default payment |
 | `GET /api/products?cat=veg\|fruits` | public | catalogue |
-| `POST /api/orders` | customer | place order (items, slot, payment, address) |
+| `POST /api/orders` | customer | place order (items, slot, payment, address) — UPI gets a 3% discount |
 | `GET /api/orders?status=&cycle=` | auth | own orders (admin: all, filterable) |
 | `PATCH /api/orders/:id/status` | admin | confirm / reject / deliver |
 | `GET /api/chat/my`, `POST /api/chat/my` | customer | support chat |

@@ -83,6 +83,22 @@ const ADDRESSES = [
     console.log('~ order_items.qty -> DECIMAL(5,1) (0.5 kg steps)');
   }
 
+  /* v3: structured address + default payment + order discount */
+  const addCol = async function (table, col, ddl) {
+    if (!(await hasColumn(table, col))) {
+      await conn.query('ALTER TABLE ' + table + ' ADD COLUMN ' + ddl);
+      console.log('+ ' + table + '.' + col);
+    }
+  };
+  await addCol('users', 'address_flat', 'address_flat VARCHAR(30) DEFAULT NULL');
+  await addCol('users', 'address_floor', 'address_floor VARCHAR(30) DEFAULT NULL');
+  await addCol('users', 'address_building', 'address_building VARCHAR(120) DEFAULT NULL');
+  await addCol('users', 'address_area', 'address_area VARCHAR(120) DEFAULT NULL');
+  await addCol('users', 'address_city', 'address_city VARCHAR(60) DEFAULT NULL');
+  await addCol('users', 'address_pin', 'address_pin VARCHAR(10) DEFAULT NULL');
+  await addCol('users', 'default_payment', "default_payment ENUM('upi','cod') NOT NULL DEFAULT 'upi'");
+  await addCol('orders', 'discount', 'discount DECIMAL(6,1) NOT NULL DEFAULT 0');
+
   const [[amtCol]] = await conn.query(
     "SELECT DATA_TYPE t FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'orders' AND COLUMN_NAME = 'amount'"
   );

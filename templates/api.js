@@ -68,6 +68,7 @@
     login: function (email, password) { return request('POST', '/auth/login', { email: email, password: password }); },
     register: function (payload) { return request('POST', '/auth/register', payload); },
     me: function () { return request('GET', '/auth/me'); },
+    updateMe: function (payload) { return request('PATCH', '/auth/me', payload); },
 
     getProducts: function (cat) { return request('GET', '/products' + (cat ? '?cat=' + encodeURIComponent(cat) : '')); },
     placeOrder: function (payload) { return request('POST', '/orders', payload); },

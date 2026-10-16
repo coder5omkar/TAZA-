@@ -68,7 +68,8 @@ function check(name, ok, extra) {
   }, custToken);
   const o = order.data.order || {};
   check('place order → new TS id (not merged)', order.status === 201 && !order.data.merged && /^TS\d{6}$/.test(o.id || ''), o.id);
-  check('order amount = 2×₹2 + ₹2 + ₹3 fee = ₹9', Number(o.amount) === 9, '₹' + o.amount);
+  check('order amount = ₹9 items − ₹0.2 UPI discount + ₹3 fee = ₹8.8', Math.abs(Number(o.amount) - 8.8) < 0.011, '₹' + o.amount);
+  check('UPI discount recorded (3% of ₹6 = ₹0.2)', Math.abs(Number(o.discount || 0) - 0.2) < 0.011, '₹' + o.discount);
   check('cycle is tomorrow or day-after', o.cycle === 'tomorrow' || o.cycle === 'day-after', o.cycle + ' → ' + o.deliveryDate);
 
   /* 5. same-day second order MERGES into the open order (same id) */
@@ -80,7 +81,7 @@ function check(name, ok, extra) {
   }, custToken);
   const mo = mergeOrder.data.order || {};
   check('second order merges into open order (same id)', mergeOrder.status === 200 && mergeOrder.data.merged === true && mo.id === o.id, mo.id);
-  check('merged amount = ₹9 + 1×₹2 = ₹11', Number(mo.amount) === 11, '₹' + mo.amount);
+  check('merged amount = ₹11 items − ₹0.2 + ₹3 fee = ₹10.8', Math.abs(Number(mo.amount) - 10.8) < 0.011, '₹' + mo.amount);
 
   /* 5b. half-kg addition also merges (0.5 steps for KG items) */
   const halfOrder = await req('POST', '/api/orders', {
@@ -90,7 +91,7 @@ function check(name, ok, extra) {
     address: '12, Green Park Society, MG Road, Pune 411001'
   }, custToken);
   const ho = halfOrder.data.order || {};
-  check('0.5 kg addition merges (₹11 + 0.5×₹1 = ₹11.5)', halfOrder.data.merged === true && Number(ho.amount) === 11.5, '₹' + ho.amount);
+  check('0.5 kg addition merges (₹8.5 − ₹0.3 + ₹3 = ₹11.2)', halfOrder.data.merged === true && Math.abs(Number(ho.amount) - 11.2) < 0.011, '₹' + ho.amount);
 
   /* short-capacity guard: empty bag rejected */
   const emptyBag = await req('POST', '/api/orders', { items: [], slot: 'morning', payment: 'upi', address: 'x' }, custToken);

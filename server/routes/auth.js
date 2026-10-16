@@ -62,10 +62,77 @@ router.post('/register', wrap(async (req, res) => {
 /* GET /api/auth/me */
 router.get('/me', requireAuth, wrap(async (req, res) => {
   const [[user]] = await db.query(
-    'SELECT id, name, email, phone, address, role, status FROM users WHERE id = ?',
+    'SELECT id, name, email, phone, address, address_flat, address_floor, address_building, ' +
+    'address_area, address_city, address_pin, default_payment, role, status FROM users WHERE id = ?',
     [req.user.id]
   );
   if (!user) return res.status(404).json({ error: 'User not found' });
+  res.json({ user: user });
+}));
+
+/* PATCH /api/auth/me — edit own profile, address or default payment.
+   Email verification will be added later (currently saved immediately). */
+router.patch('/me', requireAuth, wrap(async (req, res) => {
+  const b = req.body || {};
+  const sets = [];
+  const params = [];
+
+  if (b.name) { sets.push('name = ?'); params.push(String(b.name).trim().slice(0, 80)); }
+  if (b.email) { sets.push('email = ?'); params.push(String(b.email).trim().toLowerCase().slice(0, 160)); }
+  if (b.default_payment === 'upi' || b.default_payment === 'cod') {
+    sets.push('default_payment = ?');
+    params.push(b.default_payment);
+  }
+
+  /* structured address parts -> compose the single display address */
+  const ADDR = [
+    ['flat', 'address_flat', 30],
+    ['floor', 'address_floor', 30],
+    ['building', 'address_building', 120],
+    ['area', 'address_area', 120],
+    ['city', 'address_city', 60],
+    ['pin', 'address_pin', 10]
+  ];
+  const addrProvided = ADDR.some(function (a) { return b[a[0]] !== undefined; });
+  if (addrProvided) {
+    const [[cur]] = await db.query(
+      'SELECT address_flat, address_floor, address_building, address_area, address_city, address_pin ' +
+      'FROM users WHERE id = ?',
+      [req.user.id]
+    );
+    const vals = {
+      address_flat: cur.address_flat, address_floor: cur.address_floor, address_building: cur.address_building,
+      address_area: cur.address_area, address_city: cur.address_city, address_pin: cur.address_pin
+    };
+    ADDR.forEach(function (a) {
+      if (b[a[0]] !== undefined) {
+        vals[a[1]] = b[a[0]] ? String(b[a[0]]).trim().slice(0, a[2]) : null;
+      }
+    });
+    Object.keys(vals).forEach(function (col) { sets.push(col + ' = ?'); params.push(vals[col]); });
+
+    const cityPin = [vals.address_city, vals.address_pin].filter(Boolean).join(' ');
+    const composed = [vals.address_flat, vals.address_floor, vals.address_building, vals.address_area, cityPin]
+      .filter(Boolean).join(', ');
+    sets.push('address = ?');
+    params.push(composed.slice(0, 380));
+  }
+
+  if (!sets.length) return res.status(400).json({ error: 'Nothing to update' });
+  params.push(req.user.id);
+
+  try {
+    await db.query('UPDATE users SET ' + sets.join(', ') + ' WHERE id = ?', params);
+  } catch (e) {
+    if (e.code === 'ER_DUP_ENTRY') return res.status(409).json({ error: 'This email is already registered' });
+    throw e;
+  }
+
+  const [[user]] = await db.query(
+    'SELECT id, name, email, phone, address, address_flat, address_floor, address_building, ' +
+    'address_area, address_city, address_pin, default_payment, role, status FROM users WHERE id = ?',
+    [req.user.id]
+  );
   res.json({ user: user });
 }));
 

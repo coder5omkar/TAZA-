@@ -6,6 +6,13 @@ CREATE TABLE IF NOT EXISTS users (
   email         VARCHAR(160) NOT NULL UNIQUE,
   phone         VARCHAR(30)  DEFAULT NULL,
   address       VARCHAR(400) DEFAULT NULL,
+  address_flat     VARCHAR(30)  DEFAULT NULL,
+  address_floor    VARCHAR(30)  DEFAULT NULL,
+  address_building VARCHAR(120) DEFAULT NULL,
+  address_area     VARCHAR(120) DEFAULT NULL,
+  address_city     VARCHAR(60)  DEFAULT NULL,
+  address_pin      VARCHAR(10)  DEFAULT NULL,
+  default_payment  ENUM('upi','cod') NOT NULL DEFAULT 'upi',
   password_hash VARCHAR(100) NOT NULL,
   role          ENUM('customer','admin','delivery') NOT NULL DEFAULT 'customer',
   status        ENUM('active','suspended')        NOT NULL DEFAULT 'active',
@@ -38,7 +45,8 @@ CREATE TABLE IF NOT EXISTS orders (
   slot          ENUM('morning','evening') NOT NULL,
   payment       ENUM('upi','cod') NOT NULL,
   delivery_fee  INT UNSIGNED NOT NULL DEFAULT 0,
-  amount        DECIMAL(8,1) NOT NULL,             -- items + delivery fee (allows 0.5 kg)
+  discount      DECIMAL(6,1) NOT NULL DEFAULT 0,   -- e.g. 3% UPI discount
+  amount        DECIMAL(8,1) NOT NULL,             -- items - discount + delivery fee
   cycle         ENUM('tomorrow','day-after') NOT NULL,
   delivery_date DATE NOT NULL,
   status        ENUM('pending','confirmed','on_way','delivered','rejected') NOT NULL DEFAULT 'pending',
