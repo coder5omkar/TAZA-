@@ -1970,6 +1970,11 @@
 
   /* ---------- initial paint ---------- */
 
+  /* ---------- PWA: service worker (needed for "Install app"); skipped on file:// ---------- */
+  if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+    navigator.serviceWorker.register('sw.js').catch(function () { /* app keeps working without install support */ });
+  }
+
   applyLanguage(currentLang);
   updateCartTotals();
   initBag();

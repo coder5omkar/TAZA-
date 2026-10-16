@@ -1368,6 +1368,11 @@
   function boot() {
     renderSidebar();
 
+    /* PWA: service worker (needed for "Install app") */
+    if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+      navigator.serviceWorker.register('sw.js').catch(function () { /* admin keeps working without install support */ });
+    }
+
     /* preview helper: ?order=TS… auto-expands that order row */
     var expandParam = null;
     try { expandParam = new URLSearchParams(location.search).get('order'); } catch (e) { /* noop */ }
