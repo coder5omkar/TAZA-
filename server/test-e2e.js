@@ -143,6 +143,17 @@ function check(name, ok, extra) {
   const adminPage = await fetch(BASE + '/admin/index.html');
   check('admin page served', adminPage.status === 200);
 
+  /* 11. status can be changed at any stage — even after delivered */
+  const toDelivered = await req('PATCH', '/api/orders/' + o.id + '/status', { status: 'delivered' }, adminToken);
+  const toOnWay = await req('PATCH', '/api/orders/' + o.id + '/status', { status: 'on_way' }, adminToken);
+  const toPending = await req('PATCH', '/api/orders/' + o.id + '/status', { status: 'pending' }, adminToken);
+  const backDelivered = await req('PATCH', '/api/orders/' + o.id + '/status', { status: 'delivered' }, adminToken);
+  check(
+    'status changes at any stage (delivered → on_way → pending → delivered)',
+    toDelivered.data.status === 'delivered' && toOnWay.data.status === 'on_way' &&
+      toPending.data.status === 'pending' && backDelivered.status === 200
+  );
+
   /* summary */
   console.log('');
   console.log(results.join('\n'));

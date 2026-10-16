@@ -137,15 +137,15 @@
       { id: 'USR-1008', rawId: null, name: 'Rahul Singh', email: 'rahul@deliver.in', phone: '+91 98200 11008', address: '3, Workers Colony, Hadapsar, Pune 411028', role: 'delivery', password: 'rahul@135', status: 'active', joined: '14 Jul 2025' }
     ],
     orders: [
-      { id: 'TS261016', customer: 'Ravi Kumar', items: [{ name: 'Tomato', qty: 1 }, { name: 'Coriander', qty: 1 }], amount: 6, slot: 'Morning 8–10 AM', payment: 'UPI', placed: '15 Oct, 10:12 PM', delivery: '17 Oct', cycle: 'day-after', status: 'Pending' },
-      { id: 'TS261015', customer: 'Amit Patel', items: [{ name: 'Tomato', qty: 2 }, { name: 'Potato', qty: 1 }], amount: 8, slot: 'Morning 8–10 AM', payment: 'COD', placed: '15 Oct, 8:42 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Pending' },
-      { id: 'TS261014', customer: 'Priya Sharma', items: [{ name: 'Spinach', qty: 2 }, { name: 'Carrot', qty: 1 }, { name: 'Apple', qty: 1 }, { name: 'Grapes', qty: 1 }, { name: 'Orange', qty: 1 }], amount: 18, slot: 'Evening 7–10 PM', payment: 'UPI', placed: '15 Oct, 8:10 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Pending' },
-      { id: 'TS261013', customer: 'Ravi Kumar', items: [{ name: 'Onion', qty: 1 }, { name: 'Capsicum', qty: 1 }, { name: 'Coriander', qty: 1 }], amount: 9, slot: 'Morning 8–10 AM', payment: 'UPI', placed: '15 Oct, 7:05 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Confirmed' },
-      { id: 'TS261012', customer: 'Neha Gupta', items: [{ name: 'Tomato', qty: 1 }, { name: 'Brinjal', qty: 1 }, { name: 'Mango', qty: 1 }, { name: 'Banana', qty: 1 }, { name: 'Cherry', qty: 1 }, { name: 'Melon', qty: 1 }], amount: 18, slot: 'Evening 7–10 PM', payment: 'UPI', placed: '15 Oct, 6:30 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Confirmed' },
-      { id: 'TS261011', customer: 'Hannah', items: [{ name: 'Spinach', qty: 1 }, { name: 'Apple', qty: 1 }], amount: 8, slot: 'Morning 8–10 AM', payment: 'COD', placed: '15 Oct, 5:12 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'On the way' },
-      { id: 'TS261010', customer: 'Hannah', items: [{ name: 'Grapes', qty: 1 }, { name: 'Kiwi', qty: 2 }], amount: 8, slot: 'Morning 8–10 AM', payment: 'UPI', placed: '15 Oct, 9:15 AM', delivery: '—', cycle: 'tomorrow', status: 'Rejected' },
-      { id: 'TS261003', customer: 'Hannah', items: [{ name: 'Potato', qty: 1 }, { name: 'Spinach', qty: 1 }, { name: 'Lettuce', qty: 1 }], amount: 9, slot: 'Morning 8–10 AM', payment: 'UPI', placed: '14 Oct, 7:40 PM', delivery: '15 Oct', cycle: 'tomorrow', status: 'Delivered' },
-      { id: 'TS261002', customer: 'Hannah', items: [{ name: 'Apple', qty: 1 }, { name: 'Carrot', qty: 1 }], amount: 7, slot: 'Evening 7–10 PM', payment: 'COD', placed: '14 Oct, 6:05 PM', delivery: '15 Oct', cycle: 'tomorrow', status: 'Delivered' }
+      { id: 'TS261016', customer: 'Ravi Kumar', address: 'Flat 302, Sai Residency, Baner, Pune 411045', items: [{ name: 'Tomato', qty: 1, unit: 'kg' }, { name: 'Coriander', qty: 1, unit: 'bunch' }], amount: 6, slot: 'Morning 8–10 AM', payment: 'UPI', placed: '15 Oct, 10:12 PM', delivery: '17 Oct', cycle: 'day-after', status: 'Pending' },
+      { id: 'TS261015', customer: 'Amit Patel', address: '21, Shanti Nagar, Wakad, Pune 411057', items: [{ name: 'Tomato', qty: 2, unit: 'kg' }, { name: 'Potato', qty: 1, unit: 'kg' }], amount: 8, slot: 'Morning 8–10 AM', payment: 'COD', placed: '15 Oct, 8:42 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Pending' },
+      { id: 'TS261014', customer: 'Priya Sharma', address: '7, Rose Villa, Kothrud, Pune 411038', items: [{ name: 'Spinach', qty: 2, unit: 'bunch' }, { name: 'Carrot', qty: 1, unit: 'kg' }, { name: 'Apple', qty: 1, unit: 'pack' }, { name: 'Grapes', qty: 1, unit: 'kg' }, { name: 'Orange', qty: 1, unit: 'dozen' }], amount: 18, slot: 'Evening 7–10 PM', payment: 'UPI', placed: '15 Oct, 8:10 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Pending' },
+      { id: 'TS261013', customer: 'Ravi Kumar', address: 'Flat 302, Sai Residency, Baner, Pune 411045', items: [{ name: 'Onion', qty: 1, unit: 'kg' }, { name: 'Capsicum', qty: 1, unit: 'kg' }, { name: 'Coriander', qty: 1, unit: 'bunch' }], amount: 9, slot: 'Morning 8–10 AM', payment: 'UPI', placed: '15 Oct, 7:05 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Confirmed' },
+      { id: 'TS261012', customer: 'Neha Gupta', address: '88, Green Meadows, Hinjewadi, Pune 411057', items: [{ name: 'Tomato', qty: 1, unit: 'kg' }, { name: 'Brinjal', qty: 1, unit: 'kg' }, { name: 'Mango', qty: 1, unit: 'kg' }, { name: 'Banana', qty: 1, unit: 'dozen' }, { name: 'Cherry', qty: 1, unit: 'pack' }, { name: 'Melon', qty: 1, unit: 'piece' }], amount: 18, slot: 'Evening 7–10 PM', payment: 'UPI', placed: '15 Oct, 6:30 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'Confirmed' },
+      { id: 'TS261011', customer: 'Hannah', address: '12, Green Park Society, MG Road, Pune 411001', items: [{ name: 'Spinach', qty: 1, unit: 'bunch' }, { name: 'Apple', qty: 1, unit: 'pack' }], amount: 8, slot: 'Morning 8–10 AM', payment: 'COD', placed: '15 Oct, 5:12 PM', delivery: '16 Oct', cycle: 'tomorrow', status: 'On the way' },
+      { id: 'TS261010', customer: 'Hannah', address: '12, Green Park Society, MG Road, Pune 411001', items: [{ name: 'Grapes', qty: 1, unit: 'kg' }, { name: 'Kiwi', qty: 2, unit: 'piece' }], amount: 8, slot: 'Morning 8–10 AM', payment: 'UPI', placed: '15 Oct, 9:15 AM', delivery: '—', cycle: 'tomorrow', status: 'Rejected' },
+      { id: 'TS261003', customer: 'Hannah', address: '12, Green Park Society, MG Road, Pune 411001', items: [{ name: 'Potato', qty: 1, unit: 'kg' }, { name: 'Spinach', qty: 1, unit: 'bunch' }, { name: 'Lettuce', qty: 1, unit: 'bunch' }], amount: 9, slot: 'Morning 8–10 AM', payment: 'UPI', placed: '14 Oct, 7:40 PM', delivery: '15 Oct', cycle: 'tomorrow', status: 'Delivered' },
+      { id: 'TS261002', customer: 'Hannah', address: '12, Green Park Society, MG Road, Pune 411001', items: [{ name: 'Apple', qty: 1, unit: 'pack' }, { name: 'Carrot', qty: 1, unit: 'kg' }], amount: 7, slot: 'Evening 7–10 PM', payment: 'COD', placed: '14 Oct, 6:05 PM', delivery: '15 Oct', cycle: 'tomorrow', status: 'Delivered' }
     ],
     products: [
       { name: 'Potato', emoji: '🥔', cat: 'veg', unit: 'kg', rate: 1, section: 'kg' },
@@ -276,22 +276,99 @@
       delivery: o.status === 'rejected' ? '—' : fmtDay(o.delivery_date),
       deliveryDate: o.delivery_date,
       cycle: o.cycle,
-      status: o.status === 'on_way' ? 'On the way' : o.status.charAt(0).toUpperCase() + o.status.slice(1)
+      status: o.status === 'on_way' ? 'On the way' : o.status.charAt(0).toUpperCase() + o.status.slice(1),
+      address: o.address || '',
+      fee: o.delivery_fee != null ? Number(o.delivery_fee) : null,
+      discount: Number(o.discount || 0)
     };
   }
 
   /* ---------------- orders ---------------- */
 
   var orderFilter = 'All';
+  var ORDER_STATUSES = ['Pending', 'Confirmed', 'On the way', 'Delivered', 'Rejected'];
+  var ORDER_STATUS_API = { 'Pending': 'pending', 'Confirmed': 'confirmed', 'On the way': 'on_way', 'Delivered': 'delivered', 'Rejected': 'rejected' };
+  var expandedOrders = {};
+
+  /* "1.5 kg", "2 bunch", "200 g" — same units the customer ordered */
+  function itemQtyText(it) {
+    var unit = it && it.unit != null ? String(it.unit) : '';
+    var qty = Number(it && it.qty) || 0;
+    if (unit === '100 g') return fmtQty(qty * 100) + ' g';
+    if (!unit) return fmtQty(qty);
+    return fmtQty(qty) + ' ' + unit;
+  }
 
   function orderActions(o) {
-    if (o.status === 'Delivered' || o.status === 'Rejected') return '<span class="muted">—</span>';
     var html = '';
+    var open = !!expandedOrders[o.id];
     if (o.status === 'Pending') {
       html += '<button class="btn success small" data-act="confirm" data-id="' + esc(o.id) + '">Confirm</button>';
+      html += '<button class="btn danger small" data-act="reject" data-id="' + esc(o.id) + '">Reject</button>';
+    } else if (o.status === 'Confirmed') {
+      html += '<button class="btn ghost small" data-act="set-status" data-id="' + esc(o.id) + '" data-status="On the way">On the way</button>';
+      html += '<button class="btn success small" data-act="set-status" data-id="' + esc(o.id) + '" data-status="Delivered">Delivered</button>';
+    } else if (o.status === 'On the way') {
+      html += '<button class="btn success small" data-act="set-status" data-id="' + esc(o.id) + '" data-status="Delivered">Delivered</button>';
+    } else {
+      /* delivered / rejected — reopen or switch to any status from the expanded panel */
+      html += '<button class="btn ghost small" data-act="set-status" data-id="' + esc(o.id) + '" data-status="Pending">Reopen</button>';
     }
-    html += '<button class="btn danger small" data-act="reject" data-id="' + esc(o.id) + '">Reject</button>';
+    html += '<button class="btn ghost small" data-act="expand" data-id="' + esc(o.id) + '">' + (open ? 'Hide items' : 'Items') + '</button>';
     return html;
+  }
+
+  function orderDetailRow(o) {
+    var items = o.items || [];
+
+    /* items to pack: name, ordered quantity + unit, rate, line amount */
+    var lines = items.map(function (it) {
+      var hasRate = it.rate != null;
+      var amount = hasRate ? Number(it.rate) * Number(it.qty) : null;
+      return '<div class="od-line">' +
+        '<b>' + esc(it.name) + '</b>' +
+        '<span class="od-qty">×' + itemQtyText(it) + '</span>' +
+        (hasRate ? '<span class="od-rate">' + money(Number(it.rate)) + ' /' + esc(String(it.unit || 'unit')) + '</span>' : '') +
+        (amount != null ? '<em>' + money(amount) + '</em>' : '') +
+        '</div>';
+    }).join('') || '<p class="muted">No line items</p>';
+
+    var hasRates = items.some(function (it) { return it.rate != null; });
+    var totals = '';
+    if (hasRates) {
+      var sub = items.reduce(function (s, it) { return s + Number(it.rate || 0) * Number(it.qty || 0); }, 0);
+      var fee = o.fee != null ? o.fee : 0;
+      totals += '<div class="od-total"><span>Subtotal</span><b>' + money(sub) + '</b></div>';
+      totals += '<div class="od-total"><span>Delivery</span><b>' + money(fee) + '</b></div>';
+      if (o.discount > 0) totals += '<div class="od-total"><span>UPI discount (3%)</span><b>−' + money(o.discount) + '</b></div>';
+    }
+    totals += '<div class="od-total grand"><span>' + (hasRates ? 'Total' : 'Order total') + '</span><b>' + money(o.amount) + '</b></div>';
+
+    var statusBtns = ORDER_STATUSES.map(function (s) {
+      return '<button class="status-btn' + (s === o.status ? ' active' : '') + '"' +
+        ' data-act="set-status" data-id="' + esc(o.id) + '" data-status="' + s + '">' + s + '</button>';
+    }).join('');
+
+    return '<tr class="order-detail-row"><td colspan="7">' +
+      '<div class="od-grid">' +
+      '<div class="od-items">' +
+      '<h4>Items to pack <span>' + items.length + '</span></h4>' + lines +
+      '<div class="od-totals">' + totals + '</div>' +
+      '</div>' +
+      '<div class="od-side">' +
+      '<h4>Order details</h4>' +
+      '<div class="od-meta">' +
+      '<div class="kv"><span>Customer</span><b>' + esc(o.customer) + '</b></div>' +
+      '<div class="kv"><span>Payment</span><b>' + (o.payment === 'COD' ? 'COD · pay on delivery' : 'UPI · paid online') + '</b></div>' +
+      '<div class="kv"><span>Placed</span><b>' + esc(o.placed) + '</b></div>' +
+      '<div class="kv"><span>Delivery</span><b>' + esc(o.delivery) + '</b></div>' +
+      '<div class="kv"><span>Address</span><b>' + esc(o.address || '—') + '</b></div>' +
+      '</div>' +
+      '<h4>Change status</h4>' +
+      '<div class="od-status">' + statusBtns + '</div>' +
+      '<p class="od-note">Move the order to any status at any time — even after delivery, e.g. to correct a mistaken update.</p>' +
+      '</div>' +
+      '</div></td></tr>';
   }
 
   function renderOrders() {
@@ -299,8 +376,9 @@
     if (!tbody) return;
     var list = state.orders.filter(function (o) { return orderFilter === 'All' || o.status === orderFilter; });
     tbody.innerHTML = list.map(function (o) {
-      return '<tr>' +
-        '<td><b>' + esc(o.id) + '</b><span class="sub">placed ' + esc(o.placed) + '</span></td>' +
+      var open = !!expandedOrders[o.id];
+      var row = '<tr class="order-row' + (open ? ' open' : '') + '" data-order-row="' + esc(o.id) + '">' +
+        '<td><span class="row-chev" aria-hidden="true">›</span><b>' + esc(o.id) + '</b><span class="sub">placed ' + esc(o.placed) + '</span></td>' +
         '<td>' + esc(o.customer) + '<span class="sub">' + o.items.length + ' items</span></td>' +
         '<td class="amount">' + money(o.amount) + '</td>' +
         '<td>' + esc(o.slot) + '<span class="sub">' + esc(o.payment) + '</span></td>' +
@@ -309,6 +387,7 @@
         '<td>' + statusPill(o.status) + '</td>' +
         '<td class="actions-cell">' + orderActions(o) + '</td>' +
         '</tr>';
+      return row + (open ? orderDetailRow(o) : '');
     }).join('') || '<tr><td colspan="7" class="muted" style="padding:22px 18px">No orders in this filter.</td></tr>';
 
     var countEl = $('#ordersCount');
@@ -332,7 +411,7 @@
       toast(msg);
       return;
     }
-    window.TAZA.orderStatus(id, status.toLowerCase().replace(' ', '_')).then(function () {
+    window.TAZA.orderStatus(id, ORDER_STATUS_API[status] || String(status).toLowerCase()).then(function () {
       toast(msg);
       loadOrders();
       loadDashboard();
@@ -855,6 +934,15 @@
     var convEl = e.target.closest('.conv');
     if (convEl) { openConversation(convEl.getAttribute('data-conv')); return; }
 
+    /* tap an order row to expand its items-to-pack + status controls */
+    var orderRow = e.target.closest('[data-order-row]');
+    if (orderRow && !e.target.closest('button, a, select, input, label')) {
+      var oidRow = orderRow.getAttribute('data-order-row');
+      expandedOrders[oidRow] = !expandedOrders[oidRow];
+      renderOrders();
+      return;
+    }
+
     var btn = e.target.closest('[data-act]');
     if (!btn) return;
     var act = btn.getAttribute('data-act');
@@ -862,6 +950,12 @@
 
     if (act === 'confirm') { setOrderStatus(id, 'Confirmed', 'Order ' + id + ' confirmed — collect from supplier tonight'); return; }
     if (act === 'reject') { setOrderStatus(id, 'Rejected', 'Order ' + id + ' rejected — customer notified'); return; }
+    if (act === 'expand') { expandedOrders[id] = !expandedOrders[id]; renderOrders(); return; }
+    if (act === 'set-status') {
+      var newStatus = btn.getAttribute('data-status');
+      setOrderStatus(id, newStatus, 'Order ' + id + ' → ' + newStatus + (newStatus === 'Delivered' || newStatus === 'Rejected' ? '' : ' — customer will be informed'));
+      return;
+    }
 
     if (act === 'edit-user') { editingUserId = id; renderUsers(); return; }
     if (act === 'edit-user-cancel') { editingUserId = null; renderUsers(); return; }
@@ -1124,6 +1218,11 @@
 
   function boot() {
     renderSidebar();
+
+    /* preview helper: ?order=TS… auto-expands that order row */
+    var expandParam = null;
+    try { expandParam = new URLSearchParams(location.search).get('order'); } catch (e) { /* noop */ }
+    if (expandParam) expandedOrders[expandParam] = true;
 
     /* bind the forms once — they work in both demo and live mode */
     setupChatForm();

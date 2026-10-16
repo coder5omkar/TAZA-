@@ -81,7 +81,7 @@ The templates are mobile-first, so everything renders full-bleed like a native a
 | `GET /api/products?cat=veg\|fruits` | public | catalogue |
 | `POST /api/orders` | customer | place order (items, slot, payment, address) — UPI gets a 3% discount |
 | `GET /api/orders?status=&cycle=` | auth | own orders (admin: all, filterable) |
-| `PATCH /api/orders/:id/status` | admin | confirm / reject / deliver |
+| `PATCH /api/orders/:id/status` | admin | set any status at any stage — confirm / on the way / deliver / reject / reopen (even after delivered) |
 | `GET /api/chat/my`, `POST /api/chat/my` | customer | support chat |
 | `GET /api/chat/conversations` | admin | inbox list with unread counts |
 | `GET/POST /api/chat/conversations/:id` | admin | read thread / reply |
