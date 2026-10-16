@@ -724,18 +724,26 @@ input[type='search']::-webkit-search-cancel-button { display: none; }
 .status.way { background: #fff4e0; color: #c07c00; }
 .status.cancel { background: #fdeaea; color: #d64545; }
 
-.order-thumbs { display: flex; align-items: center; gap: 8px; margin: 12px 0; }
-
-.o-thumb {
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
-  background: linear-gradient(180deg, #f5f2fc, #eee9f9);
-  display: grid;
-  place-items: center;
-  font-size: 24px;
-  font-family: var(--emoji-font);
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 0;
+  padding: 10px 0;
+  border-top: 1px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
 }
+.oi-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+}
+.oi-name { color: #4d4a5e; }
+.oi-name span { font-weight: 600; color: var(--ink); }
+.oi-amt { font-weight: 700; color: var(--green-strong); white-space: nowrap; }
+.oi-more .oi-name { color: var(--muted); }
 
 .order-foot {
   display: flex;

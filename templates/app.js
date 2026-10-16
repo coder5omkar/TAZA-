@@ -963,9 +963,21 @@
 
     function orderCard(o) {
       var st = STATUS_VIEW[o.status] || STATUS_VIEW.pending;
-      var thumbs = (o.items || []).slice(0, 3).map(function (it) {
-        return '<span class="o-thumb">' + (it.emoji || '🧺') + '</span>';
+      var items = o.items || [];
+      var MAX = 6;
+
+      var lines = items.slice(0, MAX).map(function (it) {
+        var key = nameKeyFor(it.name);
+        var nameHtml = key
+          ? '<span data-i18n="' + key + '">' + esc(it.name) + '</span>'
+          : '<span>' + esc(it.name) + '</span>';
+        return '<div class="oi-line"><span class="oi-name">' + nameHtml + ' ×' + fmtQty(it.qty) + '</span>' +
+          '<span class="oi-amt">' + money(Number(it.rate) * Number(it.qty)) + '</span></div>';
       }).join('');
+      if (items.length > MAX) {
+        lines += '<div class="oi-line oi-more"><span class="oi-name">+' + (items.length - MAX) + ' ' + t('items_word') + '</span></div>';
+      }
+
       return '<article class="order-card" data-id="' + o.id + '">' +
         '<div class="order-head">' +
         '<div>' +
@@ -974,9 +986,9 @@
         '</div>' +
         '<span class="status ' + st.cls + '" data-i18n="' + st.key + '">' + t(st.key) + '</span>' +
         '</div>' +
-        '<div class="order-thumbs" aria-hidden="true">' + thumbs + '</div>' +
+        '<div class="order-items">' + lines + '</div>' +
         '<div class="order-foot">' +
-        '<p class="o-total">₹' + o.amount + '</p>' +
+        '<p class="o-total">₹' + fmtQty(o.amount) + '</p>' +
         '<button class="reorder" data-reorder="' + o.id + '">' + REORDER_SVG + '<span data-i18n="reorder">' + t('reorder') + '</span></button>' +
         '</div>' +
         '</article>';
