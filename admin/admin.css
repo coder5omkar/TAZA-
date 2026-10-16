@@ -434,6 +434,9 @@ select.input { cursor: pointer; }
 .p-emoji { font-family: var(--emoji); margin-right: 8px; }
 .muted { color: var(--muted); font-size: 12px; }
 
+/* installed-app mode: keep content clear of the phone's system bars */
+body { padding-bottom: env(safe-area-inset-bottom); }
+
 /* settings */
 .settings-card { max-width: 680px; }
 .settings-form { display: flex; flex-direction: column; gap: 15px; padding: 18px; }
