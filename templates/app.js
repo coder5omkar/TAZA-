@@ -194,6 +194,8 @@
       items_3: '3 Items',
       items_4: '4 Items',
       reorder: 'Reorder',
+      cancel_order: 'Cancel order',
+      order_cancelled: 'Order cancelled ✓',
       chat_contact: 'Store Support',
       chat_online: 'Online',
       chat_notice: 'Response may be delayed',
@@ -383,6 +385,8 @@
       items_3: '3 आइटम',
       items_4: '4 आइटम',
       reorder: 'फिर से ऑर्डर करें',
+      cancel_order: 'ऑर्डर रद्द करें',
+      order_cancelled: 'ऑर्डर रद्द हो गया ✓',
       chat_contact: 'स्टोर सहायता',
       chat_online: 'ऑनलाइन',
       chat_notice: 'जवाब में देरी हो सकती है',
@@ -572,6 +576,8 @@
       items_3: '3 वस्तू',
       items_4: '4 वस्तू',
       reorder: 'पुन्हा ऑर्डर करा',
+      cancel_order: 'ऑर्डर रद्द करा',
+      order_cancelled: 'ऑर्डर रद्द झाली ✓',
       chat_contact: 'स्टोअर सपोर्ट',
       chat_online: 'ऑनलाइन',
       chat_notice: 'उत्तरास उशीर होऊ शकतो',
@@ -1209,10 +1215,11 @@
       confirmed: { cls: 'conf',   key: 'status_confirmed' },
       on_way:    { cls: 'conf',   key: 'status_ongoing' },
       delivered: { cls: 'ok',     key: 'status_delivered' },
-      rejected:  { cls: 'cancel', key: 'status_rejected' }
+      rejected:  { cls: 'cancel', key: 'status_cancelled' }
     };
     var UNIT_KEYS = { kg: 'unit_kg', bunch: 'unit_bunch', pack: 'unit_pack', piece: 'unit_piece', dozen: 'unit_dozen' };
     var REORDER_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6" /><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" /></svg>';
+    var CANCEL_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>';
 
     function fmtDate(str) {
       var d = new Date(String(str || '').replace(' ', 'T'));
@@ -1237,6 +1244,14 @@
         lines += '<div class="oi-line oi-more"><span class="oi-name">+' + (items.length - MAX) + ' ' + t('items_word') + '</span></div>';
       }
 
+      /* action: Reorder only after delivery; small Cancel icon while still pending */
+      var actionHtml = '';
+      if (o.status === 'delivered') {
+        actionHtml = '<button class="reorder" data-reorder="' + o.id + '">' + REORDER_SVG + '<span data-i18n="reorder">' + t('reorder') + '</span></button>';
+      } else if (o.status === 'pending') {
+        actionHtml = '<button class="cancel-order" data-cancel="' + o.id + '" aria-label="' + esc(t('cancel_order')) + '" title="' + esc(t('cancel_order')) + '">' + CANCEL_SVG + '</button>';
+      }
+
       return '<article class="order-card" data-id="' + o.id + '">' +
         '<div class="order-head">' +
         '<div>' +
@@ -1248,7 +1263,7 @@
         '<div class="order-items">' + lines + '</div>' +
         '<div class="order-foot">' +
         '<div class="of-left"><p class="o-total">₹' + fmtQty(o.amount) + '</p>' + payChipHtml(o) + '</div>' +
-        '<button class="reorder" data-reorder="' + o.id + '">' + REORDER_SVG + '<span data-i18n="reorder">' + t('reorder') + '</span></button>' +
+        actionHtml +
         '</div>' +
         '</article>';
     }
@@ -1325,7 +1340,7 @@
       confirmed: { cls: 'conf', key: 'status_confirmed' },
       on_way: { cls: 'conf', key: 'status_ongoing' },
       delivered: { cls: 'ok', key: 'status_delivered' },
-      rejected: { cls: 'cancel', key: 'status_rejected' }
+      rejected: { cls: 'cancel', key: 'status_cancelled' }
     };
 
     function closeOrderSheet() {
@@ -1398,7 +1413,7 @@
 
       var reorderBtn = $('#sheetReorder');
       if (reorderBtn) {
-        var canReorder = !!liveOrders[order.id];
+        var canReorder = !!liveOrders[order.id] && liveOrders[order.id].status === 'delivered';
         reorderBtn.hidden = !canReorder;
         if (canReorder) reorderBtn.setAttribute('data-reorder', order.id);
       }
@@ -1493,6 +1508,57 @@
           toast(t('toast_reorder'), 2200);
         }
       }).catch(function () { /* noop */ });
+    });
+
+    /* cancel: small ✕ button on pending orders — two taps to confirm */
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-cancel]');
+      if (!btn) return;
+      var id = btn.getAttribute('data-cancel');
+
+      if (btn.getAttribute('data-confirm') !== '1') {
+        btn.setAttribute('data-confirm', '1');
+        btn.classList.add('confirming');
+        toast(t('tap_confirm'), 2200);
+        clearTimeout(btn._t);
+        btn._t = setTimeout(function () {
+          btn.removeAttribute('data-confirm');
+          btn.classList.remove('confirming');
+        }, 2600);
+        return;
+      }
+      clearTimeout(btn._t);
+
+      if (historyLive && window.TAZA && window.TAZA.token()) {
+        window.TAZA.cancelOrder(id).then(function () {
+          if (liveOrders[id]) liveOrders[id].status = 'rejected';
+          liveOrderArr.forEach(function (x) { if (x.id === id) x.status = 'rejected'; });
+          applyHistoryFilter(historyFilter);
+          toast(t('order_cancelled'));
+        }).catch(function (err) {
+          toast((err && err.message) ? err.message : t('err_generic'), 3000);
+        });
+        return;
+      }
+
+      /* demo card: mark it as cancelled locally */
+      var card = btn.closest('.order-card');
+      if (card) {
+        card.setAttribute('data-status', 'rejected');
+        var pill = $('.status', card);
+        if (pill) {
+          pill.className = 'status cancel';
+          pill.setAttribute('data-i18n', 'status_cancelled');
+          pill.textContent = t('status_cancelled');
+        }
+        try {
+          var jo = JSON.parse(card.getAttribute('data-order') || '{}');
+          jo.status = 'rejected';
+          card.setAttribute('data-order', JSON.stringify(jo));
+        } catch (err2) { /* ignore */ }
+        applyHistoryFilter(historyFilter);
+        toast(t('order_cancelled'));
+      }
     });
   }
 

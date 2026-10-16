@@ -77,6 +77,15 @@ function check(name, ok, extra) {
   const disc1 = Math.round(sub1 * 0.03 * 10) / 10;
   const amt1 = Math.round((sub1 - disc1 + 3) * 10) / 10;
 
+  /* procurement baseline for itemA — real customers' orders also contain
+     common items, so the cycle-rule check compares before/after quantities */
+  const procBaseline = await req('GET', '/api/admin/procurement', null, adminToken);
+  const procQtyOf = function (res, name) {
+    const row = (res.data.rows || []).find(function (r) { return r.name === name; });
+    return row ? Number(row.qty) : 0;
+  };
+  const beforeQtyA = procQtyOf(procBaseline, itemA.name);
+
   const order = await req('POST', '/api/orders', {
     items: [{ productId: itemA.id, qty: 2 }, { productId: itemB.id, qty: 1 }],
     slot: 'morning',
@@ -139,12 +148,12 @@ function check(name, ok, extra) {
         before-cutoff orders (cycle=tomorrow) must appear; after-cutoff
         orders (cycle=day-after) must NOT be in tonight's list */
   const proc = await req('GET', '/api/admin/procurement', null, adminToken);
-  const procRow = (proc.data.rows || []).find(function (r) { return r.name === itemA.name; });
-  const expectInProc = o.cycle === 'tomorrow';
+  const deltaA = Math.round((procQtyOf(proc, itemA.name) - beforeQtyA) * 10) / 10;
+  const expectedDelta = o.cycle === 'tomorrow' ? 3 : 0;   /* merged qty of itemA in our order */
   check(
     'procurement follows cycle rule (' + o.cycle + ')',
-    proc.status === 200 && (expectInProc ? (procRow && Number(procRow.qty) >= 2) : !procRow),
-    expectInProc ? (procRow ? 'qty ' + procRow.qty + ' of ' + itemA.name : 'missing from list') : 'correctly excluded (after 10 PM → next cycle)'
+    proc.status === 200 && Math.abs(deltaA - expectedDelta) < 0.011,
+    'Δ' + itemA.name + ' ' + deltaA + ' (expected ' + expectedDelta + ')'
   );
 
   /* 8. chat round-trip */
@@ -200,6 +209,23 @@ function check(name, ok, extra) {
   const pubOn = await req('GET', '/api/products');
   const backVisible = (pubOn.data.products || []).some(function (p) { return p.id === anyProd.id; });
   check('disable hides a product from the shop; enable brings it back', wasVisible && disableRes.status === 200 && nowHidden && enableRes.status === 200 && backVisible, anyProd.name);
+
+  /* 14. customer cancels their own pending order — only while not yet confirmed */
+  const cancelAttempt = await req('POST', '/api/orders', {
+    items: [{ productId: itemA.id, qty: 1 }],
+    slot: 'morning',
+    payment: 'cod',
+    address: '12, Green Park Society, MG Road, Pune 411001'
+  }, custToken);
+  const cancelId = (cancelAttempt.data.order || {}).id;
+  const cancelled = await req('PATCH', '/api/orders/' + cancelId + '/cancel', {}, custToken);
+  const cancelAgain = await req('PATCH', '/api/orders/' + cancelId + '/cancel', {}, custToken);
+  const cancelDelivered = await req('PATCH', '/api/orders/' + o.id + '/cancel', {}, custToken);
+  check(
+    'customer cancels a pending order (not twice, not after delivery)',
+    cancelAttempt.status === 201 && cancelled.status === 200 && cancelAgain.status === 409 && cancelDelivered.status === 409,
+    cancelId + ' → cancel ' + cancelled.status + ', again ' + cancelAgain.status + ', delivered ' + cancelDelivered.status
+  );
 
   /* summary */
   console.log('');

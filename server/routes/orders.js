@@ -205,6 +205,19 @@ router.patch('/:id/status', requireAdmin, wrap(async (req, res) => {
   res.json({ ok: true, id: req.params.id, status: status });
 }));
 
+/* PATCH /api/orders/:id/cancel — customer cancels their OWN order, only while
+   it is still pending (not yet confirmed by the store, who may have procured it) */
+router.patch('/:id/cancel', requireAuth, wrap(async (req, res) => {
+  const [r] = await db.query(
+    "UPDATE orders SET status = 'rejected' WHERE id = ? AND user_id = ? AND status = 'pending'",
+    [req.params.id, req.user.id]
+  );
+  if (!r.affectedRows) {
+    return res.status(409).json({ error: 'Only pending orders can be cancelled — please message the store instead' });
+  }
+  res.json({ ok: true, id: req.params.id, status: 'rejected' });
+}));
+
 /* PATCH /api/orders/:id/paid — admin marks the payment collected (UPI scan or cash) */
 router.patch('/:id/paid', requireAdmin, wrap(async (req, res) => {
   const paid = (req.body || {}).paid ? 1 : 0;

@@ -952,6 +952,21 @@ input[type='search']::-webkit-search-cancel-button { display: none; }
 .reorder svg { width: 13px; height: 13px; }
 .reorder:active { transform: scale(0.95); }
 
+/* small cancel button on pending orders — two taps to confirm */
+.cancel-order {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #fdeaea;
+  color: #d64545;
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+.cancel-order svg { width: 15px; height: 15px; }
+.cancel-order:active { transform: scale(0.92); }
+.cancel-order.confirming { background: #d64545; color: #fff; transform: scale(1.06); }
+
 /* ---------------- Chat (messages screen) ---------------- */
 
 .chat-head { text-align: center; }

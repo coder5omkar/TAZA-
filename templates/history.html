@@ -66,13 +66,13 @@
         <!-- orders: live from the API when signed in; static demo cards offline -->
         <div id="orderList">
 
-        <article class="order-card" data-status="confirmed" data-order='{"id":"TS26101502","status":"confirmed","placed":"15th Oct 2026","delivery":"16th Oct 2026","slot":"morning","payment":"upi","address":"12, Green Park Society, MG Road, Pune 411001","fee":3,"amount":8,"items":[{"name":"Spinach","qty":1,"rate":3,"unit":"bunch"},{"name":"Apple","qty":1,"rate":2,"unit":"pack"}]}'>
+        <article class="order-card" data-status="pending" data-order='{"id":"TS26101502","status":"pending","placed":"15th Oct 2026","delivery":"16th Oct 2026","slot":"morning","payment":"cod","address":"12, Green Park Society, MG Road, Pune 411001","fee":3,"amount":8,"items":[{"name":"Spinach","qty":1,"rate":3,"unit":"bunch"},{"name":"Apple","qty":1,"rate":2,"unit":"pack"}]}'>
           <div class="order-head">
             <div>
               <h4>TS26101502</h4>
               <p class="o-date"><span data-i18n="date_1">15th Oct 2026</span> · <span data-i18n="items_2">2 Items</span></p>
             </div>
-            <span class="status conf" data-i18n="status_confirmed">Confirmed</span>
+            <span class="status way" data-i18n="status_pending">Pending</span>
           </div>
           <div class="order-items">
             <div class="oi-line"><span class="oi-name"><span data-i18n="veg_spinach">Spinach</span> ×1 <span data-i18n="u_bunch">bunch</span></span><span class="oi-amt">₹3</span></div>
@@ -83,12 +83,8 @@
               <p class="o-total">₹8</p>
               <span class="pay-chip cod" data-i18n="pay_at_delivery">Pay on delivery</span>
             </div>
-            <button class="reorder" data-toast-key="toast_reorder">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M23 4v6h-6" />
-                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-              </svg>
-              <span data-i18n="reorder">Reorder</span>
+            <button class="cancel-order" data-cancel="TS26101502" aria-label="Cancel order" title="Cancel order">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
             </button>
           </div>
         </article>
@@ -154,7 +150,7 @@
               <h4>TS26101501</h4>
               <p class="o-date"><span data-i18n="date_4">15th Oct 2026</span> · <span data-i18n="items_2">2 Items</span></p>
             </div>
-            <span class="status cancel" data-i18n="status_rejected">Rejected</span>
+            <span class="status cancel" data-i18n="status_cancelled">Cancelled</span>
           </div>
           <div class="order-items">
             <div class="oi-line"><span class="oi-name"><span data-i18n="fruit_grapes">Grapes</span> ×1 <span data-i18n="u_kg">kg</span></span><span class="oi-amt">₹3</span></div>
@@ -162,13 +158,6 @@
           </div>
           <div class="order-foot">
             <p class="o-total">₹8</p>
-            <button class="reorder" data-toast-key="toast_reorder">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M23 4v6h-6" />
-                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-              </svg>
-              <span data-i18n="reorder">Reorder</span>
-            </button>
           </div>
         </article>
 
