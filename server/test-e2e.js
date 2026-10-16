@@ -46,7 +46,7 @@ function check(name, ok, extra) {
 
   /* 3. catalogue */
   const prods = await req('GET', '/api/products');
-  check('catalogue has 34 products', prods.status === 200 && prods.data.products.length === 34, (prods.data.products || []).length + ' products');
+  check('catalogue has 39 products (incl. 100g/gram items)', prods.status === 200 && prods.data.products.length >= 39, (prods.data.products || []).length + ' products');
 
   /* 4. place order (customer) */
   const tomato = prods.data.products.find(function (p) { return p.name === 'Tomato'; });
@@ -61,6 +61,16 @@ function check(name, ok, extra) {
   check('place order → 201 with TS id', order.status === 201 && /^TS\d{6}$/.test(o.id || ''), o.id);
   check('order amount = 2×₹2 + ₹2 + ₹3 fee = ₹9', o.amount === 9, '₹' + o.amount);
   check('cycle is tomorrow or day-after', o.cycle === 'tomorrow' || o.cycle === 'day-after', o.cycle + ' → ' + o.deliveryDate);
+
+  /* 4b. half-kg quantity (0.5 steps for KG items) */
+  const halfOrder = await req('POST', '/api/orders', {
+    items: [{ productId: tomato.id, qty: 0.5 }, { productId: apple.id, qty: 1 }],
+    slot: 'morning',
+    payment: 'upi',
+    address: '12, Green Park Society, MG Road, Pune 411001'
+  }, custToken);
+  const ho = halfOrder.data.order || {};
+  check('0.5 kg order accepted (0.5×₹2 + ₹2 + ₹3 = ₹6)', halfOrder.status === 201 && Number(ho.amount) === 6, '₹' + ho.amount);
 
   /* short-capacity guard: qty clamped, empty bag rejected */
   const emptyBag = await req('POST', '/api/orders', { items: [], slot: 'morning', payment: 'upi', address: 'x' }, custToken);

@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
   name          VARCHAR(80)  NOT NULL,
   email         VARCHAR(160) NOT NULL UNIQUE,
   phone         VARCHAR(30)  DEFAULT NULL,
+  address       VARCHAR(400) DEFAULT NULL,
   password_hash VARCHAR(100) NOT NULL,
   role          ENUM('customer','admin','delivery') NOT NULL DEFAULT 'customer',
   status        ENUM('active','suspended')        NOT NULL DEFAULT 'active',
@@ -16,7 +17,8 @@ CREATE TABLE IF NOT EXISTS products (
   name       VARCHAR(80) NOT NULL UNIQUE,
   emoji      VARCHAR(16) DEFAULT '🥬',
   cat        ENUM('veg','fruits') NOT NULL,
-  unit       ENUM('kg','bunch','pack','piece','dozen') NOT NULL DEFAULT 'kg',
+  section    ENUM('kg','bunch','gram','piece_pack','dozen_piece','pack') DEFAULT NULL,
+  unit       ENUM('kg','bunch','pack','piece','dozen','100 g') NOT NULL DEFAULT 'kg',
   rate       INT UNSIGNED NOT NULL,
   active     TINYINT(1) NOT NULL DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -36,7 +38,7 @@ CREATE TABLE IF NOT EXISTS orders (
   slot          ENUM('morning','evening') NOT NULL,
   payment       ENUM('upi','cod') NOT NULL,
   delivery_fee  INT UNSIGNED NOT NULL DEFAULT 0,
-  amount        INT UNSIGNED NOT NULL,             -- items + delivery fee
+  amount        DECIMAL(8,1) NOT NULL,             -- items + delivery fee (allows 0.5 kg)
   cycle         ENUM('tomorrow','day-after') NOT NULL,
   delivery_date DATE NOT NULL,
   status        ENUM('pending','confirmed','on_way','delivered','rejected') NOT NULL DEFAULT 'pending',
@@ -54,7 +56,7 @@ CREATE TABLE IF NOT EXISTS order_items (
   name       VARCHAR(80) NOT NULL,                 -- snapshot (safe if product changes)
   unit       VARCHAR(10) NOT NULL,
   rate       INT UNSIGNED NOT NULL,
-  qty        SMALLINT UNSIGNED NOT NULL,
+  qty        DECIMAL(5,1) UNSIGNED NOT NULL,       -- supports 0.5 kg steps
   CONSTRAINT fk_items_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

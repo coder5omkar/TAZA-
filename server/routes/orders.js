@@ -44,7 +44,9 @@ router.post('/', requireAuth, wrap(async (req, res) => {
     let subtotal = 0;
     const lines = items.map(function (i) {
       const p = prods.find(function (x) { return x.id === Number(i.productId); });
-      const qty = Math.min(99, Math.max(1, parseInt(i.qty, 10) || 1));
+      /* rounds to 0.5 steps so kg items can be ordered as 0.5 / 1 / 1.5 … */
+      let qty = Math.round((Number(i.qty) || 1) * 2) / 2;
+      qty = Math.min(99, Math.max(0.5, qty));
       if (!p) return null;
       subtotal += p.rate * qty;
       return { product_id: p.id, name: p.name, unit: p.unit, rate: p.rate, qty: qty };

@@ -17,53 +17,58 @@ const DB_HOST = process.env.DB_HOST || '127.0.0.1';
 const DB_PORT = Number(process.env.DB_PORT || 3306);
 
 const PRODUCTS = [
-  /* [name, emoji, cat, unit, rate] — matches the store/landing tables */
-  ['Tomato', '🍅', 'veg', 'kg', 2],
-  ['Potato', '🥔', 'veg', 'kg', 1],
-  ['Onion', '🧅', 'veg', 'kg', 2],
-  ['Spinach', '🥬', 'veg', 'bunch', 3],
-  ['Carrot', '🥕', 'veg', 'kg', 2],
-  ['Cucumber', '🥒', 'veg', 'kg', 1],
-  ['Capsicum', '🫑', 'veg', 'kg', 3],
-  ['Brinjal', '🍆', 'veg', 'kg', 2],
-  ['Sweet Corn', '🌽', 'veg', 'piece', 1],
-  ['Pumpkin', '🎃', 'veg', 'kg', 1],
-  ['Broccoli', '🥦', 'veg', 'kg', 3],
-  ['Mushroom', '🍄', 'veg', 'pack', 4],
-  ['Garlic', '🧄', 'veg', 'kg', 3],
-  ['Green Chilli', '🌶️', 'veg', 'kg', 2],
-  ['Lettuce', '🥗', 'veg', 'bunch', 2],
-  ['Cabbage', '🥬', 'veg', 'kg', 1],
-  ['Coriander', '🌿', 'veg', 'bunch', 1],
-  ['Sweet Potato', '🍠', 'veg', 'kg', 1],
-  ['Apple', '🍎', 'fruits', 'pack', 2],
-  ['Banana', '🍌', 'fruits', 'dozen', 2],
-  ['Mango', '🥭', 'fruits', 'kg', 4],
-  ['Grapes', '🍇', 'fruits', 'kg', 3],
-  ['Orange', '🍊', 'fruits', 'kg', 2],
-  ['Lemon', '🍋', 'fruits', 'piece', 1],
-  ['Watermelon', '🍉', 'fruits', 'kg', 1],
-  ['Strawberry', '🍓', 'fruits', 'pack', 4],
-  ['Peach', '🍑', 'fruits', 'kg', 3],
-  ['Pineapple', '🍍', 'fruits', 'piece', 2],
-  ['Kiwi', '🥝', 'fruits', 'piece', 1],
-  ['Pear', '🍐', 'fruits', 'kg', 2],
-  ['Melon', '🍈', 'fruits', 'kg', 2],
-  ['Cherry', '🍒', 'fruits', 'pack', 3],
-  ['Coconut', '🥥', 'fruits', 'piece', 2],
-  ['Avocado', '🥑', 'fruits', 'piece', 2]
+  /* [name, emoji, cat, section, unit, rate] — matches the landing page sections */
+  ['Potato', '🥔', 'veg', 'kg', 'kg', 1],
+  ['Tomato', '🍅', 'veg', 'kg', 'kg', 2],
+  ['Onion', '🧅', 'veg', 'kg', 'kg', 2],
+  ['Cucumber', '🥒', 'veg', 'kg', 'kg', 1],
+  ['Sweet Potato', '🍠', 'veg', 'kg', 'kg', 1],
+  ['Carrot', '🥕', 'veg', 'kg', 'kg', 2],
+  ['Brinjal', '🍆', 'veg', 'kg', 'kg', 2],
+  ['Capsicum', '🫑', 'veg', 'kg', 'kg', 3],
+  ['Pumpkin', '🎃', 'veg', 'kg', 'kg', 1],
+  ['Broccoli', '🥦', 'veg', 'kg', 'kg', 3],
+  ['Cabbage', '🥬', 'veg', 'kg', 'kg', 1],
+  ['Spinach', '🥬', 'veg', 'bunch', 'bunch', 3],
+  ['Fenugreek Leaves', '🌿', 'veg', 'bunch', 'bunch', 2],
+  ['Dill', '🌱', 'veg', 'bunch', 'bunch', 2],
+  ['Sorrel', '🥬', 'veg', 'bunch', 'bunch', 2],
+  ['Lettuce', '🥗', 'veg', 'bunch', 'bunch', 2],
+  ['Ginger', '🫚', 'veg', 'gram', '100 g', 2],
+  ['Garlic', '🧄', 'veg', 'gram', '100 g', 1],
+  ['Coriander', '🌿', 'veg', 'gram', '100 g', 1],
+  ['Curry Leaves', '🍃', 'veg', 'gram', '100 g', 1],
+  ['Green Chilli', '🌶️', 'veg', 'gram', '100 g', 1],
+  ['Sweet Corn', '🌽', 'veg', 'piece_pack', 'piece', 1],
+  ['Mushroom', '🍄', 'veg', 'piece_pack', 'pack', 4],
+  ['Mango', '🥭', 'fruits', 'kg', 'kg', 4],
+  ['Grapes', '🍇', 'fruits', 'kg', 'kg', 3],
+  ['Orange', '🍊', 'fruits', 'kg', 'kg', 2],
+  ['Watermelon', '🍉', 'fruits', 'kg', 'kg', 1],
+  ['Peach', '🍑', 'fruits', 'kg', 'kg', 3],
+  ['Pear', '🍐', 'fruits', 'kg', 'kg', 2],
+  ['Melon', '🍈', 'fruits', 'kg', 'kg', 2],
+  ['Banana', '🍌', 'fruits', 'dozen_piece', 'dozen', 2],
+  ['Lemon', '🍋', 'fruits', 'dozen_piece', 'piece', 1],
+  ['Pineapple', '🍍', 'fruits', 'dozen_piece', 'piece', 2],
+  ['Kiwi', '🥝', 'fruits', 'dozen_piece', 'piece', 1],
+  ['Coconut', '🥥', 'fruits', 'dozen_piece', 'piece', 2],
+  ['Avocado', '🥑', 'fruits', 'dozen_piece', 'piece', 2],
+  ['Apple', '🍎', 'fruits', 'pack', 'pack', 2],
+  ['Strawberry', '🍓', 'fruits', 'pack', 'pack', 4],
+  ['Cherry', '🍒', 'fruits', 'pack', 'pack', 3]
 ];
 
 /* [name, email, phone, password, role] — same logins as the demo templates */
 const USERS = [
-  ['Hannah', 'hannah@vegfruit.shop', '+91 98200 11001', 'hannah@123', 'admin'],
-  ['Vikram Rao', 'vikram@store.com', '+91 98200 11006', 'vikram@654', 'admin'],
-  ['Ravi Kumar', 'ravi.k@gmail.com', '+91 98200 11002', 'ravi@123', 'customer'],
-  ['Priya Sharma', 'priya.s@yahoo.com', '+91 98200 11003', 'priya@456', 'customer'],
-  ['Amit Patel', 'amit@outlook.com', '+91 98200 11004', 'amit@789', 'delivery'],
-  ['Sneha Joshi', 'sneha.j@gmail.com', '+91 98200 11005', 'sneha@321', 'customer'],
-  ['Neha Gupta', 'neha.g@gmail.com', '+91 98200 11007', 'neha@987', 'customer'],
-  ['Rahul Singh', 'rahul@deliver.in', '+91 98200 11008', 'rahul@135', 'delivery']
+  ['Hannah', 'hannah@vegfruit.shop', '+91 98200 11001', '12, Green Park Society, MG Road, Pune 411001', 'hannah@123', 'admin'],
+  ['Vikram Rao', 'vikram@store.com', '+91 98200 11006', 'Store HQ, FC Road, Pune 411004', 'vikram@654', 'admin'],
+  ['Ravi Kumar', 'ravi.k@gmail.com', '+91 98200 11002', 'Flat 302, Sai Residency, Baner, Pune 411045', 'ravi@123', 'customer'],
+  ['Priya Sharma', 'priya.s@yahoo.com', '+91 98200 11003', '7, Rose Villa, Kothrud, Pune 411038', 'priya@456', 'customer'],
+  ['Amit Patel', 'amit@outlook.com', '+91 98200 11004', '21, Shanti Nagar, Wakad, Pune 411057', 'amit@789', 'delivery'],
+  ['Sneha Joshi', 'sneha.j@gmail.com', '+91 98200 11005', '5-B, Lake View, Viman Nagar, Pune 411014', 'sneha@321', 'customer'],
+  ['Neha Gupta', 'neha.g@gmail.com', '+91 98200 11007', '88, Green Meadows, Hinjewadi, Pune 411057', 'neha@987', 'customer'],
+  ['Rahul Singh', 'rahul@deliver.in', '+91 98200 11008', '3, Workers Colony, Hadapsar, Pune 411028', 'rahul@135', 'delivery']
 ];
 
 (async function () {
@@ -88,7 +93,7 @@ const USERS = [
   let added = 0;
   for (const p of PRODUCTS) {
     const [r] = await conn.query(
-      'INSERT IGNORE INTO products (name, emoji, cat, unit, rate) VALUES (?, ?, ?, ?, ?)',
+      'INSERT IGNORE INTO products (name, emoji, cat, section, unit, rate) VALUES (?, ?, ?, ?, ?, ?)',
       p
     );
     added += r.affectedRows;
@@ -96,11 +101,11 @@ const USERS = [
   console.log('Products: ' + added + ' added, ' + (PRODUCTS.length - added) + ' already present');
 
   for (const u of USERS) {
-    const hash = await bcrypt.hash(u[3], 10);
+    const hash = await bcrypt.hash(u[4], 10);
     await conn.query(
-      'INSERT INTO users (name, email, phone, password_hash, role) VALUES (?, ?, ?, ?, ?) ' +
-      'ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), role = VALUES(role), name = VALUES(name)',
-      [u[0], u[1], u[2], hash, u[4]]
+      'INSERT INTO users (name, email, phone, address, password_hash, role) VALUES (?, ?, ?, ?, ?, ?) ' +
+      'ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), role = VALUES(role), name = VALUES(name), address = COALESCE(VALUES(address), address)',
+      [u[0], u[1], u[2], u[3], hash, u[5]]
     );
   }
   console.log('Users seeded:', USERS.length);

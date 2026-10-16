@@ -7,6 +7,7 @@
     "start": "node server/server.js",
     "dev": "nodemon server/server.js",
     "seed": "node server/seed.js",
+    "migrate": "node server/migrate.js",
     "test": "node server/test-e2e.js"
   },
   "engines": {

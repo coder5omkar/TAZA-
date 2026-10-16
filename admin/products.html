@@ -28,7 +28,7 @@
           <div class="card-head">
             <div>
               <h2>Add Product</h2>
-              <p class="hint">Rates are whole rupees (₹) — units: kg · bunch · pack · piece · dozen</p>
+              <p class="hint">Rates are whole rupees (₹) — sections follow the landing page (KG / Bunch / Gram / Piece & Pack …)</p>
             </div>
           </div>
           <form class="form-grid" id="addProductForm">
@@ -48,6 +48,10 @@
               </select>
             </label>
             <label class="field">
+              <span>Section</span>
+              <select class="input" id="npSection"></select>
+            </label>
+            <label class="field">
               <span>Unit</span>
               <select class="input" id="npUnit">
                 <option>kg</option>
@@ -55,6 +59,7 @@
                 <option>pack</option>
                 <option>piece</option>
                 <option>dozen</option>
+                <option>100 g</option>
               </select>
             </label>
             <label class="field">
@@ -80,7 +85,7 @@
           <div class="table-wrap">
             <table class="table">
               <thead>
-                <tr><th>Product</th><th>Category</th><th>Unit</th><th>Rate</th><th>Actions</th></tr>
+                <tr><th>Product</th><th>Category</th><th>Section</th><th>Unit</th><th>Rate</th><th>Actions</th></tr>
               </thead>
               <tbody id="productsBody"></tbody>
             </table>

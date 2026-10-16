@@ -8,7 +8,7 @@ const router = express.Router();
 /* GET /api/products?cat=veg|fruits */
 router.get('/', wrap(async (req, res) => {
   const params = [];
-  let sql = 'SELECT id, name, emoji, cat, unit, rate FROM products WHERE active = 1';
+  let sql = 'SELECT id, name, emoji, cat, section, unit, rate FROM products WHERE active = 1';
   if (req.query.cat === 'veg' || req.query.cat === 'fruits') {
     sql += ' AND cat = ?';
     params.push(req.query.cat);

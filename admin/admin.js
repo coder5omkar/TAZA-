@@ -16,7 +16,14 @@
 
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
   var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
-  var money = function (n) { return '₹' + n; };
+  var money = function (n) {
+    var v = Math.round(Number(n) * 10) / 10;
+    return '₹' + (Number.isInteger(v) ? v : v.toFixed(1));
+  };
+  var fmtQty = function (n) {
+    var v = Math.round(Number(n) * 10) / 10;
+    return Number.isInteger(v) ? String(v) : v.toFixed(1);
+  };
   var esc = function (s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -25,6 +32,7 @@
 
   var LIVE = false;
   var editingProductId = null;
+  var editingUserId = null;
   var activeConvId = null;
 
   /* ---------------- toast ---------------- */
@@ -85,18 +93,48 @@
       p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
   }
 
+  /* operational day: runs 10:00 PM -> 10:00 PM (late-night orders belong to the next day) */
+  function opDayKey(dateLike) {
+    var d;
+    if (dateLike instanceof Date) {
+      d = dateLike;
+    } else {
+      d = new Date(String(dateLike || '').replace(' ', 'T'));
+      if (isNaN(d.getTime())) {
+        var m = String(dateLike || '').match(/^(\d{1,2})\s+([A-Za-z]{3})/);
+        if (m) {
+          var mm = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].indexOf(m[2]);
+          d = new Date(new Date().getFullYear(), mm, parseInt(m[1], 10), 12, 0, 0);
+        }
+      }
+    }
+    if (!d || isNaN(d.getTime())) return 'unknown';
+    d = new Date(d.getTime() + 2 * 3600 * 1000);
+    var p = function (n) { return n < 10 ? '0' + n : '' + n; };
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+  }
+
+  function opDayLabel(key) {
+    var today = opDayKey(new Date());
+    var yest = opDayKey(new Date(Date.now() - 24 * 3600 * 1000));
+    if (key === today) return 'Today · orders since 10 PM last night';
+    if (key === yest) return 'Yesterday';
+    if (key === 'unknown') return 'Earlier';
+    return fmtLong(key);
+  }
+
   /* ---------------- demo data (fallback) ---------------- */
 
   var DEMO = {
     users: [
-      { id: 'USR-1001', rawId: null, name: 'Hannah', email: 'hannah@vegfruit.shop', phone: '+91 98200 11001', role: 'admin', password: 'hannah@123', status: 'active', joined: '12 Jun 2025' },
-      { id: 'USR-1002', rawId: null, name: 'Ravi Kumar', email: 'ravi.k@gmail.com', phone: '+91 98200 11002', role: 'customer', password: 'ravi@123', status: 'active', joined: '18 Jun 2025' },
-      { id: 'USR-1003', rawId: null, name: 'Priya Sharma', email: 'priya.s@yahoo.com', phone: '+91 98200 11003', role: 'customer', password: 'priya@456', status: 'active', joined: '21 Jun 2025' },
-      { id: 'USR-1004', rawId: null, name: 'Amit Patel', email: 'amit@outlook.com', phone: '+91 98200 11004', role: 'delivery', password: 'amit@789', status: 'active', joined: '25 Jun 2025' },
-      { id: 'USR-1005', rawId: null, name: 'Sneha Joshi', email: 'sneha.j@gmail.com', phone: '+91 98200 11005', role: 'customer', password: 'sneha@321', status: 'suspended', joined: '02 Jul 2025' },
-      { id: 'USR-1006', rawId: null, name: 'Vikram Rao', email: 'vikram@store.com', phone: '+91 98200 11006', role: 'admin', password: 'vikram@654', status: 'active', joined: '05 Jul 2025' },
-      { id: 'USR-1007', rawId: null, name: 'Neha Gupta', email: 'neha.g@gmail.com', phone: '+91 98200 11007', role: 'customer', password: 'neha@987', status: 'active', joined: '11 Jul 2025' },
-      { id: 'USR-1008', rawId: null, name: 'Rahul Singh', email: 'rahul@deliver.in', phone: '+91 98200 11008', role: 'delivery', password: 'rahul@135', status: 'active', joined: '14 Jul 2025' }
+      { id: 'USR-1001', rawId: null, name: 'Hannah', email: 'hannah@vegfruit.shop', phone: '+91 98200 11001', address: '12, Green Park Society, MG Road, Pune 411001', role: 'admin', password: 'hannah@123', status: 'active', joined: '12 Jun 2025' },
+      { id: 'USR-1002', rawId: null, name: 'Ravi Kumar', email: 'ravi.k@gmail.com', phone: '+91 98200 11002', address: 'Flat 302, Sai Residency, Baner, Pune 411045', role: 'customer', password: 'ravi@123', status: 'active', joined: '18 Jun 2025' },
+      { id: 'USR-1003', rawId: null, name: 'Priya Sharma', email: 'priya.s@yahoo.com', phone: '+91 98200 11003', address: '7, Rose Villa, Kothrud, Pune 411038', role: 'customer', password: 'priya@456', status: 'active', joined: '21 Jun 2025' },
+      { id: 'USR-1004', rawId: null, name: 'Amit Patel', email: 'amit@outlook.com', phone: '+91 98200 11004', address: '21, Shanti Nagar, Wakad, Pune 411057', role: 'delivery', password: 'amit@789', status: 'active', joined: '25 Jun 2025' },
+      { id: 'USR-1005', rawId: null, name: 'Sneha Joshi', email: 'sneha.j@gmail.com', phone: '+91 98200 11005', address: '5-B, Lake View, Viman Nagar, Pune 411014', role: 'customer', password: 'sneha@321', status: 'suspended', joined: '02 Jul 2025' },
+      { id: 'USR-1006', rawId: null, name: 'Vikram Rao', email: 'vikram@store.com', phone: '+91 98200 11006', address: 'Store HQ, FC Road, Pune 411004', role: 'admin', password: 'vikram@654', status: 'active', joined: '05 Jul 2025' },
+      { id: 'USR-1007', rawId: null, name: 'Neha Gupta', email: 'neha.g@gmail.com', phone: '+91 98200 11007', address: '88, Green Meadows, Hinjewadi, Pune 411057', role: 'customer', password: 'neha@987', status: 'active', joined: '11 Jul 2025' },
+      { id: 'USR-1008', rawId: null, name: 'Rahul Singh', email: 'rahul@deliver.in', phone: '+91 98200 11008', address: '3, Workers Colony, Hadapsar, Pune 411028', role: 'delivery', password: 'rahul@135', status: 'active', joined: '14 Jul 2025' }
     ],
     orders: [
       { id: 'TS261016', customer: 'Ravi Kumar', items: [{ name: 'Tomato', qty: 1 }, { name: 'Coriander', qty: 1 }], amount: 6, slot: 'Morning 8–10 AM', payment: 'UPI', placed: '15 Oct, 10:12 PM', delivery: '17 Oct', cycle: 'day-after', status: 'Pending' },
@@ -110,40 +148,45 @@
       { id: 'TS261002', customer: 'Hannah', items: [{ name: 'Apple', qty: 1 }, { name: 'Carrot', qty: 1 }], amount: 7, slot: 'Evening 7–10 PM', payment: 'COD', placed: '14 Oct, 6:05 PM', delivery: '15 Oct', cycle: 'tomorrow', status: 'Delivered' }
     ],
     products: [
-      { name: 'Tomato', emoji: '🍅', cat: 'veg', unit: 'kg', rate: 2 },
-      { name: 'Potato', emoji: '🥔', cat: 'veg', unit: 'kg', rate: 1 },
-      { name: 'Onion', emoji: '🧅', cat: 'veg', unit: 'kg', rate: 2 },
-      { name: 'Spinach', emoji: '🥬', cat: 'veg', unit: 'bunch', rate: 3 },
-      { name: 'Carrot', emoji: '🥕', cat: 'veg', unit: 'kg', rate: 2 },
-      { name: 'Cucumber', emoji: '🥒', cat: 'veg', unit: 'kg', rate: 1 },
-      { name: 'Capsicum', emoji: '🫑', cat: 'veg', unit: 'kg', rate: 3 },
-      { name: 'Brinjal', emoji: '🍆', cat: 'veg', unit: 'kg', rate: 2 },
-      { name: 'Sweet Corn', emoji: '🌽', cat: 'veg', unit: 'piece', rate: 1 },
-      { name: 'Pumpkin', emoji: '🎃', cat: 'veg', unit: 'kg', rate: 1 },
-      { name: 'Broccoli', emoji: '🥦', cat: 'veg', unit: 'kg', rate: 3 },
-      { name: 'Mushroom', emoji: '🍄', cat: 'veg', unit: 'pack', rate: 4 },
-      { name: 'Garlic', emoji: '🧄', cat: 'veg', unit: 'kg', rate: 3 },
-      { name: 'Green Chilli', emoji: '🌶️', cat: 'veg', unit: 'kg', rate: 2 },
-      { name: 'Lettuce', emoji: '🥗', cat: 'veg', unit: 'bunch', rate: 2 },
-      { name: 'Cabbage', emoji: '🥬', cat: 'veg', unit: 'kg', rate: 1 },
-      { name: 'Coriander', emoji: '🌿', cat: 'veg', unit: 'bunch', rate: 1 },
-      { name: 'Sweet Potato', emoji: '🍠', cat: 'veg', unit: 'kg', rate: 1 },
-      { name: 'Apple', emoji: '🍎', cat: 'fruits', unit: 'pack', rate: 2 },
-      { name: 'Banana', emoji: '🍌', cat: 'fruits', unit: 'dozen', rate: 2 },
-      { name: 'Mango', emoji: '🥭', cat: 'fruits', unit: 'kg', rate: 4 },
-      { name: 'Grapes', emoji: '🍇', cat: 'fruits', unit: 'kg', rate: 3 },
-      { name: 'Orange', emoji: '🍊', cat: 'fruits', unit: 'kg', rate: 2 },
-      { name: 'Lemon', emoji: '🍋', cat: 'fruits', unit: 'piece', rate: 1 },
-      { name: 'Watermelon', emoji: '🍉', cat: 'fruits', unit: 'kg', rate: 1 },
-      { name: 'Strawberry', emoji: '🍓', cat: 'fruits', unit: 'pack', rate: 4 },
-      { name: 'Peach', emoji: '🍑', cat: 'fruits', unit: 'kg', rate: 3 },
-      { name: 'Pineapple', emoji: '🍍', cat: 'fruits', unit: 'piece', rate: 2 },
-      { name: 'Kiwi', emoji: '🥝', cat: 'fruits', unit: 'piece', rate: 1 },
-      { name: 'Pear', emoji: '🍐', cat: 'fruits', unit: 'kg', rate: 2 },
-      { name: 'Melon', emoji: '🍈', cat: 'fruits', unit: 'kg', rate: 2 },
-      { name: 'Cherry', emoji: '🍒', cat: 'fruits', unit: 'pack', rate: 3 },
-      { name: 'Coconut', emoji: '🥥', cat: 'fruits', unit: 'piece', rate: 2 },
-      { name: 'Avocado', emoji: '🥑', cat: 'fruits', unit: 'piece', rate: 2 }
+      { name: 'Potato', emoji: '🥔', cat: 'veg', unit: 'kg', rate: 1, section: 'kg' },
+      { name: 'Tomato', emoji: '🍅', cat: 'veg', unit: 'kg', rate: 2, section: 'kg' },
+      { name: 'Onion', emoji: '🧅', cat: 'veg', unit: 'kg', rate: 2, section: 'kg' },
+      { name: 'Cucumber', emoji: '🥒', cat: 'veg', unit: 'kg', rate: 1, section: 'kg' },
+      { name: 'Sweet Potato', emoji: '🍠', cat: 'veg', unit: 'kg', rate: 1, section: 'kg' },
+      { name: 'Carrot', emoji: '🥕', cat: 'veg', unit: 'kg', rate: 2, section: 'kg' },
+      { name: 'Brinjal', emoji: '🍆', cat: 'veg', unit: 'kg', rate: 2, section: 'kg' },
+      { name: 'Capsicum', emoji: '🫑', cat: 'veg', unit: 'kg', rate: 3, section: 'kg' },
+      { name: 'Pumpkin', emoji: '🎃', cat: 'veg', unit: 'kg', rate: 1, section: 'kg' },
+      { name: 'Broccoli', emoji: '🥦', cat: 'veg', unit: 'kg', rate: 3, section: 'kg' },
+      { name: 'Cabbage', emoji: '🥬', cat: 'veg', unit: 'kg', rate: 1, section: 'kg' },
+      { name: 'Spinach', emoji: '🥬', cat: 'veg', unit: 'bunch', rate: 3, section: 'bunch' },
+      { name: 'Fenugreek Leaves', emoji: '🌿', cat: 'veg', unit: 'bunch', rate: 2, section: 'bunch' },
+      { name: 'Dill', emoji: '🌱', cat: 'veg', unit: 'bunch', rate: 2, section: 'bunch' },
+      { name: 'Sorrel', emoji: '🥬', cat: 'veg', unit: 'bunch', rate: 2, section: 'bunch' },
+      { name: 'Lettuce', emoji: '🥗', cat: 'veg', unit: 'bunch', rate: 2, section: 'bunch' },
+      { name: 'Ginger', emoji: '🫚', cat: 'veg', unit: '100 g', rate: 2, section: 'gram' },
+      { name: 'Garlic', emoji: '🧄', cat: 'veg', unit: '100 g', rate: 1, section: 'gram' },
+      { name: 'Coriander', emoji: '🌿', cat: 'veg', unit: '100 g', rate: 1, section: 'gram' },
+      { name: 'Curry Leaves', emoji: '🍃', cat: 'veg', unit: '100 g', rate: 1, section: 'gram' },
+      { name: 'Green Chilli', emoji: '🌶️', cat: 'veg', unit: '100 g', rate: 1, section: 'gram' },
+      { name: 'Sweet Corn', emoji: '🌽', cat: 'veg', unit: 'piece', rate: 1, section: 'piece_pack' },
+      { name: 'Mushroom', emoji: '🍄', cat: 'veg', unit: 'pack', rate: 4, section: 'piece_pack' },
+      { name: 'Mango', emoji: '🥭', cat: 'fruits', unit: 'kg', rate: 4, section: 'kg' },
+      { name: 'Grapes', emoji: '🍇', cat: 'fruits', unit: 'kg', rate: 3, section: 'kg' },
+      { name: 'Orange', emoji: '🍊', cat: 'fruits', unit: 'kg', rate: 2, section: 'kg' },
+      { name: 'Watermelon', emoji: '🍉', cat: 'fruits', unit: 'kg', rate: 1, section: 'kg' },
+      { name: 'Peach', emoji: '🍑', cat: 'fruits', unit: 'kg', rate: 3, section: 'kg' },
+      { name: 'Pear', emoji: '🍐', cat: 'fruits', unit: 'kg', rate: 2, section: 'kg' },
+      { name: 'Melon', emoji: '🍈', cat: 'fruits', unit: 'kg', rate: 2, section: 'kg' },
+      { name: 'Banana', emoji: '🍌', cat: 'fruits', unit: 'dozen', rate: 2, section: 'dozen_piece' },
+      { name: 'Lemon', emoji: '🍋', cat: 'fruits', unit: 'piece', rate: 1, section: 'dozen_piece' },
+      { name: 'Pineapple', emoji: '🍍', cat: 'fruits', unit: 'piece', rate: 2, section: 'dozen_piece' },
+      { name: 'Kiwi', emoji: '🥝', cat: 'fruits', unit: 'piece', rate: 1, section: 'dozen_piece' },
+      { name: 'Coconut', emoji: '🥥', cat: 'fruits', unit: 'piece', rate: 2, section: 'dozen_piece' },
+      { name: 'Avocado', emoji: '🥑', cat: 'fruits', unit: 'piece', rate: 2, section: 'dozen_piece' },
+      { name: 'Apple', emoji: '🍎', cat: 'fruits', unit: 'pack', rate: 2, section: 'pack' },
+      { name: 'Strawberry', emoji: '🍓', cat: 'fruits', unit: 'pack', rate: 4, section: 'pack' },
+      { name: 'Cherry', emoji: '🍒', cat: 'fruits', unit: 'pack', rate: 3, section: 'pack' }
     ],
     conversations: [
       { id: 'c1', name: 'Ravi Kumar', order: 'TS261013', online: true, unread: 2, messages: [
@@ -229,6 +272,7 @@
       slot: slotLabel(o.slot),
       payment: String(o.payment || '').toUpperCase(),
       placed: fmtDayTime(o.placed_at),
+      placedAt: o.placed_at,
       delivery: o.status === 'rejected' ? '—' : fmtDay(o.delivery_date),
       deliveryDate: o.delivery_date,
       cycle: o.cycle,
@@ -329,7 +373,7 @@
     tbody.innerHTML = rows.map(function (r) {
       return '<tr>' +
         '<td><b>' + esc(r.name) + '</b></td>' +
-        '<td>' + r.qty + '</td>' +
+        '<td>' + fmtQty(r.qty) + '</td>' +
         '<td>/' + esc(r.unit) + '</td>' +
         '<td class="amount">' + money(Number(r.value)) + '</td>' +
         '</tr>';
@@ -340,9 +384,10 @@
 
     var totals = $('#procTotals');
     if (totals) {
+      var totalValue = proc.totalValue != null ? proc.totalValue : (proc.value != null ? proc.value : 0);
       totals.innerHTML = '<span><b>' + proc.orders + '</b> orders</span>' +
         '<span><b>' + totalItems + '</b> items to procure</span>' +
-        '<span>order value <b>' + money(Number(proc.totalValue)) + '</b></span>';
+        '<span>order value <b>' + money(Number(totalValue)) + '</b></span>';
     }
   }
 
@@ -363,9 +408,11 @@
 
     var snap = $('#snapList');
     if (snap && settings) {
+      var vegCount = state.products.filter(function (p) { return p.cat === 'veg'; }).length;
+      var fruitCount = state.products.filter(function (p) { return p.cat === 'fruits'; }).length;
       snap.innerHTML =
-        '<div class="kv"><span>Vegetables</span><b>' + (state.products.filter(function (p) { return p.cat === 'veg'; }).length || 18) + '</b></div>' +
-        '<div class="kv"><span>Fruits</span><b>' + (state.products.filter(function (p) { return p.cat === 'fruits'; }).length || 16) + '</b></div>' +
+        '<div class="kv"><span>Vegetables</span><b>' + (vegCount || 18) + '</b></div>' +
+        '<div class="kv"><span>Fruits</span><b>' + (fruitCount || 16) + '</b></div>' +
         '<div class="kv"><span>Order cutoff</span><b>' + settings.cutoff_hour + ':00 PM daily</b></div>' +
         '<div class="kv"><span>Daily capacity</span><b>99 orders</b></div>' +
         '<div class="kv"><span>Delivery slots</span><b>' + (settings.morning_slot ? 'Morning' : '') + (settings.morning_slot && settings.evening_slot ? ' · ' : '') + (settings.evening_slot ? 'Evening' : '') + '</b></div>' +
@@ -376,14 +423,30 @@
   function renderRecentOrders() {
     var recent = $('#recentOrders');
     if (!recent) return;
-    recent.innerHTML = state.orders.slice(0, 5).map(function (o) {
-      return '<tr>' +
-        '<td><b>' + esc(o.id) + '</b><span class="sub">placed ' + esc(o.placed) + '</span></td>' +
-        '<td>' + esc(o.customer) + '</td>' +
-        '<td class="amount">' + money(o.amount) + '</td>' +
-        '<td>' + statusPill(o.status) + '</td>' +
-        '</tr>';
-    }).join('');
+
+    /* grouped by operational day (10 PM -> 10 PM) */
+    var groups = {};
+    state.orders.forEach(function (o) {
+      var k = opDayKey(o.placedAt || o.placed || '');
+      if (!groups[k]) groups[k] = [];
+      groups[k].push(o);
+    });
+
+    var keys = Object.keys(groups).sort().reverse().slice(0, 4);
+    var html = '';
+    keys.forEach(function (k) {
+      html += '<tr class="group-row"><td colspan="4">' + esc(opDayLabel(k)) +
+        '<span>' + groups[k].length + ' orders</span></td></tr>';
+      groups[k].slice(0, 6).forEach(function (o) {
+        html += '<tr>' +
+          '<td><b>' + esc(o.id) + '</b><span class="sub">placed ' + esc(o.placed) + '</span></td>' +
+          '<td>' + esc(o.customer) + '</td>' +
+          '<td class="amount">' + money(o.amount) + '</td>' +
+          '<td>' + statusPill(o.status) + '</td>' +
+          '</tr>';
+      });
+    });
+    recent.innerHTML = html || '<tr><td colspan="4" class="muted" style="padding:18px">No orders yet.</td></tr>';
   }
 
   function loadDashboard() {
@@ -392,10 +455,12 @@
       window.TAZA.adminStats(),
       window.TAZA.adminOrders(),
       window.TAZA.adminProcurement(),
-      window.TAZA.adminSettings()
+      window.TAZA.adminSettings(),
+      window.TAZA.getProducts()
     ]).then(function (res) {
       var stats = res[0];
       state.orders = (res[1].orders || []).map(mapOrder);
+      state.products = res[4].products || [];
       state.settings = res[3].settings || DEMO.settings;
       renderStatsAndSnapshot(stats, state.settings);
       renderRecentOrders();
@@ -416,20 +481,47 @@
     if (!tbody) return;
     tbody.innerHTML = state.users.map(function (u) {
       var idAttr = u.rawId != null ? u.rawId : esc(u.id);
-      var pwCell = u.rawId != null
-        ? '<span class="pw-cell" title="Passwords are stored hashed and never shown">••••••••</span>'
+      var live = u.rawId != null;
+      var editing = editingUserId != null && String(editingUserId) === String(idAttr);
+
+      if (editing) {
+        return '<tr>' +
+          '<td><b>' + esc(u.id) + '</b><span class="sub">joined ' + esc(u.joined) + '</span></td>' +
+          '<td>' +
+          '<input class="input user-edit-input user-edit-name" value="' + esc(u.name) + '" placeholder="Name" />' +
+          '<input class="input user-edit-input user-edit-email" value="' + esc(u.email) + '" placeholder="Email" />' +
+          '<input class="input user-edit-input user-edit-phone" value="' + esc(u.phone || '') + '" placeholder="Phone" />' +
+          '</td>' +
+          '<td><input class="input user-edit-input user-edit-address" value="' + esc(u.address || '') + '" placeholder="Delivery address" /></td>' +
+          '<td><select class="input role-select role-edit" aria-label="Role">' + roleOptions(u.role) + '</select></td>' +
+          '<td><select class="input user-edit-status" aria-label="Status">' +
+          '<option value="active"' + (u.status === 'active' ? ' selected' : '') + '>Active</option>' +
+          '<option value="suspended"' + (u.status === 'suspended' ? ' selected' : '') + '>Suspended</option>' +
+          '</select></td>' +
+          '<td><input class="input user-edit-input user-edit-password" type="text" value="' + (live ? '' : esc(u.password || '')) + '" placeholder="' + (live ? 'New password (blank = keep)' : 'Password') + '" /></td>' +
+          '<td class="actions-cell">' +
+          '<button class="btn success small" data-act="edit-user-save" data-id="' + idAttr + '">Save</button>' +
+          '<button class="btn ghost small" data-act="edit-user-cancel">Cancel</button>' +
+          '</td>' +
+          '</tr>';
+      }
+
+      var pwCell = live
+        ? '<span class="pw-cell" title="Passwords are stored hashed — use edit to reset">••••••••</span>'
         : '<span class="pw-cell" id="pw-' + esc(u.id) + '" data-show="0">••••••••</span>';
-      var actions = u.rawId != null
+      var quick = live
         ? '<button class="iconbtn" data-act="toggle-user" data-id="' + idAttr + '" title="' + (u.status === 'active' ? 'Suspend' : 'Activate') + '">' + (u.status === 'active' ? ICONS.ban : ICONS.check) + '</button>'
         : '<button class="iconbtn" data-act="pw" data-id="' + esc(u.id) + '" title="Show / hide password">' + ICONS.eye + '</button>';
 
       return '<tr>' +
         '<td><b>' + esc(u.id) + '</b><span class="sub">joined ' + esc(u.joined) + '</span></td>' +
         '<td>' + esc(u.name) + '<span class="sub">' + esc(u.email) + (u.phone ? ' · ' + esc(u.phone) : '') + '</span></td>' +
-        '<td><select class="input role-select" data-id="' + idAttr + '" data-live="' + (u.rawId != null ? '1' : '0') + '" aria-label="Role">' + roleOptions(u.role) + '</select></td>' +
-        '<td>' + pwCell + '</td>' +
+        '<td>' + (u.address ? esc(u.address) : '<span class="muted">—</span>') + '</td>' +
+        '<td><select class="input role-select" data-id="' + idAttr + '" data-live="' + (live ? '1' : '0') + '" aria-label="Role">' + roleOptions(u.role) + '</select></td>' +
         '<td><span class="pill ' + (u.status === 'active' ? 'active' : 'suspended') + '">' + (u.status === 'active' ? 'Active' : 'Suspended') + '</span></td>' +
-        '<td class="actions-cell">' + actions +
+        '<td>' + pwCell + '</td>' +
+        '<td class="actions-cell">' + quick +
+        '<button class="iconbtn" data-act="edit-user" data-id="' + idAttr + '" title="Edit user">' + ICONS.pencil + '</button>' +
         '<button class="iconbtn danger" data-act="del-user" data-id="' + idAttr + '" title="Delete user">' + ICONS.trash + '</button>' +
         '</td>' +
         '</tr>';
@@ -449,6 +541,7 @@
           name: u.name,
           email: u.email,
           phone: u.phone || '',
+          address: u.address || '',
           role: u.role,
           status: u.status,
           joined: fmtLong(u.created_at)
@@ -460,6 +553,38 @@
 
   /* ---------------- products ---------------- */
 
+  var SECTION_LABELS = {
+    kg: 'KG · Weight',
+    bunch: 'Bunch (Judi)',
+    gram: 'Gram',
+    piece_pack: 'Piece & Pack',
+    dozen_piece: 'Dozen · Piece (Count)',
+    pack: 'Pack (Pre-packed)'
+  };
+  var SECTION_OPTIONS = {
+    veg: ['kg', 'bunch', 'gram', 'piece_pack'],
+    fruits: ['kg', 'dozen_piece', 'pack']
+  };
+  var UNIT_OPTIONS = ['kg', 'bunch', 'pack', 'piece', 'dozen', '100 g'];
+
+  function sectionFromUnit(p) {
+    if (p.cat === 'veg') {
+      if (p.unit === 'bunch') return 'bunch';
+      if (p.unit === 'pack' || p.unit === 'piece' || p.unit === 'dozen') return 'piece_pack';
+      return 'kg';
+    }
+    if (p.unit === 'pack') return 'pack';
+    if (p.unit === 'piece' || p.unit === 'dozen') return 'dozen_piece';
+    return 'kg';
+  }
+
+  function sectionOptionsHtml(cat, selected) {
+    var list = SECTION_OPTIONS[cat === 'fruits' ? 'fruits' : 'veg'];
+    return list.map(function (v) {
+      return '<option value="' + v + '"' + (v === selected ? ' selected' : '') + '>' + SECTION_LABELS[v] + '</option>';
+    }).join('');
+  }
+
   var productFilter = 'All';
 
   function renderProducts() {
@@ -470,9 +595,13 @@
     tbody.innerHTML = list.map(function (p) {
       var idAttr = p.id != null ? p.id : esc(p.name);
       var editing = editingProductId != null && String(editingProductId) === String(idAttr);
+      var sec = p.section || sectionFromUnit(p);
+      var sectionCell = editing
+        ? '<select class="input section-edit" style="height:34px">' + sectionOptionsHtml(p.cat, sec) + '</select>'
+        : '<span class="pill section">' + SECTION_LABELS[sec] + '</span>';
       var unitCell = editing
         ? '<select class="input rate-edit-unit" style="height:34px">' +
-          ['kg', 'bunch', 'pack', 'piece', 'dozen'].map(function (un) {
+          UNIT_OPTIONS.map(function (un) {
             return '<option' + (un === p.unit ? ' selected' : '') + '>' + un + '</option>';
           }).join('') + '</select>'
         : '/' + esc(p.unit);
@@ -488,11 +617,12 @@
       return '<tr>' +
         '<td><span class="p-emoji">' + esc(p.emoji) + '</span><b>' + esc(p.name) + '</b></td>' +
         '<td><span class="pill ' + (p.cat === 'veg' ? 'cat-veg' : 'cat-fruits') + '">' + (p.cat === 'veg' ? 'Vegetables' : 'Fruits') + '</span></td>' +
+        '<td>' + sectionCell + '</td>' +
         '<td>' + unitCell + '</td>' +
         '<td class="amount">' + rateCell + '</td>' +
         '<td class="actions-cell">' + actions + '</td>' +
         '</tr>';
-    }).join('') || '<tr><td colspan="5" class="muted" style="padding:22px 18px">No products in this filter.</td></tr>';
+    }).join('') || '<tr><td colspan="6" class="muted" style="padding:22px 18px">No products in this filter.</td></tr>';
 
     var countEl = $('#prodCount');
     if (countEl) countEl.textContent = list.length + ' products';
@@ -509,12 +639,25 @@
   function setupProductForm() {
     var form = $('#addProductForm');
     if (!form) return;
+
+    var catEl = $('#npCat');
+    function fillSectionOptions() {
+      var selEl = $('#npSection');
+      if (!selEl || !catEl) return;
+      selEl.innerHTML = sectionOptionsHtml(catEl.value, null);
+    }
+    if (catEl) {
+      catEl.addEventListener('change', fillSectionOptions);
+      fillSectionOptions();
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var payload = {
         name: $('#npName').value.trim(),
         emoji: $('#npEmoji').value.trim() || '🥬',
         cat: $('#npCat').value,
+        section: $('#npSection') ? $('#npSection').value : null,
         unit: $('#npUnit').value,
         rate: parseInt($('#npRate').value, 10) || 1
       };
@@ -526,17 +669,20 @@
           form.reset();
           $('#npEmoji').value = '🥬';
           $('#npRate').value = 1;
+          fillSectionOptions();
           loadProducts();
         }).catch(function (err) { toast(err.message || 'Could not add the product'); });
         return;
       }
 
       payload.id = 'd' + Date.now();
+      payload.section = payload.section || sectionFromUnit(payload);
       state.products.unshift(payload);
       renderProducts();
       form.reset();
       $('#npEmoji').value = '🥬';
       $('#npRate').value = 1;
+      fillSectionOptions();
       toast(payload.name + ' added to catalogue ✓');
     });
   }
@@ -717,6 +863,48 @@
     if (act === 'confirm') { setOrderStatus(id, 'Confirmed', 'Order ' + id + ' confirmed — collect from supplier tonight'); return; }
     if (act === 'reject') { setOrderStatus(id, 'Rejected', 'Order ' + id + ' rejected — customer notified'); return; }
 
+    if (act === 'edit-user') { editingUserId = id; renderUsers(); return; }
+    if (act === 'edit-user-cancel') { editingUserId = null; renderUsers(); return; }
+
+    if (act === 'edit-user-save') {
+      var du2 = null;
+      state.users.forEach(function (x) { if (String(x.rawId != null ? x.rawId : x.id) === String(id)) du2 = x; });
+      if (!du2) return;
+
+      var payload = {
+        name: $('.user-edit-name') ? $('.user-edit-name').value.trim() : '',
+        email: $('.user-edit-email') ? $('.user-edit-email').value.trim() : '',
+        phone: $('.user-edit-phone') ? $('.user-edit-phone').value.trim() : '',
+        address: $('.user-edit-address') ? $('.user-edit-address').value.trim() : '',
+        role: $('.role-edit') ? $('.role-edit').value : undefined,
+        status: $('.user-edit-status') ? $('.user-edit-status').value : undefined,
+        password: $('.user-edit-password') ? $('.user-edit-password').value.trim() : ''
+      };
+      if (!payload.name || !payload.email) { toast('Name and email are required'); return; }
+      if (!payload.password) delete payload.password;
+
+      if (LIVE) {
+        window.TAZA.adminUpdateUser(id, payload).then(function () {
+          editingUserId = null;
+          toast(payload.name + ' updated ✓');
+          loadUsers();
+        }).catch(function (err) { toast(err.message || 'Could not update the user'); });
+        return;
+      }
+
+      du2.name = payload.name;
+      du2.email = payload.email;
+      du2.phone = payload.phone;
+      du2.address = payload.address;
+      if (payload.role) du2.role = payload.role;
+      if (payload.status) du2.status = payload.status;
+      if (payload.password) du2.password = payload.password;
+      editingUserId = null;
+      renderUsers();
+      toast(payload.name + ' updated ✓');
+      return;
+    }
+
     if (act === 'toggle-user') {
       var u = null;
       state.users.forEach(function (x) { if (String(x.rawId) === String(id)) u = x; });
@@ -766,18 +954,26 @@
     if (act === 'edit-save') {
       var rateEl = $('.rate-edit-rate');
       var unitEl = $('.rate-edit-unit');
+      var secEl = $('.section-edit');
       var newRate = rateEl ? parseInt(rateEl.value, 10) || 1 : null;
       var newUnit = unitEl ? unitEl.value : null;
+      var newSection = secEl ? secEl.value : null;
 
       if (LIVE) {
-        window.TAZA.adminUpdateProduct(id, { rate: newRate, unit: newUnit }).then(function () {
+        window.TAZA.adminUpdateProduct(id, { rate: newRate, unit: newUnit, section: newSection }).then(function () {
           toast(btn.getAttribute('data-name') + ' updated ✓');
           editingProductId = null;
           loadProducts();
         }).catch(function (err) { toast(err.message || 'Could not update the product'); });
         return;
       }
-      state.products.forEach(function (p) { if (String(p.id) === String(id) || p.name === btn.getAttribute('data-name')) { if (newRate) p.rate = newRate; if (newUnit) p.unit = newUnit; } });
+      state.products.forEach(function (p) {
+        if (String(p.id) === String(id) || p.name === btn.getAttribute('data-name')) {
+          if (newRate) p.rate = newRate;
+          if (newUnit) p.unit = newUnit;
+          if (newSection) p.section = newSection;
+        }
+      });
       editingProductId = null;
       renderProducts();
       toast(btn.getAttribute('data-name') + ' updated ✓');
@@ -807,7 +1003,7 @@
 
   document.addEventListener('change', function (e) {
     var sel = e.target.closest('.role-select');
-    if (!sel) return;
+    if (!sel || sel.classList.contains('role-edit')) return;   /* edit-mode select is read on Save */
     var id = sel.getAttribute('data-id');
     if (sel.getAttribute('data-live') === '1' && LIVE) {
       window.TAZA.adminUpdateUser(id, { role: sel.value }).then(function () {
@@ -882,7 +1078,7 @@
     /* users page: passwords are never returned by the API */
     if ($('#usersBody')) {
       var usersHint = $('.card-head span.hint');
-      if (usersHint) usersHint.textContent = 'Passwords are stored hashed (never shown) — change role or suspend from Actions';
+      if (usersHint) usersHint.textContent = 'Click the pencil to edit any user — including password reset (stored hashed)';
     }
 
     /* dashboard */
@@ -928,6 +1124,11 @@
 
   function boot() {
     renderSidebar();
+
+    /* bind the forms once — they work in both demo and live mode */
+    setupChatForm();
+    setupProductForm();
+    setupSettings();
 
     var t = window.TAZA;
     if (!t || !t.token()) { initDemo(); return; }

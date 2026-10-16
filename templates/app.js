@@ -12,7 +12,14 @@
 
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
   var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
-  var money = function (n) { return '₹' + Math.round(n); };
+  var money = function (n) {
+    var v = Math.round(Number(n) * 10) / 10;
+    return '₹' + (Number.isInteger(v) ? v : v.toFixed(1));
+  };
+  var fmtQty = function (n) {
+    var v = Math.round(Number(n) * 10) / 10;
+    return Number.isInteger(v) ? String(v) : v.toFixed(1);
+  };
   var esc = function (s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -49,6 +56,11 @@
       veg_cabbage: 'Cabbage',
       veg_coriander: 'Coriander',
       veg_sweet_potato: 'Sweet Potato',
+      veg_methi: 'Fenugreek Leaves',
+      veg_shepu: 'Dill',
+      veg_chuka: 'Sorrel',
+      veg_ginger: 'Ginger',
+      veg_curry_leaves: 'Curry Leaves',
       fruit_apple: 'Apple',
       fruit_banana: 'Banana',
       fruit_mango: 'Mango',
@@ -70,6 +82,13 @@
       unit_pack: ' /pack',
       unit_piece: ' /piece',
       unit_dozen: ' /dozen',
+      unit_100g: ' /100 g',
+      sec_kg: 'KG · Weight',
+      sec_bunch: 'Bunch (Judi)',
+      sec_gram: 'Gram',
+      sec_piece_pack: 'Piece & Pack',
+      sec_dozen_piece: 'Dozen · Piece (Count)',
+      sec_pack: 'Pack (Pre-packed)',
       my_cart: 'My Cart',
       fresh_fiji_apples: 'Fresh Fiji Apples',
       organic_spinach: 'Organic Spinach',
@@ -193,6 +212,11 @@
       veg_cabbage: 'पत्तागोभी',
       veg_coriander: 'धनिया',
       veg_sweet_potato: 'शकरकंद',
+      veg_methi: 'मेथी',
+      veg_shepu: 'शेपू',
+      veg_chuka: 'चुका',
+      veg_ginger: 'अदरक',
+      veg_curry_leaves: 'कड़ी पत्ता',
       fruit_apple: 'सेब',
       fruit_banana: 'केला',
       fruit_mango: 'आम',
@@ -214,6 +238,13 @@
       unit_pack: ' /पैक',
       unit_piece: ' /नग',
       unit_dozen: ' /दर्जन',
+      unit_100g: ' /100 ग्राम',
+      sec_kg: 'किलो · वज़न',
+      sec_bunch: 'गड्डी (जुडी)',
+      sec_gram: 'ग्राम',
+      sec_piece_pack: 'पीस और पैक',
+      sec_dozen_piece: 'दर्जन · पीस (गिनती)',
+      sec_pack: 'पैक (तैयार)',
       my_cart: 'मेरा कार्ट',
       fresh_fiji_apples: 'ताज़े फ़िजी सेब',
       organic_spinach: 'जैविक पालक',
@@ -337,6 +368,11 @@
       veg_cabbage: 'कोबी',
       veg_coriander: 'कोथिंबीर',
       veg_sweet_potato: 'रताळे',
+      veg_methi: 'मेथी',
+      veg_shepu: 'शेपू',
+      veg_chuka: 'चुका',
+      veg_ginger: 'आले',
+      veg_curry_leaves: 'कढीपत्ता',
       fruit_apple: 'सफरचंद',
       fruit_banana: 'केळे',
       fruit_mango: 'आंबा',
@@ -358,6 +394,13 @@
       unit_pack: ' /पॅक',
       unit_piece: ' /नग',
       unit_dozen: ' /डझन',
+      unit_100g: ' /100 ग्राम',
+      sec_kg: 'किलो · वजन',
+      sec_bunch: 'गड्डी (जुडी)',
+      sec_gram: 'ग्राम',
+      sec_piece_pack: 'पीस आणि पॅक',
+      sec_dozen_piece: 'डझन · पीस (संख्या)',
+      sec_pack: 'पॅक (तयार)',
       my_cart: 'माझे कार्ट',
       fresh_fiji_apples: 'ताजी फिजी सफरचंद',
       organic_spinach: 'सेंद्रिय पालक',
@@ -538,7 +581,7 @@
 
     var subtotal = 0;
     items.forEach(function (item) {
-      subtotal += parseFloat(item.dataset.price) * parseInt(item.dataset.qty, 10);
+      subtotal += parseFloat(item.dataset.price) * parseFloat(item.dataset.qty);
     });
     var delivery = subtotal > 0 ? 3 : 0;
 
@@ -629,6 +672,13 @@
 
   /* ---------- quantity steppers (delegated — also covers rendered cart rows) ---------- */
 
+  function stepInfo(stepper) {
+    var row = stepper.closest('.cart-item') || stepper.closest('.rate-row');
+    var unitEl = row ? $('.price span[data-i18n]', row) : null;
+    var isKg = !!(unitEl && unitEl.getAttribute('data-i18n') === 'unit_kg');
+    return { step: isKg ? 0.5 : 1, isKg: isKg };
+  }
+
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('.step');
     if (!btn || btn.disabled) return;
@@ -636,13 +686,15 @@
     var qtyEl = stepper ? $('.qty', stepper) : null;
     if (!qtyEl) return;
 
-    var current = parseInt(qtyEl.textContent, 10) || 0;
     var cartItem = stepper.closest('.cart-item');
     var rateRow = stepper.closest('.rate-row');
-    var min = cartItem ? 1 : 0;
-    var next = Math.min(99, Math.max(min, current + parseInt(btn.dataset.step, 10)));
+    var info = stepInfo(stepper);
+    var current = parseFloat(qtyEl.textContent) || 0;
+    var min = cartItem ? info.step : 0;
+    var raw = current + (parseInt(btn.dataset.step, 10) * info.step);
+    var next = Math.min(99, Math.max(min, Math.round(raw * 10) / 10));
 
-    /* cart: minus from 1 removes the item */
+    /* cart: minus at the minimum removes the item */
     if (cartItem && next === current) {
       setBagItem(cartItem.dataset.id, 0);
       renderCart();
@@ -651,8 +703,8 @@
     }
     if (next === current) return;
 
-    qtyEl.textContent = next;
-    refreshStepperState(stepper, next, min);
+    qtyEl.textContent = fmtQty(next);
+    refreshStepperState(stepper, next, 0);
 
     if (cartItem) {
       cartItem.dataset.qty = next;
@@ -673,7 +725,7 @@
           rowTotal.hidden = true;
         }
       }
-      if (current === 0 && next === 1) toast(t('toast_added'));
+      if (current === 0) toast(t('toast_added'));
     }
   });
 
@@ -709,7 +761,7 @@
         '</div>' +
         '<div class="stepper">' +
         '<button class="step" data-step="-1" aria-label="Decrease quantity">' + STEP_MINUS_SVG + '</button>' +
-        '<span class="qty">' + it.qty + '</span>' +
+        '<span class="qty">' + fmtQty(it.qty) + '</span>' +
         '<button class="step plus" data-step="1" aria-label="Increase quantity">' + STEP_PLUS_SVG + '</button>' +
         '</div>' +
         '</li>';
@@ -717,7 +769,7 @@
 
     applyLanguage(currentLang);
     $$('.cart-item .stepper').forEach(function (stepper) {
-      refreshStepperState(stepper, parseInt($('.qty', stepper).textContent, 10), 1);
+      refreshStepperState(stepper, parseFloat($('.qty', stepper).textContent), 0);
     });
     updateCartTotals();
   }
@@ -734,7 +786,7 @@
       var item = findBagItem(bag, h4.getAttribute('data-i18n'));
       var qty = item ? item.qty : 0;
       var qtyEl = $('.qty', row);
-      if (qtyEl) qtyEl.textContent = qty;
+      if (qtyEl) qtyEl.textContent = fmtQty(qty);
       refreshStepperState($('.stepper', row), qty, 0);
     });
   }
@@ -1169,7 +1221,7 @@
   function rateRowHtml(p) {
     var key = nameKeyFor(p.name);
     var nameHtml = key ? '<h4 data-i18n="' + key + '">' + esc(p.name) + '</h4>' : '<h4>' + esc(p.name) + '</h4>';
-    var unitKey = 'unit_' + (p.unit === 'piece' ? 'piece' : p.unit);
+    var unitKey = p.unit === '100 g' ? 'unit_100g' : 'unit_' + p.unit;
     return '<div class="rate-row" data-price="' + p.rate + '">' +
       '<div class="r-top"><span class="r-emoji" aria-hidden="true">' + esc(p.emoji) + '</span>' + nameHtml + '</div>' +
       '<div class="r-bottom">' +
@@ -1181,14 +1233,53 @@
       '</div></div></div>';
   }
 
-  function fillTable(sel, products) {
-    var table = $(sel);
-    if (!table) return;
-    var cols = $$('.rate-col', table);
-    if (cols.length < 2 || !products.length) return;
-    var half = Math.ceil(products.length / 2);
-    cols[0].innerHTML = products.slice(0, half).map(rateRowHtml).join('');
-    cols[1].innerHTML = products.slice(half).map(rateRowHtml).join('');
+  function sectionFor(p) {
+    if (p.cat === 'veg') {
+      if (p.unit === 'bunch') return 'bunch';
+      if (p.unit === '100 g') return 'gram';
+      if (p.unit === 'pack' || p.unit === 'piece' || p.unit === 'dozen') return 'piece_pack';
+      return 'kg';
+    }
+    if (p.unit === 'pack') return 'pack';
+    if (p.unit === 'piece' || p.unit === 'dozen') return 'dozen_piece';
+    return 'kg';
+  }
+
+  var SECTION_META = {
+    veg: [
+      { id: 'kg', ico: '🥔', key: 'sec_kg' },
+      { id: 'bunch', ico: '🥬', key: 'sec_bunch' },
+      { id: 'gram', ico: '⚖️', key: 'sec_gram' },
+      { id: 'piece_pack', ico: '📦', key: 'sec_piece_pack' }
+    ],
+    fruits: [
+      { id: 'kg', ico: '🥭', key: 'sec_kg' },
+      { id: 'dozen_piece', ico: '🍌', key: 'sec_dozen_piece' },
+      { id: 'pack', ico: '📦', key: 'sec_pack' }
+    ]
+  };
+
+  function buildPane(sel, products, cat) {
+    var pane = $(sel);
+    if (!pane || !products.length) return;
+    var theme = cat === 'veg' ? 'theme-green' : 'theme-purple';
+
+    pane.innerHTML = SECTION_META[cat].map(function (def) {
+      var items = products.filter(function (p) { return sectionFor(p) === def.id; });
+      if (!items.length) return '';
+      var half = Math.ceil(items.length / 2);
+      return '<div class="sub-section ' + theme + '">' +
+        '<div class="sub-head">' +
+        '<span class="sub-ico" aria-hidden="true">' + def.ico + '</span>' +
+        '<h4 data-i18n="' + def.key + '"></h4>' +
+        '<span class="sub-count"><b>' + items.length + '</b> <span data-i18n="items_word"></span></span>' +
+        '</div>' +
+        '<div class="rate-table">' +
+        '<div class="rate-col">' + items.slice(0, half).map(rateRowHtml).join('') + '</div>' +
+        '<div class="rate-col">' + items.slice(half).map(rateRowHtml).join('') + '</div>' +
+        '</div>' +
+        '</div>';
+    }).join('');
   }
 
   if ($('#vegList') && window.TAZA) {
@@ -1196,8 +1287,8 @@
       if (!ok) return;                         /* static demo tables stay */
       window.TAZA.getProducts().then(function (res) {
         var products = res.products || [];
-        fillTable('#vegList', products.filter(function (p) { return p.cat === 'veg'; }));
-        fillTable('#fruitList', products.filter(function (p) { return p.cat === 'fruits'; }));
+        buildPane('#vegList', products.filter(function (p) { return p.cat === 'veg'; }), 'veg');
+        buildPane('#fruitList', products.filter(function (p) { return p.cat === 'fruits'; }), 'fruits');
         applyLanguage(currentLang);
         initHomeRows();                        /* restore bag quantities */
       }).catch(function () { /* keep static tables */ });
