@@ -434,8 +434,13 @@ select.input { cursor: pointer; }
 .p-emoji { font-family: var(--emoji); margin-right: 8px; }
 .muted { color: var(--muted); font-size: 12px; }
 
-/* installed-app mode: keep content clear of the phone's system bars */
+/* installed-app mode: keep content clear of the phone's system bars.
+   Some Android builds overlay the nav buttons without reporting an inset,
+   so guarantee clearance in standalone mode (larger value wins). */
 body { padding-bottom: env(safe-area-inset-bottom); }
+@media (max-width: 980px) and (display-mode: standalone) {
+  body { padding-bottom: max(44px, env(safe-area-inset-bottom)); }
+}
 
 /* settings */
 .settings-card { max-width: 680px; }
