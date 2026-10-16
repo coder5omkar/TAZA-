@@ -515,6 +515,20 @@ input[type='search']::-webkit-search-cancel-button { display: none; }
 .order-success b { display: block; font-size: 13px; color: var(--green-strong); }
 .order-success .os-text { display: block; font-size: 11.5px; color: var(--muted); margin-top: 2px; }
 
+/* open order (items will merge into it) */
+.open-order {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  background: #fff4e0;
+  border: 1.5px solid rgba(192, 124, 0, 0.28);
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+.open-order .oo-ico { font-size: 19px; line-height: 1; font-family: var(--emoji-font); }
+.open-order b { display: block; font-size: 13px; color: #a37100; }
+.open-order .oo-text { display: block; font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
 .btn-primary.is-busy { opacity: 0.6; pointer-events: none; }
 
 /* empty bag */

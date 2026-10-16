@@ -48,9 +48,18 @@ function check(name, ok, extra) {
   const prods = await req('GET', '/api/products');
   check('catalogue has 39 products (incl. 100g/gram items)', prods.status === 200 && prods.data.products.length >= 39, (prods.data.products || []).length + ' products');
 
-  /* 4. place order (customer) */
+  /* 3b. cleanup: close any open orders from previous runs so checks are deterministic */
+  const openBefore = await req('GET', '/api/orders', null, adminToken);
+  for (const ord of (openBefore.data.orders || [])) {
+    if (ord.status === 'pending' || ord.status === 'confirmed') {
+      await req('PATCH', '/api/orders/' + ord.id + '/status', { status: 'delivered' }, adminToken);
+    }
+  }
+
+  /* 4. place order (customer) → creates a NEW order */
   const tomato = prods.data.products.find(function (p) { return p.name === 'Tomato'; });
   const apple = prods.data.products.find(function (p) { return p.name === 'Apple'; });
+  const cucumber = prods.data.products.find(function (p) { return p.name === 'Cucumber'; });
   const order = await req('POST', '/api/orders', {
     items: [{ productId: tomato.id, qty: 2 }, { productId: apple.id, qty: 1 }],
     slot: 'morning',
@@ -58,28 +67,41 @@ function check(name, ok, extra) {
     address: '12, Green Park Society, MG Road, Pune 411001'
   }, custToken);
   const o = order.data.order || {};
-  check('place order → 201 with TS id', order.status === 201 && /^TS\d{6}$/.test(o.id || ''), o.id);
-  check('order amount = 2×₹2 + ₹2 + ₹3 fee = ₹9', o.amount === 9, '₹' + o.amount);
+  check('place order → new TS id (not merged)', order.status === 201 && !order.data.merged && /^TS\d{6}$/.test(o.id || ''), o.id);
+  check('order amount = 2×₹2 + ₹2 + ₹3 fee = ₹9', Number(o.amount) === 9, '₹' + o.amount);
   check('cycle is tomorrow or day-after', o.cycle === 'tomorrow' || o.cycle === 'day-after', o.cycle + ' → ' + o.deliveryDate);
 
-  /* 4b. half-kg quantity (0.5 steps for KG items) */
+  /* 5. same-day second order MERGES into the open order (same id) */
+  const mergeOrder = await req('POST', '/api/orders', {
+    items: [{ productId: tomato.id, qty: 1 }],
+    slot: 'morning',
+    payment: 'upi',
+    address: '12, Green Park Society, MG Road, Pune 411001'
+  }, custToken);
+  const mo = mergeOrder.data.order || {};
+  check('second order merges into open order (same id)', mergeOrder.status === 200 && mergeOrder.data.merged === true && mo.id === o.id, mo.id);
+  check('merged amount = ₹9 + 1×₹2 = ₹11', Number(mo.amount) === 11, '₹' + mo.amount);
+
+  /* 5b. half-kg addition also merges (0.5 steps for KG items) */
   const halfOrder = await req('POST', '/api/orders', {
-    items: [{ productId: tomato.id, qty: 0.5 }, { productId: apple.id, qty: 1 }],
+    items: [{ productId: cucumber.id, qty: 0.5 }],
     slot: 'morning',
     payment: 'upi',
     address: '12, Green Park Society, MG Road, Pune 411001'
   }, custToken);
   const ho = halfOrder.data.order || {};
-  check('0.5 kg order accepted (0.5×₹2 + ₹2 + ₹3 = ₹6)', halfOrder.status === 201 && Number(ho.amount) === 6, '₹' + ho.amount);
+  check('0.5 kg addition merges (₹11 + 0.5×₹1 = ₹11.5)', halfOrder.data.merged === true && Number(ho.amount) === 11.5, '₹' + ho.amount);
 
-  /* short-capacity guard: qty clamped, empty bag rejected */
+  /* short-capacity guard: empty bag rejected */
   const emptyBag = await req('POST', '/api/orders', { items: [], slot: 'morning', payment: 'upi', address: 'x' }, custToken);
   check('empty bag rejected', emptyBag.status === 400);
 
-  /* 5. customer sees own order */
+  /* 6. customer sees one order with merged quantities */
   const mine = await req('GET', '/api/orders', null, custToken);
   const mineOrder = (mine.data.orders || []).find(function (x) { return x.id === o.id; });
-  check('customer order list contains it (with items)', !!mineOrder && mineOrder.items.length === 2, mineOrder ? mineOrder.items.map(function (i) { return i.name + '×' + i.qty; }).join(', ') : 'not found');
+  const hasTomato3 = mineOrder && mineOrder.items.some(function (i) { return i.name === 'Tomato' && Number(i.qty) === 3; });
+  const hasCucumberHalf = mineOrder && mineOrder.items.some(function (i) { return i.name === 'Cucumber' && Number(i.qty) === 0.5; });
+  check('one order holds merged items (Tomato ×3, Cucumber ×0.5)', !!mineOrder && hasTomato3 && hasCucumberHalf, mineOrder ? mineOrder.items.map(function (i) { return i.name + '×' + i.qty; }).join(', ') : 'not found');
 
   /* 6. admin confirms */
   const confirm = await req('PATCH', '/api/orders/' + o.id + '/status', { status: 'confirmed' }, adminToken);

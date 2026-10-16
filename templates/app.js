@@ -103,7 +103,10 @@
       addr_office: 'Office',
       place_order: 'Place Order',
       order_placed: 'Order placed ✓',
+      order_updated: 'Order updated ✓',
       order_delivery: 'delivery',
+      open_order_title: 'Open order',
+      open_order_text: 'New items will be added to this order',
       err_signin: 'Please sign in to place your order',
       err_address: 'Choose a delivery address',
       err_items: 'Some items are no longer available',
@@ -259,7 +262,10 @@
       addr_office: 'ऑफ़िस',
       place_order: 'ऑर्डर करें',
       order_placed: 'ऑर्डर हो गया ✓',
+      order_updated: 'ऑर्डर अपडेट हुआ ✓',
       order_delivery: 'डिलीवरी',
+      open_order_title: 'खुला ऑर्डर',
+      open_order_text: 'नए आइटम इसी ऑर्डर में जोड़े जाएँगे',
       err_signin: 'ऑर्डर करने के लिए लॉग इन करें',
       err_address: 'डिलीवरी पता चुनें',
       err_items: 'कुछ आइटम अब उपलब्ध नहीं हैं',
@@ -415,7 +421,10 @@
       addr_office: 'ऑफिस',
       place_order: 'ऑर्डर करा',
       order_placed: 'ऑर्डर झाली ✓',
+      order_updated: 'ऑर्डर अपडेट झाली ✓',
       order_delivery: 'वितरण',
+      open_order_title: 'सुरू असलेली ऑर्डर',
+      open_order_text: 'नवीन वस्तू याच ऑर्डरमध्ये जोडल्या जातील',
       err_signin: 'ऑर्डर करण्यासाठी लॉग इन करा',
       err_address: 'वितरण पत्ता निवडा',
       err_items: 'काही वस्तू आता उपलब्ध नाहीत',
@@ -849,12 +858,12 @@
 
   var placeBtn = $('#placeOrderBtn');
 
-  function showLastOrder(order) {
+  function showLastOrder(order, merged) {
     var el = $('#orderSuccess');
     if (!el || !order || !order.id) return;
     var title = $('#orderSuccessTitle');
     var text = $('#orderSuccessText');
-    if (title) title.textContent = t('order_placed');
+    if (title) title.textContent = merged ? t('order_updated') : t('order_placed');
     if (text) {
       var str = order.id;
       if (order.deliveryDate) str += ' · ' + t('order_delivery') + ' ' + order.deliveryDate;
@@ -863,14 +872,47 @@
     el.hidden = false;
   }
 
+  /* shows only the ?last= preview variant — the green banner does NOT persist
+     across visits (it confused users by appearing before a new order) */
   function restoreLastOrder() {
-    var last = null;
-    try { last = JSON.parse(sessionStorage.getItem('taza-last-order') || 'null'); } catch (e) { /* noop */ }
-    /* ?last=TS261001&date=2026-10-17 renders the banner directly (for previews/testing) */
     var urlId = null;
     try { urlId = new URLSearchParams(window.location.search).get('last'); } catch (e) { /* noop */ }
-    if (urlId) last = { id: urlId, deliveryDate: new URLSearchParams(window.location.search).get('date') || '' };
-    if (last && last.id) showLastOrder(last);
+    if (urlId) {
+      showLastOrder({ id: urlId, deliveryDate: new URLSearchParams(window.location.search).get('date') || '' });
+    }
+  }
+
+  /* ---------- open order strip: new items merge into it ---------- */
+
+  function showOpenOrder(order) {
+    var el = $('#openOrder');
+    if (!el || !order || !order.id) return;
+    var success = $('#orderSuccess');
+    if (success && !success.hidden) return;   /* fresh green confirmation already explains it */
+    var title = $('#openOrderTitle');
+    var text = $('#openOrderText');
+    if (title) title.textContent = t('open_order_title') + ' · ' + order.id;
+    if (text) {
+      var str = t('open_order_text');
+      if (order.delivery_date) str += ' · ' + t('order_delivery') + ' ' + order.delivery_date;
+      text.textContent = str;
+    }
+    el.hidden = false;
+  }
+
+  if ($('#openOrder') && window.TAZA) {
+    window.TAZA.available().then(function (ok) {
+      if (!ok || !window.TAZA.token()) return;
+      window.TAZA.myOrders().then(function (res) {
+        var d = new Date();
+        var p = function (n) { return n < 10 ? '0' + n : '' + n; };
+        var todayStr = d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+        var open = (res.orders || []).filter(function (o) {
+          return (o.status === 'pending' || o.status === 'confirmed') && String(o.delivery_date || '') >= todayStr;
+        })[0];
+        if (open) showOpenOrder(open);
+      }).catch(function () { /* noop */ });
+    });
   }
 
   function setPlaceBusy(busy) {
@@ -921,14 +963,14 @@
         return window.TAZA.placeOrder({ items: items, slot: slot, payment: payment, address: address });
       }).then(function (res) {
         var order = res.order || {};
+        var merged = !!res.merged;
         saveBag([]);
         updateFabs();
         renderCart();
         setPlaceBusy(false);
 
-        try { sessionStorage.setItem('taza-last-order', JSON.stringify(order)); } catch (e) { /* noop */ }
-        showLastOrder(order);
-        toast(t('order_placed') + ' · ' + order.id + ' · ' + t('order_delivery') + ' ' + order.deliveryDate, 4200);
+        showLastOrder(order, merged);
+        toast((merged ? t('order_updated') : t('order_placed')) + ' · ' + order.id + ' · ' + t('order_delivery') + ' ' + order.deliveryDate, 4200);
       }).catch(function (err) {
         setPlaceBusy(false);
         toast((err && err.message) ? err.message : t('err_generic'), 3200);

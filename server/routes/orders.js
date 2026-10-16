@@ -62,6 +62,51 @@ router.post('/', requireAuth, wrap(async (req, res) => {
     const cutoff = settings ? settings.cutoff_hour : 22;
     const total = subtotal + fee;
 
+    /* 2b. merge into an open order (pending/confirmed, not yet delivered) instead
+       of creating a new one — per store rule, same-day items join the open order */
+    const [[openOrder]] = await conn.query(
+      "SELECT id, delivery_fee, cycle, delivery_date, status FROM orders " +
+      "WHERE user_id = ? AND status IN ('pending', 'confirmed') AND delivery_date >= CURDATE() " +
+      'ORDER BY delivery_date ASC, placed_at ASC LIMIT 1 FOR UPDATE',
+      [req.user.id]
+    );
+
+    if (openOrder) {
+      for (const l of lines) {
+        const [[existing]] = await conn.query(
+          'SELECT id FROM order_items WHERE order_id = ? AND product_id = ? LIMIT 1',
+          [openOrder.id, l.product_id]
+        );
+        if (existing) {
+          await conn.query('UPDATE order_items SET qty = qty + ? WHERE id = ?', [l.qty, existing.id]);
+        } else {
+          await conn.query(
+            'INSERT INTO order_items (order_id, product_id, name, unit, rate, qty) VALUES (?, ?, ?, ?, ?, ?)',
+            [openOrder.id, l.product_id, l.name, l.unit, l.rate, l.qty]
+          );
+        }
+      }
+      const [[totals]] = await conn.query(
+        'SELECT COALESCE(SUM(qty * rate), 0) AS sub FROM order_items WHERE order_id = ?',
+        [openOrder.id]
+      );
+      const newAmount = Number(totals.sub) + Number(openOrder.delivery_fee);
+      await conn.query('UPDATE orders SET amount = ? WHERE id = ?', [newAmount, openOrder.id]);
+
+      await conn.commit();
+      return res.status(200).json({
+        merged: true,
+        order: {
+          id: openOrder.id,
+          amount: newAmount,
+          cycle: openOrder.cycle,
+          deliveryDate: openOrder.delivery_date,
+          status: openOrder.status,
+          items: lines
+        }
+      });
+    }
+
     /* 3. cycle + delivery date */
     const now = new Date();
     const beforeCutoff = now.getHours() < cutoff;
