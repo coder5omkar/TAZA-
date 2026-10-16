@@ -205,7 +205,7 @@
         { from: 'me', text: 'Happy to help 🌿 See you in tomorrow\'s cycle.', time: '10:05 AM' }
       ] }
     ],
-    settings: { store_name: 'TAZA-PHAL-SABZI.COM', support_phone: '+91 98200 11001', delivery_fee: 3, cutoff_hour: 22, morning_slot: 1, evening_slot: 1, upi_enabled: 1, cod_enabled: 1 }
+    settings: { store_name: 'TAZA-PHAL-SABZI.COM', support_phone: '+91 98200 11001', delivery_fee: 3, cutoff_hour: 22, morning_slot: 1, evening_slot: 1, upi_enabled: 0, cod_enabled: 1 }
   };
 
   var state = {
@@ -553,7 +553,7 @@
         '<div class="kv"><span>Order cutoff</span><b>' + settings.cutoff_hour + ':00 PM daily</b></div>' +
         '<div class="kv"><span>Daily capacity</span><b>99 orders</b></div>' +
         '<div class="kv"><span>Delivery slots</span><b>' + (settings.morning_slot ? 'Morning' : '') + (settings.morning_slot && settings.evening_slot ? ' · ' : '') + (settings.evening_slot ? 'Evening' : '') + '</b></div>' +
-        '<div class="kv"><span>Payments</span><b>' + (settings.upi_enabled ? 'UPI on delivery' : '') + (settings.upi_enabled && settings.cod_enabled ? ' · ' : '') + (settings.cod_enabled ? 'Cash (COD)' : '') + '</b></div>';
+        '<div class="kv"><span>Payments</span><b>Cash on Delivery — collected at the door</b></div>';
     }
   }
 
@@ -982,8 +982,8 @@
         delivery_fee: $('#stFee') ? parseInt($('#stFee').value, 10) : undefined,
         morning_slot: $('#stMorning') && $('#stMorning').checked ? 1 : 0,
         evening_slot: $('#stEvening') && $('#stEvening').checked ? 1 : 0,
-        upi_enabled: $('#stUpi') && $('#stUpi').checked ? 1 : 0,
-        cod_enabled: $('#stCod') && $('#stCod').checked ? 1 : 0
+        upi_enabled: 0,
+        cod_enabled: 1
       };
       if (LIVE) {
         window.TAZA.adminSaveSettings(payload).then(function () { toast('Settings saved ✓'); })

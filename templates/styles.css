@@ -923,7 +923,7 @@ input[type='search']::-webkit-search-cancel-button { display: none; }
 }
 .o-total { font-size: 15px; font-weight: 700; color: var(--green-strong); }
 
-/* payment mode chip on order cards (Paid · UPI / COD) */
+/* payment mode chip on order cards (Pay on delivery / Paid · Cash) */
 .of-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .pay-chip {
   font-size: 9.5px;

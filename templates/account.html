@@ -123,19 +123,6 @@
             </span>
           </button>
 
-          <button class="menu-item" id="btnPayment">
-            <span class="m-ico" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="1" y="4" width="22" height="16" rx="2" />
-                <path d="M1 10h22" />
-              </svg>
-            </span>
-            <span data-i18n="menu_payments">Payment Methods</span>
-            <span class="chev" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6" /></svg>
-            </span>
-          </button>
-
           <a class="menu-item" href="messages.html">
             <span class="m-ico" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -241,35 +228,6 @@
           <label class="acct-field"><span data-i18n="addr_pin">PIN code</span><input id="adPin" type="text" inputmode="numeric" maxlength="6" /></label>
         </div>
         <button class="btn-primary sheet-save" id="adSave" data-i18n="save_btn">Save</button>
-      </section>
-
-      <!-- default payment method (UPI 3% off) -->
-      <section class="order-sheet" id="sheetPayment" hidden aria-label="Payment methods">
-        <div class="sheet-head">
-          <div><h3 data-i18n="pay_default_title">Payment Methods</h3></div>
-          <button class="icon-btn acct-sheet-close" aria-label="Close">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
-          </button>
-        </div>
-        <div class="pay-options">
-          <label class="addr-option" id="payUpi" data-pay="upi">
-            <input type="radio" name="default-pay" hidden />
-            <span class="addr-radio" aria-hidden="true"></span>
-            <span class="addr-body">
-              <span class="addr-type"><span data-i18n="pay_upi">UPI on delivery</span> <em class="pay-tag" data-i18n="pay_upi_tag">3% discount</em></span>
-              <span class="addr-text" data-i18n="pay_upi_at_door">PhonePe · GPay · Paytm</span>
-            </span>
-          </label>
-          <label class="addr-option active" id="payCod" data-pay="cod">
-            <input type="radio" name="default-pay" checked hidden />
-            <span class="addr-radio" aria-hidden="true"></span>
-            <span class="addr-body">
-              <span class="addr-type" data-i18n="pay_cod">Cash on Delivery</span>
-              <span class="addr-text" data-i18n="pay_cod_sub">Pay when your order arrives</span>
-            </span>
-          </label>
-        </div>
-        <button class="btn-primary sheet-save" id="paySave" data-i18n="save_btn">Save</button>
       </section>
 
     </div>

@@ -117,7 +117,6 @@
       paid_word: 'Paid',
       cod_word: 'Cash',
       pay_at_delivery: 'Pay on delivery',
-      pay_upi_at_door: 'Scan & pay when your order arrives',
       sec_kg: 'KG · Weight',
       sec_bunch: 'Bunch (Judi)',
       sec_gram: 'Gram',
@@ -157,12 +156,9 @@
       addr_city: 'City',
       addr_pin: 'PIN code',
       current_address: 'Current address',
-      pay_default_title: 'Payment Methods',
-      pay_upi_tag: '3% discount',
       upi_discount: 'UPI on delivery discount (3%)',
       profile_saved: 'Profile updated ✓',
       address_saved: 'Address updated ✓',
-      payment_saved: 'Default payment saved ✓',
       err_required: 'Name and email are required',
       err_signin: 'Please sign in to place your order',
       err_address: 'Choose a delivery address',
@@ -218,7 +214,6 @@
       lang_label: 'Language',
       menu_my_orders: 'My Orders',
       menu_addresses: 'Delivery Addresses',
-      menu_payments: 'Payment Methods',
       menu_help: 'Help & Support',
       menu_logout: 'Log Out',
       slot_title: 'Delivery Slot',
@@ -228,7 +223,6 @@
       pay_title: 'Payment Method',
       pay_cod: 'Cash on Delivery',
       pay_cod_sub: 'Pay when your order arrives',
-      pay_upi_sub: 'PhonePe · GPay · Paytm · 3% discount',
       cart_empty: 'Your bag is empty',
       cart_empty_sub: 'Add fresh vegetables & fruits to get started',
       browse: 'Browse products',
@@ -315,7 +309,6 @@
       paid_word: 'भुगतान हुआ',
       cod_word: 'कैश',
       pay_at_delivery: 'डिलीवरी पर भुगतान',
-      pay_upi_at_door: 'ऑर्डर आने पर स्कैन करके भुगतान करें',
       sec_kg: 'किलो · वज़न',
       sec_bunch: 'गड्डी (जुडी)',
       sec_gram: 'ग्राम',
@@ -355,12 +348,9 @@
       addr_city: 'शहर',
       addr_pin: 'पिन कोड',
       current_address: 'वर्तमान पता',
-      pay_default_title: 'भुगतान तरीके',
-      pay_upi_tag: '3% छूट',
       upi_discount: 'डिलीवरी पर UPI छूट (3%)',
       profile_saved: 'प्रोफ़ाइल अपडेट हुई ✓',
       address_saved: 'पता अपडेट हुआ ✓',
-      payment_saved: 'डिफ़ॉल्ट भुगतान सहेजा गया ✓',
       err_required: 'नाम और ईमेल आवश्यक हैं',
       err_signin: 'ऑर्डर करने के लिए लॉग इन करें',
       err_address: 'डिलीवरी पता चुनें',
@@ -416,7 +406,6 @@
       lang_label: 'भाषा',
       menu_my_orders: 'मेरे ऑर्डर',
       menu_addresses: 'डिलीवरी पते',
-      menu_payments: 'भुगतान तरीके',
       menu_help: 'सहायता और समर्थन',
       menu_logout: 'लॉग आउट',
       slot_title: 'डिलीवरी समय',
@@ -426,7 +415,6 @@
       pay_title: 'भुगतान विधि',
       pay_cod: 'कैश ऑन डिलीवरी',
       pay_cod_sub: 'ऑर्डर मिलने पर भुगतान करें',
-      pay_upi_sub: 'PhonePe · GPay · Paytm · 3% छूट',
       cart_empty: 'आपका बैग खाली है',
       cart_empty_sub: 'शुरू करने के लिए ताज़ी सब्ज़ियाँ और फल जोड़ें',
       browse: 'उत्पाद देखें',
@@ -513,7 +501,6 @@
       paid_word: 'पेमेंट झाले',
       cod_word: 'कॅश',
       pay_at_delivery: 'डिलिव्हरीवर पेमेंट',
-      pay_upi_at_door: 'ऑर्डर आल्यावर स्कॅन करून पेमेंट करा',
       sec_kg: 'किलो · वजन',
       sec_bunch: 'गड्डी (जुडी)',
       sec_gram: 'ग्राम',
@@ -553,12 +540,9 @@
       addr_city: 'शहर',
       addr_pin: 'पिन कोड',
       current_address: 'सध्याचा पत्ता',
-      pay_default_title: 'पेमेंट पद्धती',
-      pay_upi_tag: '3% सूट',
       upi_discount: 'डिलिव्हरीवर UPI सूट (3%)',
       profile_saved: 'प्रोफाइल अपडेट झाले ✓',
       address_saved: 'पत्ता अपडेट झाला ✓',
-      payment_saved: 'डीफॉल्ट पेमेंट जतन केले ✓',
       err_required: 'नाव आणि ईमेल आवश्यक आहेत',
       err_signin: 'ऑर्डर करण्यासाठी लॉग इन करा',
       err_address: 'वितरण पत्ता निवडा',
@@ -614,7 +598,6 @@
       lang_label: 'भाषा',
       menu_my_orders: 'माझ्या ऑर्डर्स',
       menu_addresses: 'वितरण पत्ते',
-      menu_payments: 'पेमेंट पद्धती',
       menu_help: 'मदत आणि समर्थन',
       menu_logout: 'लॉग आउट',
       slot_title: 'वितरण वेळ',
@@ -624,7 +607,6 @@
       pay_title: 'पेमेंट पद्धत',
       pay_cod: 'कॅश ऑन डिलिव्हरी',
       pay_cod_sub: 'ऑर्डर मिळाल्यावर पैसे द्या',
-      pay_upi_sub: 'PhonePe · GPay · Paytm · 3% सूट',
       cart_empty: 'तुमची बॅग रिकामी आहे',
       cart_empty_sub: 'सुरू करण्यासाठी ताज्या भाज्या आणि फळे जोडा',
       browse: 'उत्पादने पहा',
@@ -723,6 +705,16 @@
     });
   }
 
+  /* preview helper: ?scroll=bottom jumps the content area to the bottom */
+  try {
+    if (new URLSearchParams(window.location.search).get('scroll') === 'bottom') {
+      setTimeout(function () {
+        var c = $('.content');
+        if (c) c.scrollTop = c.scrollHeight;
+      }, 500);
+    }
+  } catch (e) { /* noop */ }
+
   /* ---------- toast ---------- */
 
   function toast(message, ms) {
@@ -762,7 +754,7 @@
 
     /* UPI orders get a 3% discount on the items subtotal */
     var payEl = $('.pay-card .addr-option.active');
-    var pay = payEl && payEl.getAttribute('data-pay') ? payEl.getAttribute('data-pay') : 'upi';
+    var pay = payEl && payEl.getAttribute('data-pay') ? payEl.getAttribute('data-pay') : 'cod';
     var discount = pay === 'upi' && subtotal > 0 ? Math.round(subtotal * 0.03 * 10) / 10 : 0;
 
     var upiRow = $('#upiRow');
@@ -1144,7 +1136,7 @@
       var slotEl = $('.slot-card .addr-option.active');
       var payEl = $('.pay-card .addr-option.active');
       var slot = slotEl && slotEl.getAttribute('data-slot') ? slotEl.getAttribute('data-slot') : 'morning';
-      var payment = payEl && payEl.getAttribute('data-pay') ? payEl.getAttribute('data-pay') : 'upi';
+      var payment = payEl && payEl.getAttribute('data-pay') ? payEl.getAttribute('data-pay') : 'cod';
 
       setPlaceBusy(true);
       toast(t('toast_checkout'), 1200);
@@ -1916,51 +1908,12 @@
       });
     }
 
-    /* payment sheet: default method (UPI gets 3% off) */
-    var btnPayment = $('#btnPayment');
-    if (btnPayment) {
-      btnPayment.addEventListener('click', function () {
-        var def = (acctUser && acctUser.default_payment) || localDefaultPay();
-        var upi = $('#payUpi');
-        var cod = $('#payCod');
-        if (upi && cod) {
-          upi.classList.toggle('active', def !== 'cod');
-          cod.classList.toggle('active', def === 'cod');
-          var ui = $('input', upi);
-          var ci = $('input', cod);
-          if (ui) ui.checked = def !== 'cod';
-          if (ci) ci.checked = def === 'cod';
-        }
-        openAcctSheet('sheetPayment');
-      });
-    }
-
-    var paySave = $('#paySave');
-    if (paySave) {
-      paySave.addEventListener('click', function () {
-        var cod = $('#payCod');
-        var pay = cod && cod.classList.contains('active') ? 'cod' : 'upi';
-        try { localStorage.setItem('taza-default-pay', pay); } catch (e) { /* noop */ }
-        if (window.TAZA && window.TAZA.token()) {
-          window.TAZA.updateMe({ default_payment: pay }).then(function (res) {
-            if (res.user) acctUser = res.user;
-            closeAcctSheets();
-            toast(t('payment_saved'));
-          }).catch(function (err) { toast((err && err.message) ? err.message : t('err_generic'), 3200); });
-          return;
-        }
-        closeAcctSheets();
-        toast(t('payment_saved'));
-      });
-    }
-
-    /* preview helper: ?sheet=profile|address|payment opens that sheet */
+    /* preview helper: ?sheet=profile|address opens that sheet */
     var sheetParam = new URLSearchParams(location.search).get('sheet');
     if (sheetParam) {
       setTimeout(function () {
         if (sheetParam === 'profile' && pencil) pencil.click();
         else if (sheetParam === 'address' && btnAddress) btnAddress.click();
-        else if (sheetParam === 'payment' && btnPayment) btnPayment.click();
       }, 300);
     }
   }

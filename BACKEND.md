@@ -66,10 +66,11 @@ The templates are mobile-first, so everything renders full-bleed like a native a
 - **UPI discount** — orders paid by UPI get **3% off the items subtotal**
   (the delivery fee is not discounted). Saved in `orders.discount`; merging
   new items recomputes it. COD orders keep `discount = 0`.
-- **Pay on delivery** — both UPI (scan the shop QR at the door) and COD (cash)
-  are collected **on delivery**; every order starts `paid = 0` and the admin
-  marks it collected via `PATCH /api/orders/:id/paid`. **COD is the default**
-  payment method (no online gateway is wired yet).
+- **Pay on delivery** — the customer app offers **Cash on Delivery only** (paid
+  at the door; no online gateway is wired). Every order starts `paid = 0` and
+  the admin marks it collected via `PATCH /api/orders/:id/paid`. The API still
+  accepts `payment = 'upi'` for older orders (and for a future UPI-on-delivery
+  re-enable), and only UPI orders carry the 3% discount.
 - **Supplier list** — `GET /api/admin/procurement` aggregates item × qty × value
   for all live orders in the `tomorrow` cycle (the 10 PM handover list).
 - **Same-day confirm/reject** — `PATCH /api/orders/:id/status` with
