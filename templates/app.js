@@ -118,6 +118,10 @@
       history_signin: 'Sign in to see your orders',
       loading_orders: 'Loading your orders…',
       no_orders_filter: 'No orders in this filter',
+      details_items: 'Items',
+      sheet_placed: 'Placed',
+      sheet_payment: 'Payment',
+      order_late_note: 'Placed after 10 PM — delivered the day after',
       history_title: 'Order History',
       filter_all: 'All',
       filter_delivered: 'Delivered',
@@ -278,6 +282,10 @@
       history_signin: 'अपने ऑर्डर देखने के लिए लॉग इन करें',
       loading_orders: 'आपके ऑर्डर लोड हो रहे हैं…',
       no_orders_filter: 'इस फ़िल्टर में कोई ऑर्डर नहीं',
+      details_items: 'आइटम',
+      sheet_placed: 'ऑर्डर समय',
+      sheet_payment: 'भुगतान',
+      order_late_note: 'रात 10 बजे के बाद ऑर्डर — अगले दिन डिलीवरी',
       history_title: 'ऑर्डर इतिहास',
       filter_all: 'सभी',
       filter_delivered: 'डिलीवर हुए',
@@ -438,6 +446,10 @@
       history_signin: 'तुमच्या ऑर्डर पाहण्यासाठी लॉग इन करा',
       loading_orders: 'तुमच्या ऑर्डर लोड होत आहेत…',
       no_orders_filter: 'या फिल्टरमध्ये ऑर्डर नाहीत',
+      details_items: 'वस्तू',
+      sheet_placed: 'ऑर्डर वेळ',
+      sheet_payment: 'पेमेंट',
+      order_late_note: 'रात्री 10 नंतर ऑर्डर — पुढच्या दिवशी वितरण',
       history_title: 'ऑर्डर इतिहास',
       filter_all: 'सर्व',
       filter_delivered: 'डिलिव्हर झाले',
@@ -1106,6 +1118,129 @@
       });
     }
 
+    /* ---------- order details popup (tap a card) ---------- */
+
+    var sheetEl = $('#orderSheet');
+    var sheetBackdrop = $('#orderSheetBackdrop');
+    var sheetTimer = null;
+
+    var SHEET_STATUS = {
+      pending: { cls: 'way', key: 'status_pending' },
+      confirmed: { cls: 'conf', key: 'status_confirmed' },
+      on_way: { cls: 'conf', key: 'status_ongoing' },
+      delivered: { cls: 'ok', key: 'status_delivered' },
+      rejected: { cls: 'cancel', key: 'status_rejected' }
+    };
+
+    function closeOrderSheet() {
+      if (!sheetEl || sheetEl.hidden) return;
+      sheetEl.classList.remove('open');
+      if (sheetBackdrop) sheetBackdrop.classList.remove('open');
+      clearTimeout(sheetTimer);
+      sheetTimer = setTimeout(function () {
+        sheetEl.hidden = true;
+        if (sheetBackdrop) sheetBackdrop.hidden = true;
+      }, 240);
+    }
+
+    function smRow(label, value) {
+      return '<div class="sm-row"><span>' + esc(label) + '</span><b>' + esc(value) + '</b></div>';
+    }
+
+    function openOrderSheet(order) {
+      if (!sheetEl || !order || !order.id) return;
+
+      var st = SHEET_STATUS[order.status] || SHEET_STATUS.pending;
+
+      $('#sheetOrderId').textContent = order.id;
+      var pill = $('#sheetStatus');
+      pill.className = 'status ' + st.cls;
+      pill.setAttribute('data-i18n', st.key);
+      pill.textContent = t(st.key);
+
+      var meta = '';
+      meta += smRow(t('sheet_placed'), fmtDate(order.placed));
+      meta += smRow(t('slot_title'), order.slot === 'evening' ? t('slot_evening') : t('slot_morning'));
+      meta += smRow(t('sheet_payment'), String(order.payment || '').toUpperCase());
+      meta += smRow(t('order_delivery'), fmtDate(order.delivery));
+      meta += smRow(t('delivery_address'), order.address || '—');
+      $('#sheetMeta').innerHTML = meta;
+
+      var late = $('#sheetLate');
+      if (late) {
+        late.hidden = order.cycle !== 'day-after';
+        late.textContent = t('order_late_note');
+      }
+
+      var items = order.items || [];
+      var sub = 0;
+      $('#sheetItems').innerHTML = items.map(function (it) {
+        var amount = Number(it.rate) * Number(it.qty);
+        sub += amount;
+        var key = nameKeyFor(it.name);
+        var nameHtml = key
+          ? '<span data-i18n="' + key + '">' + esc(it.name) + '</span>'
+          : '<span>' + esc(it.name) + '</span>';
+        return '<div class="oi-line"><span class="oi-name">' + nameHtml + ' ×' + fmtQty(it.qty) + '</span>' +
+          '<span class="oi-amt">' + money(amount) + '</span></div>';
+      }).join('') || '<p class="oi-empty">—</p>';
+
+      var fee = order.fee != null ? Number(order.fee) : Math.max(0, Number(order.amount) - sub);
+      $('#sheetTotals').innerHTML =
+        '<div class="s-row"><span>' + esc(t('subtotal')) + '</span><b>' + money(sub) + '</b></div>' +
+        '<div class="s-row"><span>' + esc(t('delivery')) + '</span><b>' + money(fee) + '</b></div>' +
+        '<div class="s-divider"></div>' +
+        '<div class="s-total"><span>' + esc(t('total')) + '</span><b>' + money(Number(order.amount)) + '</b></div>';
+
+      var reorderBtn = $('#sheetReorder');
+      if (reorderBtn) {
+        var canReorder = !!liveOrders[order.id];
+        reorderBtn.hidden = !canReorder;
+        if (canReorder) reorderBtn.setAttribute('data-reorder', order.id);
+      }
+
+      applyLanguage(currentLang);
+
+      sheetEl.hidden = false;
+      if (sheetBackdrop) sheetBackdrop.hidden = false;
+      requestAnimationFrame(function () {
+        sheetEl.classList.add('open');
+        if (sheetBackdrop) sheetBackdrop.classList.add('open');
+      });
+    }
+
+    /* tap an order card → details popup (reorder taps are excluded) */
+    orderListEl.addEventListener('click', function (e) {
+      if (e.target.closest('[data-reorder]')) return;
+      var card = e.target.closest('.order-card');
+      if (!card) return;
+
+      var order = null;
+      var id = card.getAttribute('data-id');
+      if (id && liveOrders[id]) {
+        var o = liveOrders[id];
+        order = {
+          id: o.id,
+          status: o.status,
+          placed: o.placed_at,
+          delivery: o.delivery_date,
+          slot: o.slot,
+          payment: o.payment,
+          address: o.address,
+          fee: Number(o.delivery_fee || 0),
+          amount: Number(o.amount),
+          cycle: o.cycle,
+          items: o.items || []
+        };
+      } else if (card.getAttribute('data-order')) {
+        try { order = JSON.parse(card.getAttribute('data-order')); } catch (err) { order = null; }
+      }
+      if (order) openOrderSheet(order);
+    });
+
+    if (sheetBackdrop) sheetBackdrop.addEventListener('click', closeOrderSheet);
+    if ($('#sheetClose')) $('#sheetClose').addEventListener('click', closeOrderSheet);
+
     window.TAZA.available().then(function (ok) {
       if (!ok) return;                    /* static demo (file://) — keep the demo cards */
       if (!window.TAZA.token()) { showOrderState('signin'); return; }
@@ -1132,7 +1267,10 @@
           mergeBag(idKey, it.qty, p.emoji, p.rate, UNIT_KEYS[p.unit] || 'unit_pack');
           added++;
         });
-        if (added) toast(t('toast_reorder'), 2200);
+        if (added) {
+          closeOrderSheet();
+          toast(t('toast_reorder'), 2200);
+        }
       }).catch(function () { /* noop */ });
     });
   }

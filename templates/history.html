@@ -61,7 +61,7 @@
         <!-- orders: live from the API when signed in; static demo cards offline -->
         <div id="orderList">
 
-        <article class="order-card" data-status="confirmed">
+        <article class="order-card" data-status="confirmed" data-order='{"id":"TS261011","status":"confirmed","placed":"15th Oct 2026","delivery":"16th Oct 2026","slot":"morning","payment":"upi","address":"12, Green Park Society, MG Road, Pune 411001","fee":3,"amount":8,"items":[{"name":"Spinach","qty":1,"rate":3},{"name":"Apple","qty":1,"rate":2}]}'>
           <div class="order-head">
             <div>
               <h4>TS261011</h4>
@@ -85,7 +85,7 @@
           </div>
         </article>
 
-        <article class="order-card" data-status="delivered">
+        <article class="order-card" data-status="delivered" data-order='{"id":"TS261003","status":"delivered","placed":"14th Oct 2026","delivery":"15th Oct 2026","slot":"morning","payment":"upi","address":"12, Green Park Society, MG Road, Pune 411001","fee":3,"amount":9,"items":[{"name":"Potato","qty":1,"rate":1},{"name":"Spinach","qty":1,"rate":3},{"name":"Lettuce","qty":1,"rate":2}]}'>
           <div class="order-head">
             <div>
               <h4>TS261003</h4>
@@ -110,7 +110,7 @@
           </div>
         </article>
 
-        <article class="order-card" data-status="delivered">
+        <article class="order-card" data-status="delivered" data-order='{"id":"TS261002","status":"delivered","placed":"14th Oct 2026","delivery":"15th Oct 2026","slot":"evening","payment":"cod","address":"12, Green Park Society, MG Road, Pune 411001","fee":3,"amount":7,"items":[{"name":"Apple","qty":1,"rate":2},{"name":"Carrot","qty":1,"rate":2}]}'>
           <div class="order-head">
             <div>
               <h4>TS261002</h4>
@@ -134,7 +134,7 @@
           </div>
         </article>
 
-        <article class="order-card" data-status="rejected">
+        <article class="order-card" data-status="rejected" data-order='{"id":"TS261010","status":"rejected","placed":"15th Oct 2026","delivery":"—","slot":"morning","payment":"upi","address":"12, Green Park Society, MG Road, Pune 411001","fee":3,"amount":8,"items":[{"name":"Grapes","qty":1,"rate":3},{"name":"Kiwi","qty":2,"rate":1}]}'>
           <div class="order-head">
             <div>
               <h4>TS261010</h4>
@@ -216,6 +216,29 @@
           <span data-i18n="tab_account">Account</span>
         </a>
       </nav>
+
+      <!-- ============ order details popup ============ -->
+      <div class="sheet-backdrop" id="orderSheetBackdrop" hidden></div>
+      <section class="order-sheet" id="orderSheet" hidden aria-label="Order details">
+        <div class="sheet-head">
+          <div>
+            <h3 id="sheetOrderId">—</h3>
+            <span class="status ok" id="sheetStatus"></span>
+          </div>
+          <button class="icon-btn" id="sheetClose" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <div class="sheet-meta" id="sheetMeta"></div>
+        <p class="sheet-late" id="sheetLate" hidden></p>
+        <h4 class="sheet-sub" data-i18n="details_items">Items</h4>
+        <div class="sheet-items" id="sheetItems"></div>
+        <div class="sheet-totals" id="sheetTotals"></div>
+        <button class="reorder sheet-reorder" id="sheetReorder" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6" /><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" /></svg>
+          <span data-i18n="reorder">Reorder</span>
+        </button>
+      </section>
 
     </div>
   </div>
