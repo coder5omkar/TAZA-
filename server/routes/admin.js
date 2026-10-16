@@ -81,6 +81,14 @@ router.delete('/users/:id', requireAdmin, wrap(async (req, res) => {
 const PRODUCT_SECTIONS = ['kg', 'bunch', 'gram', 'piece_pack', 'dozen_piece', 'pack'];
 const PRODUCT_UNITS = ['kg', 'bunch', 'pack', 'piece', 'dozen', '100 g'];
 
+/* GET /api/admin/products — full catalogue incl. disabled items (admin only) */
+router.get('/products', requireAdmin, wrap(async (req, res) => {
+  const [products] = await db.query(
+    'SELECT id, name, emoji, cat, section, unit, rate, active FROM products ORDER BY cat ASC, name ASC'
+  );
+  res.json({ products: products });
+}));
+
 router.post('/products', requireAdmin, wrap(async (req, res) => {
   const b = req.body || {};
   const name = String(b.name || '').trim();
@@ -109,7 +117,10 @@ router.patch('/products/:id', requireAdmin, wrap(async (req, res) => {
   const unit = PRODUCT_UNITS.includes(b.unit) ? b.unit : null;
   const section = PRODUCT_SECTIONS.includes(b.section) ? b.section : null;
   const emoji = b.emoji ? String(b.emoji).trim().slice(0, 8) : null;
-  const active = b.active === 0 || b.active === 1 ? b.active : null;
+  /* accepts true/false, 0/1 or '0'/'1' — disable/enable a product at runtime */
+  const active = (b.active === true || b.active === 1 || b.active === '1') ? 1
+    : (b.active === false || b.active === 0 || b.active === '0') ? 0
+    : null;
   if (rate === null && unit === null && section === null && emoji === null && active === null) {
     return res.status(400).json({ error: 'Nothing to update' });
   }

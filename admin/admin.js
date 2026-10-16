@@ -170,7 +170,7 @@
       { name: 'Curry Leaves', emoji: '🍃', cat: 'veg', unit: '100 g', rate: 1, section: 'gram' },
       { name: 'Green Chilli', emoji: '🌶️', cat: 'veg', unit: '100 g', rate: 1, section: 'gram' },
       { name: 'Sweet Corn', emoji: '🌽', cat: 'veg', unit: 'piece', rate: 1, section: 'piece_pack' },
-      { name: 'Mushroom', emoji: '🍄', cat: 'veg', unit: 'pack', rate: 4, section: 'piece_pack' },
+      { name: 'Mushroom', emoji: '🍄', cat: 'veg', unit: 'pack', rate: 4, section: 'piece_pack', active: 0 },
       { name: 'Mango', emoji: '🥭', cat: 'fruits', unit: 'kg', rate: 4, section: 'kg' },
       { name: 'Grapes', emoji: '🍇', cat: 'fruits', unit: 'kg', rate: 3, section: 'kg' },
       { name: 'Orange', emoji: '🍊', cat: 'fruits', unit: 'kg', rate: 2, section: 'kg' },
@@ -183,7 +183,7 @@
       { name: 'Pineapple', emoji: '🍍', cat: 'fruits', unit: 'piece', rate: 2, section: 'dozen_piece' },
       { name: 'Kiwi', emoji: '🥝', cat: 'fruits', unit: 'piece', rate: 1, section: 'dozen_piece' },
       { name: 'Coconut', emoji: '🥥', cat: 'fruits', unit: 'piece', rate: 2, section: 'dozen_piece' },
-      { name: 'Avocado', emoji: '🥑', cat: 'fruits', unit: 'piece', rate: 2, section: 'dozen_piece' },
+      { name: 'Avocado', emoji: '🥑', cat: 'fruits', unit: 'piece', rate: 2, section: 'dozen_piece', active: 0 },
       { name: 'Apple', emoji: '🍎', cat: 'fruits', unit: 'pack', rate: 2, section: 'pack' },
       { name: 'Strawberry', emoji: '🍓', cat: 'fruits', unit: 'pack', rate: 4, section: 'pack' },
       { name: 'Cherry', emoji: '🍒', cat: 'fruits', unit: 'pack', rate: 3, section: 'pack' }
@@ -682,11 +682,16 @@
   function renderProducts() {
     var tbody = $('#productsBody');
     if (!tbody) return;
-    var list = state.products.filter(function (p) { return productFilter === 'All' || p.cat === productFilter; });
+    var list = state.products.filter(function (p) {
+      if (productFilter === 'All') return true;
+      if (productFilter === 'Disabled') return Number(p.active) === 0;
+      return p.cat === productFilter;
+    });
 
     tbody.innerHTML = list.map(function (p) {
       var idAttr = p.id != null ? p.id : esc(p.name);
       var editing = editingProductId != null && String(editingProductId) === String(idAttr);
+      var isActive = Number(p.active) !== 0;              /* undefined / 1 = enabled */
       var sec = p.section || sectionFromUnit(p);
       var sectionCell = editing
         ? '<select class="input section-edit" style="height:34px">' + sectionOptionsHtml(p.cat, sec) + '</select>'
@@ -700,14 +705,17 @@
       var rateCell = editing
         ? '<input class="input rate-edit-rate" type="number" min="1" step="1" value="' + p.rate + '" style="height:34px;width:80px" />'
         : money(p.rate);
+      var toggleBtn = '<button class="iconbtn' + (isActive ? '' : ' ok') + '" data-act="toggle-prod" data-id="' + idAttr + '" data-name="' + esc(p.name) + '" title="' + (isActive ? 'Disable — hide from customers' : 'Enable — show to customers again') + '">' + (isActive ? ICONS.ban : ICONS.check) + '</button>';
       var actions = editing
         ? '<button class="btn success small" data-act="edit-save" data-id="' + idAttr + '" data-name="' + esc(p.name) + '">Save</button>' +
           '<button class="btn ghost small" data-act="edit-cancel">Cancel</button>'
-        : '<button class="iconbtn" data-act="edit-prod" data-id="' + idAttr + '" title="Edit">' + ICONS.pencil + '</button>' +
+        : toggleBtn +
+          '<button class="iconbtn" data-act="edit-prod" data-id="' + idAttr + '" title="Edit">' + ICONS.pencil + '</button>' +
           '<button class="iconbtn danger" data-act="del-prod" data-id="' + idAttr + '" data-name="' + esc(p.name) + '" title="Delete">' + ICONS.trash + '</button>';
 
-      return '<tr>' +
-        '<td><span class="p-emoji">' + esc(p.emoji) + '</span><b>' + esc(p.name) + '</b></td>' +
+      return '<tr' + (isActive ? '' : ' class="row-disabled"') + '>' +
+        '<td><span class="p-emoji">' + esc(p.emoji) + '</span><b>' + esc(p.name) + '</b>' +
+        (isActive ? '' : ' <span class="pill suspended">Disabled</span>') + '</td>' +
         '<td><span class="pill ' + (p.cat === 'veg' ? 'cat-veg' : 'cat-fruits') + '">' + (p.cat === 'veg' ? 'Vegetables' : 'Fruits') + '</span></td>' +
         '<td>' + sectionCell + '</td>' +
         '<td>' + unitCell + '</td>' +
@@ -717,12 +725,15 @@
     }).join('') || '<tr><td colspan="6" class="muted" style="padding:22px 18px">No products in this filter.</td></tr>';
 
     var countEl = $('#prodCount');
-    if (countEl) countEl.textContent = list.length + ' products';
+    if (countEl) {
+      var offCount = state.products.filter(function (p) { return Number(p.active) === 0; }).length;
+      countEl.textContent = list.length + ' products' + (productFilter !== 'Disabled' && offCount ? ' · ' + offCount + ' disabled' : '');
+    }
   }
 
   function loadProducts() {
     if (!LIVE) { renderProducts(); return Promise.resolve(); }
-    return window.TAZA.getProducts().then(function (res) {
+    return window.TAZA.adminGetProducts().then(function (res) {
       state.products = res.products || [];
       renderProducts();
     }).catch(function (err) { toast(err.message || 'Could not load products'); });
@@ -1096,6 +1107,29 @@
     if (act === 'edit-prod') { editingProductId = id; renderProducts(); return; }
     if (act === 'edit-cancel') { editingProductId = null; renderProducts(); return; }
 
+    if (act === 'toggle-prod') {
+      var prod = null;
+      var pName = btn.getAttribute('data-name');
+      state.products.forEach(function (x) {
+        var xid = x.id != null ? String(x.id) : x.name;
+        if (xid === String(id) || x.name === pName) prod = x;
+      });
+      if (!prod) return;
+      var isNowActive = Number(prod.active) !== 0;       /* undefined / 1 = enabled */
+      var nextActive = isNowActive ? 0 : 1;
+      if (LIVE) {
+        window.TAZA.adminUpdateProduct(id, { active: nextActive }).then(function () {
+          toast(prod.name + (nextActive ? ' enabled — visible to customers ✓' : ' disabled — hidden from customers ✓'));
+          loadProducts();
+        }).catch(function (err) { toast(err.message || 'Could not update the product'); });
+        return;
+      }
+      prod.active = nextActive;
+      renderProducts();
+      toast(prod.name + (nextActive ? ' enabled — visible to customers' : ' disabled — hidden from customers'));
+      return;
+    }
+
     if (act === 'edit-save') {
       var rateEl = $('.rate-edit-rate');
       var unitEl = $('.rate-edit-unit');
@@ -1181,6 +1215,15 @@
       productFilter = chip.getAttribute('data-filter');
       renderProducts();
     });
+
+    /* preview helper: ?filter=Disabled|veg|fruits activates that chip */
+    var wantedFilter = null;
+    try { wantedFilter = new URLSearchParams(location.search).get('filter'); } catch (e) { /* noop */ }
+    if (wantedFilter) {
+      $$('.chip', pf).forEach(function (c) {
+        if (c.getAttribute('data-filter') === wantedFilter) c.click();
+      });
+    }
   }
 
   /* ---------------- init ---------------- */

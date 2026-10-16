@@ -236,6 +236,13 @@ input[type='number']::-webkit-inner-spin-button { -webkit-appearance: none; marg
 .actions-cell .btn + .btn,
 .actions-cell .iconbtn + .iconbtn { margin-left: 8px; }
 
+/* disabled products (runtime enable/disable) */
+.row-disabled td { opacity: 0.55; }
+.row-disabled td.actions-cell { opacity: 1; }
+.row-disabled td .pill.suspended { opacity: 1; }
+.iconbtn.ok { color: var(--green-strong); }
+.iconbtn.ok:hover { background: var(--green-soft); color: var(--green-strong); }
+
 /* bulk accept button next to the order filters */
 .head-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
 

@@ -171,6 +171,20 @@ function check(name, ok, extra) {
   const payOrd = (payRead.data.orders || []).find(function (x) { return x.id === o.id; });
   check('admin marks payment collected (paid flag)', payTrue.status === 200 && !!payOrd && Number(payOrd.paid) === 1, payOrd ? 'paid=' + payOrd.paid : 'order not found');
 
+  /* 13. runtime enable/disable of any product (admin) */
+  const adminProds = await req('GET', '/api/admin/products', null, adminToken);
+  const anyProd = (adminProds.data.products || [])[0];
+  check('admin product list includes the active flag', adminProds.status === 200 && !!anyProd && anyProd.active !== undefined, anyProd ? anyProd.name + ' active=' + anyProd.active : 'empty');
+  const pubBefore = await req('GET', '/api/products');
+  const wasVisible = (pubBefore.data.products || []).some(function (p) { return p.id === anyProd.id; });
+  const disableRes = await req('PATCH', '/api/admin/products/' + anyProd.id, { active: false }, adminToken);
+  const pubOff = await req('GET', '/api/products');
+  const nowHidden = !(pubOff.data.products || []).some(function (p) { return p.id === anyProd.id; });
+  const enableRes = await req('PATCH', '/api/admin/products/' + anyProd.id, { active: true }, adminToken);
+  const pubOn = await req('GET', '/api/products');
+  const backVisible = (pubOn.data.products || []).some(function (p) { return p.id === anyProd.id; });
+  check('disable hides a product from the shop; enable brings it back', wasVisible && disableRes.status === 200 && nowHidden && enableRes.status === 200 && backVisible, anyProd.name);
+
   /* summary */
   console.log('');
   console.log(results.join('\n'));

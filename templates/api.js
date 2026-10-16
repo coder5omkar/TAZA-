@@ -86,6 +86,7 @@
     adminUpdateUser: function (id, payload) { return request('PATCH', '/admin/users/' + id, payload); },
     adminDeleteUser: function (id) { return request('DELETE', '/admin/users/' + id); },
     adminAddProduct: function (payload) { return request('POST', '/admin/products', payload); },
+    adminGetProducts: function () { return request('GET', '/admin/products'); },
     adminUpdateProduct: function (id, payload) { return request('PATCH', '/admin/products/' + id, payload); },
     adminDeleteProduct: function (id) { return request('DELETE', '/admin/products/' + id); },
     adminProcurement: function () { return request('GET', '/admin/procurement'); },

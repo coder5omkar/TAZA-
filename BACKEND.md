@@ -94,7 +94,8 @@ The templates are mobile-first, so everything renders full-bleed like a native a
 | `GET /api/admin/users` | admin | list users |
 | `PATCH /api/admin/users/:id` | admin | change role / suspend |
 | `DELETE /api/admin/users/:id` | admin | delete (blocked if the user has orders) |
-| `POST/PATCH/DELETE /api/admin/products/:id?` | admin | manage catalogue |
+| `GET /api/admin/products` | admin | full catalogue incl. disabled items (with `active` flag) |
+| `POST/PATCH/DELETE /api/admin/products/:id?` | admin | manage catalogue — PATCH also enables/disables (`{ active: true/false }`) |
 | `GET /api/admin/procurement` | admin | tonight's supplier list |
 | `GET/PUT /api/admin/settings` | admin | store / slot / payment settings |
 
