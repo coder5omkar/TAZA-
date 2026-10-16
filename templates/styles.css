@@ -1442,11 +1442,25 @@ input[type='search']::-webkit-search-cancel-button { display: none; }
 /* ---------------- Small screens: full-bleed app ---------------- */
 
 @media (max-width: 460px) {
-  body { padding: 0; }
+  /* On a real phone the OS already shows status/nav bars, so:
+     - hide the mock iPhone status bar
+     - fill the *visible* viewport exactly (no centering, no clipped bottom nav) */
+  body {
+    padding: 0;
+    display: block;
+    min-height: 100dvh;
+  }
   .phone {
     width: 100%;
+    height: 100vh;      /* fallback for older browsers */
     height: 100dvh;
     border-radius: 0;
     box-shadow: none;
   }
+  .statusbar { display: none; }
+
+  /* breathing room for gesture navigation / rounded screen corners */
+  .tabbar { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+  .checkout-bar { padding-bottom: max(14px, env(safe-area-inset-bottom)); }
+  .chat-bar { padding-bottom: max(10px, env(safe-area-inset-bottom)); }
 }
