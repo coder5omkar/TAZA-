@@ -721,6 +721,8 @@
     if (cartItem) {
       cartItem.dataset.qty = next;
       setBagItem(cartItem.dataset.id, next);
+      var lt = $('.line-total', cartItem);
+      if (lt) lt.textContent = '= ' + money(parseFloat(cartItem.dataset.price) * next);
       updateCartTotals();
     }
 
@@ -769,7 +771,8 @@
         '<div class="c-thumb" aria-hidden="true">' + it.emoji + '</div>' +
         '<div class="c-info">' +
         '<h4 data-i18n="' + it.id + '">' + it.id + '</h4>' +
-        '<p class="price"><b>₹' + Math.round(it.price) + '</b><span data-i18n="' + it.unit + '"></span></p>' +
+        '<p class="price"><b>' + money(it.price) + '</b><span data-i18n="' + it.unit + '"></span></p>' +
+        '<em class="line-total">= ' + money(Number(it.price) * Number(it.qty)) + '</em>' +
         '</div>' +
         '<div class="stepper">' +
         '<button class="step" data-step="-1" aria-label="Decrease quantity">' + STEP_MINUS_SVG + '</button>' +
@@ -1449,6 +1452,19 @@
       if (!ok) return;
       pollUnread();
       setInterval(pollUnread, 15000);
+    });
+  }
+
+  /* ---------- cart: single delivery address taken from the account ---------- */
+
+  if ($('#deliveryAddress') && window.TAZA) {
+    window.TAZA.available().then(function (ok) {
+      if (!ok || !window.TAZA.token()) return;
+      window.TAZA.me().then(function (res) {
+        if (res.user && res.user.address) {
+          $('#deliveryAddress').textContent = res.user.address;
+        }
+      }).catch(function () { /* keep the default address */ });
     });
   }
 

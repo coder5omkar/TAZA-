@@ -62,7 +62,7 @@ router.post('/register', wrap(async (req, res) => {
 /* GET /api/auth/me */
 router.get('/me', requireAuth, wrap(async (req, res) => {
   const [[user]] = await db.query(
-    'SELECT id, name, email, phone, role, status FROM users WHERE id = ?',
+    'SELECT id, name, email, phone, address, role, status FROM users WHERE id = ?',
     [req.user.id]
   );
   if (!user) return res.status(404).json({ error: 'User not found' });

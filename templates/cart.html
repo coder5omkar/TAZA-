@@ -69,6 +69,15 @@
           </div>
         </div>
 
+        <!-- order summary (kept at the top so the total is always visible) -->
+        <!-- Values are recomputed by app.js from the item data-price / data-qty attributes. -->
+        <section class="summary">
+          <div class="s-row"><span data-i18n="subtotal">Subtotal</span><b id="subtotal">₹13</b></div>
+          <div class="s-row"><span data-i18n="delivery">Delivery</span><b id="delivery">₹3</b></div>
+          <div class="s-divider"></div>
+          <div class="s-total"><span data-i18n="total">Total</span><b id="total">₹16</b></div>
+        </section>
+
         <!-- empty state -->
         <div class="cart-empty">
           <span class="ce-emoji" aria-hidden="true">🧺</span>
@@ -90,21 +99,13 @@
             <span data-i18n="delivery_address">Delivery Address</span>
           </h3>
 
+          <!-- one address per account (manage in Account → Delivery Addresses) -->
           <label class="addr-option active">
             <input type="radio" name="delivery-address" checked hidden />
             <span class="addr-radio" aria-hidden="true"></span>
             <span class="addr-body">
               <span class="addr-type" data-i18n="addr_home">Home</span>
-              <span class="addr-text">12, Green Park Society, MG Road, Pune 411001</span>
-            </span>
-          </label>
-
-          <label class="addr-option">
-            <input type="radio" name="delivery-address" hidden />
-            <span class="addr-radio" aria-hidden="true"></span>
-            <span class="addr-body">
-              <span class="addr-type" data-i18n="addr_office">Office</span>
-              <span class="addr-text">4th Floor, Tech Plaza, Baner Road, Pune 411045</span>
+              <span class="addr-text" id="deliveryAddress">12, Green Park Society, MG Road, Pune 411001</span>
             </span>
           </label>
         </section>
@@ -165,17 +166,6 @@
               <span class="addr-text" data-i18n="pay_cod_sub">Pay when your order arrives</span>
             </span>
           </label>
-        </section>
-
-        <!-- order summary -->
-        <!-- Values are recomputed by app.js from the item data-price / data-qty attributes.
-             (The mockup's printed totals didn't match its own item prices, so we keep the
-             maths honest — adjust the data attributes to change the amounts.) -->
-        <section class="summary">
-          <div class="s-row"><span data-i18n="subtotal">Subtotal</span><b id="subtotal">₹13</b></div>
-          <div class="s-row"><span data-i18n="delivery">Delivery</span><b id="delivery">₹3</b></div>
-          <div class="s-divider"></div>
-          <div class="s-total"><span data-i18n="total">Total</span><b id="total">₹16</b></div>
         </section>
       </main>
 
