@@ -234,5 +234,11 @@ const ADDRESSES = [
   console.log('Migration complete ✓');
 })().catch(function (e) {
   console.error('Migration failed:', e.message);
+  if (/ECONNREFUSED 127\.0\.0\.1|ENOTFOUND|ETIMEDOUT|Access denied/.test(String(e.message))) {
+    console.error('');
+    console.error('→ No database reachable with the current variables.');
+    console.error('  Check that THIS service has DB_HOST..DB_NAME (or MYSQLHOST..MYSQLDATABASE)');
+    console.error('  pointing at your MySQL service — see BACKEND.md §5b (Railway).');
+  }
   process.exit(1);
 });
