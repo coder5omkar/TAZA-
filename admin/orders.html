@@ -35,13 +35,16 @@
               <h2>All Orders</h2>
               <p class="hint" id="ordersCount">8 orders</p>
             </div>
-            <div class="chips" id="orderFilters">
-              <button class="chip active" data-filter="All">All</button>
-              <button class="chip" data-filter="Pending">Pending</button>
-              <button class="chip" data-filter="Confirmed">Confirmed</button>
-              <button class="chip" data-filter="On the way">On the way</button>
-              <button class="chip" data-filter="Delivered">Delivered</button>
-              <button class="chip" data-filter="Rejected">Rejected</button>
+            <div class="head-actions">
+              <button class="btn success small" id="acceptAllBtn" data-act="accept-all" hidden>Accept all pending</button>
+              <div class="chips" id="orderFilters">
+                <button class="chip active" data-filter="All">All</button>
+                <button class="chip" data-filter="Pending">Pending</button>
+                <button class="chip" data-filter="Confirmed">Confirmed</button>
+                <button class="chip" data-filter="On the way">On the way</button>
+                <button class="chip" data-filter="Delivered">Delivered</button>
+                <button class="chip" data-filter="Rejected">Rejected</button>
+              </div>
             </div>
           </div>
           <div class="table-wrap">

@@ -79,6 +79,7 @@
     sendChat: function (text) { return request('POST', '/chat/my', { text: text }); },
 
     orderStatus: function (id, status) { return request('PATCH', '/orders/' + encodeURIComponent(id) + '/status', { status: status }); },
+    orderPaid: function (id, paid) { return request('PATCH', '/orders/' + encodeURIComponent(id) + '/paid', { paid: !!paid }); },
     adminStats: function () { return request('GET', '/admin/stats'); },
     adminOrders: function (params) { return request('GET', '/orders' + (params ? '?' + params : '')); },
     adminUsers: function () { return request('GET', '/admin/users'); },

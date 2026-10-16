@@ -107,6 +107,19 @@ const ADDRESSES = [
     console.log('~ orders.amount -> DECIMAL(8,1)');
   }
 
+  /* v4: payment is collected at delivery for both UPI & COD; default method -> COD */
+  await addCol('orders', 'paid', 'paid TINYINT(1) NOT NULL DEFAULT 0');
+  const [[payDef]] = await conn.query(
+    "SELECT COLUMN_DEFAULT d FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = 'default_payment'"
+  );
+  if (String(payDef.d).toLowerCase() !== 'cod') {
+    await conn.query("ALTER TABLE users MODIFY default_payment ENUM('upi','cod') NOT NULL DEFAULT 'cod'");
+    await conn.query("UPDATE users SET default_payment = 'cod'");
+    console.log('~ default payment -> cod (all users)');
+  }
+  const [paidBackfill] = await conn.query("UPDATE orders SET paid = 1 WHERE status = 'delivered' AND paid = 0");
+  if (paidBackfill.affectedRows) console.log('~ paid=1 backfilled for delivered orders:', paidBackfill.affectedRows);
+
   /* backfill sections */
   const maps = [
     ['kg', SECTION_KG], ['bunch', SECTION_BUNCH], ['gram', SECTION_GRAM],

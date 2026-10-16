@@ -252,16 +252,16 @@
           </button>
         </div>
         <div class="pay-options">
-          <label class="addr-option active" id="payUpi" data-pay="upi">
-            <input type="radio" name="default-pay" checked hidden />
+          <label class="addr-option" id="payUpi" data-pay="upi">
+            <input type="radio" name="default-pay" hidden />
             <span class="addr-radio" aria-hidden="true"></span>
             <span class="addr-body">
               <span class="addr-type">UPI <em class="pay-tag" data-i18n="pay_upi_tag">3% discount</em></span>
-              <span class="addr-text">PhonePe · GPay · Paytm</span>
+              <span class="addr-text" data-i18n="pay_upi_at_door">Scan &amp; pay when your order arrives</span>
             </span>
           </label>
-          <label class="addr-option" id="payCod" data-pay="cod">
-            <input type="radio" name="default-pay" hidden />
+          <label class="addr-option active" id="payCod" data-pay="cod">
+            <input type="radio" name="default-pay" checked hidden />
             <span class="addr-radio" aria-hidden="true"></span>
             <span class="addr-body">
               <span class="addr-type" data-i18n="pay_cod">Cash on Delivery</span>

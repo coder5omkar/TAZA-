@@ -236,6 +236,9 @@ input[type='number']::-webkit-inner-spin-button { -webkit-appearance: none; marg
 .actions-cell .btn + .btn,
 .actions-cell .iconbtn + .iconbtn { margin-left: 8px; }
 
+/* bulk accept button next to the order filters */
+.head-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+
 /* expandable order rows: items to pack + status control */
 .order-row { cursor: pointer; }
 .order-row.open td { background: #faf9ff; }
@@ -309,6 +312,7 @@ input[type='number']::-webkit-inner-spin-button { -webkit-appearance: none; marg
 .od-meta .kv { gap: 14px; }
 .od-meta .kv span { flex: none; }
 .od-meta .kv b { text-align: right; min-width: 0; }
+.od-paid-row { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
 .od-status { display: flex; flex-wrap: wrap; gap: 7px; }
 .status-btn {
   border: 1.5px solid var(--line);

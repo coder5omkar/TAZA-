@@ -65,6 +65,10 @@ The templates are mobile-first, so everything renders full-bleed like a native a
 - **UPI discount** — orders paid by UPI get **3% off the items subtotal**
   (the delivery fee is not discounted). Saved in `orders.discount`; merging
   new items recomputes it. COD orders keep `discount = 0`.
+- **Pay on delivery** — both UPI (scan the shop QR at the door) and COD (cash)
+  are collected **on delivery**; every order starts `paid = 0` and the admin
+  marks it collected via `PATCH /api/orders/:id/paid`. **COD is the default**
+  payment method (no online gateway is wired yet).
 - **Supplier list** — `GET /api/admin/procurement` aggregates item × qty × value
   for all live orders in the `tomorrow` cycle (the 10 PM handover list).
 - **Same-day confirm/reject** — `PATCH /api/orders/:id/status` with
@@ -82,6 +86,7 @@ The templates are mobile-first, so everything renders full-bleed like a native a
 | `POST /api/orders` | customer | place order (items, slot, payment, address) — UPI gets a 3% discount |
 | `GET /api/orders?status=&cycle=` | auth | own orders (admin: all, filterable) |
 | `PATCH /api/orders/:id/status` | admin | set any status at any stage — confirm / on the way / deliver / reject / reopen (even after delivered) |
+| `PATCH /api/orders/:id/paid` | admin | mark the payment collected (UPI scan / cash) or unpaid |
 | `GET /api/chat/my`, `POST /api/chat/my` | customer | support chat |
 | `GET /api/chat/conversations` | admin | inbox list with unread counts |
 | `GET/POST /api/chat/conversations/:id` | admin | read thread / reply |

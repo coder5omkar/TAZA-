@@ -80,6 +80,7 @@ function check(name, ok, extra) {
   check('place order → new TS id (not merged)', order.status === 201 && !order.data.merged && /^TS\d{6}$/.test(o.id || ''), o.id);
   check('order amount = ₹9 items − ₹0.2 UPI discount + ₹3 fee = ₹8.8', Math.abs(Number(o.amount) - 8.8) < 0.011, '₹' + o.amount);
   check('UPI discount recorded (3% of ₹6 = ₹0.2)', Math.abs(Number(o.discount || 0) - 0.2) < 0.011, '₹' + o.discount);
+  check('new order starts unpaid (pay on delivery)', Number(o.paid || 0) === 0, 'paid=' + o.paid);
   check('cycle is tomorrow or day-after', o.cycle === 'tomorrow' || o.cycle === 'day-after', o.cycle + ' → ' + o.deliveryDate);
 
   /* 5. same-day second order MERGES into the open order (same id) */
@@ -163,6 +164,12 @@ function check(name, ok, extra) {
     toDelivered.data.status === 'delivered' && toOnWay.data.status === 'on_way' &&
       toPending.data.status === 'pending' && backDelivered.status === 200
   );
+
+  /* 12. payment collected flag (admin marks UPI scan / cash received) */
+  const payTrue = await req('PATCH', '/api/orders/' + o.id + '/paid', { paid: true }, adminToken);
+  const payRead = await req('GET', '/api/orders', null, custToken);
+  const payOrd = (payRead.data.orders || []).find(function (x) { return x.id === o.id; });
+  check('admin marks payment collected (paid flag)', payTrue.status === 200 && !!payOrd && Number(payOrd.paid) === 1, payOrd ? 'paid=' + payOrd.paid : 'order not found');
 
   /* summary */
   console.log('');

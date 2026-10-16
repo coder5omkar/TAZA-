@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
   address_area     VARCHAR(120) DEFAULT NULL,
   address_city     VARCHAR(60)  DEFAULT NULL,
   address_pin      VARCHAR(10)  DEFAULT NULL,
-  default_payment  ENUM('upi','cod') NOT NULL DEFAULT 'upi',
+  default_payment  ENUM('upi','cod') NOT NULL DEFAULT 'cod',
   password_hash VARCHAR(100) NOT NULL,
   role          ENUM('customer','admin','delivery') NOT NULL DEFAULT 'customer',
   status        ENUM('active','suspended')        NOT NULL DEFAULT 'active',
@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS orders (
   payment       ENUM('upi','cod') NOT NULL,
   delivery_fee  INT UNSIGNED NOT NULL DEFAULT 0,
   discount      DECIMAL(6,1) NOT NULL DEFAULT 0,   -- e.g. 3% UPI discount
+  paid          TINYINT(1) NOT NULL DEFAULT 0,     -- payment collected at delivery
   amount        DECIMAL(8,1) NOT NULL,             -- items - discount + delivery fee
   cycle         ENUM('tomorrow','day-after') NOT NULL,
   delivery_date DATE NOT NULL,

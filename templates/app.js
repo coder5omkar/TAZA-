@@ -31,11 +31,17 @@
     var key = UNIT_WORD_KEYS[unit];
     return fmtQty(qty) + (key ? ' <span data-i18n="' + key + '">' + t(key) + '</span>' : ' ' + esc(unit));
   };
-  var payChipHtml = function (payment) {
-    return String(payment || '').toLowerCase() === 'cod'
-      ? '<span class="pay-chip cod" data-i18n="cod_word">' + t('cod_word') + '</span>'
-      : '<span class="pay-chip"><span data-i18n="paid_word">' + t('paid_word') +
-        '</span> · <span data-i18n="pay_upi">' + t('pay_upi') + '</span></span>';
+  var payChipHtml = function (order) {
+    var method = String(order && order.payment || '').toLowerCase() === 'cod' ? 'cod' : 'upi';
+    var label = method === 'cod'
+      ? '<span data-i18n="cod_word">' + t('cod_word') + '</span>'
+      : '<span data-i18n="pay_upi">' + t('pay_upi') + '</span>';
+    if (order && order.status === 'rejected') return '';
+    var isPaid = !!(order && (order.paid === true || order.paid === 1 || order.paid === '1'));
+    if (isPaid) {
+      return '<span class="pay-chip"><span data-i18n="paid_word">' + t('paid_word') + '</span> · ' + label + '</span>';
+    }
+    return '<span class="pay-chip cod" data-i18n="pay_at_delivery">' + t('pay_at_delivery') + '</span>';
   };
   var esc = function (s) {
     return String(s == null ? '' : s)
@@ -109,6 +115,8 @@
       pay_upi: 'UPI',
       paid_word: 'Paid',
       cod_word: 'COD',
+      pay_at_delivery: 'Pay on delivery',
+      pay_upi_at_door: 'Scan & pay when your order arrives',
       sec_kg: 'KG · Weight',
       sec_bunch: 'Bunch (Judi)',
       sec_gram: 'Gram',
@@ -219,7 +227,7 @@
       pay_title: 'Payment Method',
       pay_cod: 'Cash on Delivery',
       pay_cod_sub: 'Pay when your order arrives',
-      pay_upi_sub: 'PhonePe · GPay · Paytm · 3% discount',
+      pay_upi_sub: 'Pay by UPI on delivery · 3% discount',
       cart_empty: 'Your bag is empty',
       cart_empty_sub: 'Add fresh vegetables & fruits to get started',
       browse: 'Browse products',
@@ -304,6 +312,8 @@
       pay_upi: 'UPI',
       paid_word: 'भुगतान हुआ',
       cod_word: 'COD',
+      pay_at_delivery: 'डिलीवरी पर भुगतान',
+      pay_upi_at_door: 'ऑर्डर आने पर स्कैन करके भुगतान करें',
       sec_kg: 'किलो · वज़न',
       sec_bunch: 'गड्डी (जुडी)',
       sec_gram: 'ग्राम',
@@ -414,7 +424,7 @@
       pay_title: 'भुगतान विधि',
       pay_cod: 'कैश ऑन डिलीवरी',
       pay_cod_sub: 'ऑर्डर मिलने पर भुगतान करें',
-      pay_upi_sub: 'PhonePe · GPay · Paytm · 3% छूट',
+      pay_upi_sub: 'डिलीवरी पर UPI से भुगतान · 3% छूट',
       cart_empty: 'आपका बैग खाली है',
       cart_empty_sub: 'शुरू करने के लिए ताज़ी सब्ज़ियाँ और फल जोड़ें',
       browse: 'उत्पाद देखें',
@@ -499,6 +509,8 @@
       pay_upi: 'UPI',
       paid_word: 'पेमेंट झाले',
       cod_word: 'COD',
+      pay_at_delivery: 'डिलिव्हरीवर पेमेंट',
+      pay_upi_at_door: 'ऑर्डर आल्यावर स्कॅन करून पेमेंट करा',
       sec_kg: 'किलो · वजन',
       sec_bunch: 'गड्डी (जुडी)',
       sec_gram: 'ग्राम',
@@ -609,7 +621,7 @@
       pay_title: 'पेमेंट पद्धत',
       pay_cod: 'कॅश ऑन डिलिव्हरी',
       pay_cod_sub: 'ऑर्डर मिळाल्यावर पैसे द्या',
-      pay_upi_sub: 'PhonePe · GPay · Paytm · 3% सूट',
+      pay_upi_sub: 'डिलिव्हरीवर UPI ने पेमेंट · 3% सूट',
       cart_empty: 'तुमची बॅग रिकामी आहे',
       cart_empty_sub: 'सुरू करण्यासाठी ताज्या भाज्या आणि फळे जोडा',
       browse: 'उत्पादने पहा',
@@ -754,7 +766,7 @@
   }
 
   function localDefaultPay() {
-    try { return localStorage.getItem('taza-default-pay') || 'upi'; } catch (e) { return 'upi'; }
+    try { return localStorage.getItem('taza-default-pay') || 'cod'; } catch (e) { return 'cod'; }
   }
 
   /* ---------- bag (shared between home & cart) ---------- */
@@ -1223,7 +1235,7 @@
         '</div>' +
         '<div class="order-items">' + lines + '</div>' +
         '<div class="order-foot">' +
-        '<div class="of-left"><p class="o-total">₹' + fmtQty(o.amount) + '</p>' + payChipHtml(o.payment) + '</div>' +
+        '<div class="of-left"><p class="o-total">₹' + fmtQty(o.amount) + '</p>' + payChipHtml(o) + '</div>' +
         '<button class="reorder" data-reorder="' + o.id + '">' + REORDER_SVG + '<span data-i18n="reorder">' + t('reorder') + '</span></button>' +
         '</div>' +
         '</article>';
@@ -1334,8 +1346,13 @@
       meta += smRow(t('sheet_placed'), fmtDate(order.placed));
       meta += smRow(t('slot_title'), order.slot === 'evening' ? t('slot_evening') : t('slot_morning'));
       var payValue = String(order.payment || '').toLowerCase() === 'cod'
-        ? '<span data-i18n="cod_word">' + t('cod_word') + '</span> · <span data-i18n="pay_cod_sub">' + t('pay_cod_sub') + '</span>'
-        : '<span data-i18n="pay_upi">' + t('pay_upi') + '</span> · <span data-i18n="paid_word">' + t('paid_word') + '</span>';
+        ? '<span data-i18n="cod_word">' + t('cod_word') + '</span>'
+        : '<span data-i18n="pay_upi">' + t('pay_upi') + '</span>';
+      if (order.status !== 'rejected') {
+        payValue += ' · ' + (order.paid
+          ? '<span data-i18n="paid_word">' + t('paid_word') + '</span>'
+          : '<span data-i18n="pay_at_delivery">' + t('pay_at_delivery') + '</span>');
+      }
       meta += '<div class="sm-row"><span>' + esc(t('sheet_payment')) + '</span><b>' + payValue + '</b></div>';
       meta += smRow(t('order_delivery'), fmtDate(order.delivery));
       meta += smRow(t('delivery_address'), order.address || '—');
@@ -1403,6 +1420,7 @@
           delivery: o.delivery_date,
           slot: o.slot,
           payment: o.payment,
+          paid: !!(Number(o.paid) === 1),
           address: o.address,
           fee: Number(o.delivery_fee || 0),
           discount: Number(o.discount || 0),

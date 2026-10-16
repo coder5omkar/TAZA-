@@ -68,7 +68,7 @@ router.post('/', requireAuth, wrap(async (req, res) => {
     /* 2b. merge into an open order (pending/confirmed, not yet delivered) instead
        of creating a new one — per store rule, same-day items join the open order */
     const [[openOrder]] = await conn.query(
-      "SELECT id, delivery_fee, payment, cycle, delivery_date, status FROM orders " +
+      "SELECT id, delivery_fee, payment, paid, cycle, delivery_date, status FROM orders " +
       "WHERE user_id = ? AND status IN ('pending', 'confirmed') AND delivery_date >= CURDATE() " +
       'ORDER BY delivery_date ASC, placed_at ASC LIMIT 1 FOR UPDATE',
       [req.user.id]
@@ -105,6 +105,7 @@ router.post('/', requireAuth, wrap(async (req, res) => {
           id: openOrder.id,
           amount: newAmount,
           discount: newDiscount,
+          paid: Number(openOrder.paid || 0),
           cycle: openOrder.cycle,
           deliveryDate: openOrder.delivery_date,
           status: openOrder.status,
@@ -149,7 +150,7 @@ router.post('/', requireAuth, wrap(async (req, res) => {
 
     await conn.commit();
     res.status(201).json({
-      order: { id: orderId, amount: total, discount: discount, cycle: cycle, deliveryDate: deliveryDate, status: 'pending', items: lines }
+      order: { id: orderId, amount: total, discount: discount, paid: 0, cycle: cycle, deliveryDate: deliveryDate, status: 'pending', items: lines }
     });
   } catch (e) {
     await conn.rollback();
@@ -163,7 +164,7 @@ router.post('/', requireAuth, wrap(async (req, res) => {
 router.get('/', requireAuth, wrap(async (req, res) => {
   const params = [];
   let sql =
-    'SELECT o.id, o.user_id, o.customer_name, o.address, o.slot, o.payment, o.delivery_fee, o.discount, ' +
+    'SELECT o.id, o.user_id, o.customer_name, o.address, o.slot, o.payment, o.delivery_fee, o.discount, o.paid, ' +
     'o.amount, o.cycle, o.delivery_date, o.status, o.placed_at FROM orders o';
 
   const where = [];
@@ -201,6 +202,14 @@ router.patch('/:id/status', requireAdmin, wrap(async (req, res) => {
   const [r] = await db.query('UPDATE orders SET status = ? WHERE id = ?', [status, req.params.id]);
   if (!r.affectedRows) return res.status(404).json({ error: 'Order not found' });
   res.json({ ok: true, id: req.params.id, status: status });
+}));
+
+/* PATCH /api/orders/:id/paid — admin marks the payment collected (UPI scan or cash) */
+router.patch('/:id/paid', requireAdmin, wrap(async (req, res) => {
+  const paid = (req.body || {}).paid ? 1 : 0;
+  const [r] = await db.query('UPDATE orders SET paid = ? WHERE id = ?', [paid, req.params.id]);
+  if (!r.affectedRows) return res.status(404).json({ error: 'Order not found' });
+  res.json({ ok: true, id: req.params.id, paid: !!paid });
 }));
 
 module.exports = router;
