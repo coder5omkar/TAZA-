@@ -96,8 +96,11 @@ The templates are mobile-first, so everything renders full-bleed like a native a
 | `GET /api/admin/users` | admin | list users |
 | `PATCH /api/admin/users/:id` | admin | change role / suspend |
 | `DELETE /api/admin/users/:id` | admin | delete (blocked if the user has orders) |
-| `GET /api/admin/products` | admin | full catalogue incl. disabled items (with `active` flag) |
-| `POST/PATCH/DELETE /api/admin/products/:id?` | admin | manage catalogue — PATCH also enables/disables (`{ active: true/false }`) |
+| `GET /api/admin/products` | admin | full catalogue incl. disabled items (with `active` flag, `description`, `images`) |
+| `POST/PATCH/DELETE /api/admin/products/:id?` | admin | manage catalogue — PATCH also saves `description` and enables/disables (`{ active: true/false }`) |
+| `POST /api/admin/products/:id/images` | admin | upload a product photo (multipart `image`, max 5/product) |
+| `DELETE /api/admin/product-images/:imgId` | admin | remove a product photo (+ its files) |
+| `POST /api/auth/avatar` | auth | upload/replace own profile photo (multipart `image`) |
 | `GET /api/admin/procurement` | admin | tonight's supplier list |
 | `GET/PUT /api/admin/settings` | admin | store / slot / payment settings |
 
@@ -173,7 +176,14 @@ curl -X POST http://localhost:3000/api/auth/login \
    variables / `MYSQL_URL` directly.)
 5. **Region** — web service → *Settings → Region*: **Southeast Asia (Singapore)**
    (closest to India).
-6. **Domain** — web service → *Settings → Networking → Generate Domain*.
+6. **Photos volume (REQUIRED for image uploads)** — web service → *Settings →
+   Volumes → Add Volume*, mount path `/data`. Then add the variable:
+   ```
+   UPLOADS_DIR=/data/uploads
+   ```
+   Without this, uploaded product/avatar photos live inside the container and
+   **vanish on every redeploy**. (Locally they are saved to `./uploads/`.)
+7. **Domain** — web service → *Settings → Networking → Generate Domain*.
 7. **Verify** — `https://<domain>/api/health` → `"database":"up"`, then log in
    at `/templates/login.html` (customer) and `/admin/index.html` (admin).
    Full smoke test from your PC:

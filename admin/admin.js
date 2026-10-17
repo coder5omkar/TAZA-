@@ -227,7 +227,8 @@
     trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>',
     pencil: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>',
     ban: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg>',
-    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+    camera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>'
   };
 
   var NAV = [
@@ -751,16 +752,23 @@
         ? '<input class="input rate-edit-rate" type="number" min="1" step="1" value="' + p.rate + '" style="height:34px;width:80px" />'
         : money(p.rate);
       var toggleBtn = '<button class="iconbtn' + (isActive ? '' : ' ok') + '" data-act="toggle-prod" data-id="' + idAttr + '" data-name="' + esc(p.name) + '" title="' + (isActive ? 'Disable — hide from customers' : 'Enable — show to customers again') + '">' + (isActive ? ICONS.ban : ICONS.check) + '</button>';
+      var imgCount = (p.images || []).length;
+      var photosBtn = '<button class="iconbtn" data-act="prod-images" data-id="' + idAttr + '" title="Photos & description">' + ICONS.camera + (imgCount ? '<span class="ico-badge">' + imgCount + '</span>' : '') + '</button>';
       var actions = editing
         ? '<button class="btn success small" data-act="edit-save" data-id="' + idAttr + '" data-name="' + esc(p.name) + '">Save</button>' +
           '<button class="btn ghost small" data-act="edit-cancel">Cancel</button>'
-        : toggleBtn +
+        : photosBtn + toggleBtn +
           '<button class="iconbtn" data-act="edit-prod" data-id="' + idAttr + '" title="Edit">' + ICONS.pencil + '</button>' +
           '<button class="iconbtn danger" data-act="del-prod" data-id="' + idAttr + '" data-name="' + esc(p.name) + '" title="Delete">' + ICONS.trash + '</button>';
 
+      var mediaCell = imgCount
+        ? '<span class="p-thumb"><img src="' + esc(p.images[0].thumb) + '" alt="" loading="lazy"></span>'
+        : '<span class="p-emoji">' + esc(p.emoji) + '</span>';
+
       return '<tr' + (isActive ? '' : ' class="row-disabled"') + '>' +
-        '<td><span class="p-emoji">' + esc(p.emoji) + '</span><b>' + esc(p.name) + '</b>' +
-        (isActive ? '' : ' <span class="pill suspended">Disabled</span>') + '</td>' +
+        '<td>' + mediaCell + '<b>' + esc(p.name) + '</b>' +
+        (isActive ? '' : ' <span class="pill suspended">Disabled</span>') +
+        (p.description ? '<span class="sub">' + esc(p.description) + '</span>' : '') + '</td>' +
         '<td><span class="pill ' + (p.cat === 'veg' ? 'cat-veg' : 'cat-fruits') + '">' + (p.cat === 'veg' ? 'Vegetables' : 'Fruits') + '</span></td>' +
         '<td>' + sectionCell + '</td>' +
         '<td>' + unitCell + '</td>' +
@@ -905,6 +913,103 @@
       return;
     }
     renderThread();
+  }
+
+  /* ---------------- product photos & description (modal) ---------------- */
+
+  var pimgProductId = null;
+
+  function currentProduct(id) {
+    var found = null;
+    state.products.forEach(function (p) {
+      var pid = p.id != null ? String(p.id) : p.name;
+      if (pid === String(id)) found = p;
+    });
+    return found;
+  }
+
+  function ensureImageModal() {
+    if ($('#pimgModal') || $('#pimgWrap')) return;
+    var X_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+    var wrap = document.createElement('div');
+    wrap.id = 'pimgWrap';
+    wrap.hidden = true;
+    wrap.innerHTML =
+      '<div class="pimg-backdrop" data-act="pimg-close"></div>' +
+      '<div class="pimg-card" id="pimgModal" role="dialog" aria-label="Product photos">' +
+      '<div class="pimg-head">' +
+      '<div><b id="pimgTitle">Photos</b><span class="sub">Up to 5 photos — customers see them when they tap this product</span></div>' +
+      '<button class="iconbtn" data-act="pimg-close" aria-label="Close">' + X_SVG + '</button>' +
+      '</div>' +
+      '<div class="pimg-grid" id="pimgGrid"></div>' +
+      '<label class="btn ghost small pimg-add" for="pimgFile">' + ICONS.camera + '<span>Add photo</span></label>' +
+      '<input type="file" id="pimgFile" accept="image/*" hidden>' +
+      '<div class="pimg-desc">' +
+      '<span class="pimg-label">Description (shown on the product)</span>' +
+      '<textarea id="pimgDesc" maxlength="160" rows="2" placeholder="e.g. Fresh from the farm — picked this morning. Great for sabzi &amp; salad."></textarea>' +
+      '<div class="pimg-desc-foot"><span id="pimgCount">0/160</span>' +
+      '<button class="btn primary small" data-act="pimg-save-desc">Save description</button></div>' +
+      '</div>' +
+      '</div>';
+    document.body.appendChild(wrap);
+
+    $('#pimgFile').addEventListener('change', function () {
+      var file = this.files && this.files[0];
+      this.value = '';
+      if (!file || !pimgProductId) return;
+      var prod = currentProduct(pimgProductId);
+      if (!prod) return;
+
+      if (!LIVE) {
+        /* demo: show the picked photo locally */
+        try {
+          var url = URL.createObjectURL(file);
+          prod.images = prod.images || [];
+          prod.images.push({ id: 'demo-' + Date.now(), url: url, thumb: url });
+          renderImageModal();
+          renderProducts();
+          toast('Photo added (demo)');
+        } catch (e) { /* noop */ }
+        return;
+      }
+      window.TAZA.adminUploadProductImage(prod.id, file).then(function (res) {
+        prod.images = prod.images || [];
+        prod.images.push(res.image);
+        renderImageModal();
+        renderProducts();
+        toast('Photo uploaded ✓');
+      }).catch(function (err) { toast(err.message || 'Upload failed'); });
+    });
+
+    $('#pimgDesc').addEventListener('input', function () {
+      $('#pimgCount').textContent = this.value.length + '/160';
+    });
+  }
+
+  function renderImageModal() {
+    var prod = currentProduct(pimgProductId);
+    if (!prod) { closeImageModal(); return; }
+    $('#pimgTitle').textContent = prod.name;
+    $('#pimgDesc').value = prod.description || '';
+    $('#pimgCount').textContent = (prod.description || '').length + '/160';
+    var imgs = prod.images || [];
+    var pid = prod.id != null ? prod.id : prod.name;
+    $('#pimgGrid').innerHTML = imgs.length ? imgs.map(function (im) {
+      return '<span class="pimg-cell"><img src="' + esc(im.thumb || im.url) + '" alt="">' +
+        '<button class="pimg-x" data-act="prod-img-del" data-id="' + esc(String(pid)) + '" data-img="' + esc(String(im.id)) + '" aria-label="Remove photo">✕</button></span>';
+    }).join('') : '<p class="muted">No photos yet — tap "Add photo".</p>';
+    $('#pimgWrap').hidden = false;
+  }
+
+  function openImageModal(id) {
+    pimgProductId = id;
+    renderImageModal();
+  }
+
+  function closeImageModal() {
+    pimgProductId = null;
+    var w = $('#pimgWrap');
+    if (w) w.hidden = true;
   }
 
   function loadConversations() {
@@ -1185,6 +1290,48 @@
       return;
     }
 
+    if (act === 'prod-images') { openImageModal(id); return; }
+    if (act === 'pimg-close') { closeImageModal(); return; }
+
+    if (act === 'pimg-save-desc') {
+      var dProd = currentProduct(pimgProductId);
+      if (!dProd) return;
+      var desc = ($('#pimgDesc').value || '').trim();
+      if (!LIVE) {
+        dProd.description = desc;
+        renderProducts();
+        toast('Description saved (demo)');
+        return;
+      }
+      window.TAZA.adminUpdateProduct(dProd.id, { description: desc }).then(function () {
+        dProd.description = desc;
+        renderProducts();
+        toast('Description saved ✓');
+      }).catch(function (err) { toast(err.message || 'Could not save the description'); });
+      return;
+    }
+
+    if (act === 'prod-img-del') {
+      var imgId = btn.getAttribute('data-img');
+      var iProd = currentProduct(id);
+      if (!iProd) return;
+      if (!window.confirm('Remove this photo?')) return;
+      if (!LIVE) {
+        iProd.images = (iProd.images || []).filter(function (im) { return String(im.id) !== String(imgId); });
+        renderImageModal();
+        renderProducts();
+        toast('Photo removed (demo)');
+        return;
+      }
+      window.TAZA.adminDeleteProductImage(imgId).then(function () {
+        iProd.images = (iProd.images || []).filter(function (im) { return String(im.id) !== String(imgId); });
+        renderImageModal();
+        renderProducts();
+        toast('Photo removed ✓');
+      }).catch(function (err) { toast(err.message || 'Could not remove the photo'); });
+      return;
+    }
+
     if (act === 'edit-save') {
       var rateEl = $('.rate-edit-rate');
       var unitEl = $('.rate-edit-unit');
@@ -1382,6 +1529,7 @@
     setupChatForm();
     setupProductForm();
     setupSettings();
+    if ($('#productsBody')) ensureImageModal();
 
     var t = window.TAZA;
     if (!t || !t.token()) { initDemo(); return; }

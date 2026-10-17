@@ -57,12 +57,19 @@
 
         <!-- profile -->
         <section class="profile-card">
-          <span class="pf-avatar" aria-hidden="true">
+          <button class="pf-avatar" id="pfAvatar" type="button" aria-label="Change profile photo">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="7" r="4" />
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
             </svg>
-          </span>
+            <span class="pf-cam" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
+              </svg>
+            </span>
+          </button>
+          <input type="file" id="avatarInput" accept="image/*" hidden />
           <div class="pf-info">
             <h4 data-i18n="profile_name">Hannah</h4>
             <p>hannah@vegfruit.shop</p>

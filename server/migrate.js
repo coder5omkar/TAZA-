@@ -125,8 +125,7 @@ const ADDRESSES = [
   const [paidBackfill] = await conn.query("UPDATE orders SET paid = 1 WHERE status = 'delivered' AND paid = 0");
   if (paidBackfill.affectedRows) console.log('~ paid=1 backfilled for delivered orders:', paidBackfill.affectedRows);
 
-  /* v5: order ids -> TS·YY·MM·DD·NN (daily counter resets to 01 each day) */
-  const [[ymCol]] = await conn.query(
+  /* v5: order ids -> TS·YY·MM·DD·NN (daily counter resets to 01 each day) */  const [[ymCol]] = await conn.query(
     "SELECT CHARACTER_MAXIMUM_LENGTH len FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'order_counters' AND COLUMN_NAME = 'ym'"
   );
   if (Number(ymCol.len) < 6) {
@@ -184,6 +183,22 @@ const ADDRESSES = [
   /* drop the old monthly counters — they are no longer used */
   const [oldCounters] = await conn.query("DELETE FROM order_counters WHERE CHAR_LENGTH(ym) < 6");
   if (oldCounters.affectedRows) console.log('~ removed old monthly counters:', oldCounters.affectedRows);
+
+  /* v6: images — product photos + admin description + user avatars */
+  await addCol('products', 'description', 'description VARCHAR(160) DEFAULT NULL');
+  await addCol('users', 'avatar', 'avatar VARCHAR(255) DEFAULT NULL');
+  await conn.query(
+    'CREATE TABLE IF NOT EXISTS product_images (' +
+    '  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,' +
+    '  product_id INT UNSIGNED NOT NULL,' +
+    '  path VARCHAR(255) NOT NULL,' +
+    '  thumb VARCHAR(255) NOT NULL,' +
+    '  sort_no TINYINT UNSIGNED NOT NULL DEFAULT 0,' +
+    '  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,' +
+    '  CONSTRAINT fk_pimg_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE' +
+    ') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'
+  );
+  console.log('~ product_images table ensured');
 
   /* backfill sections */
   const maps = [

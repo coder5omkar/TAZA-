@@ -893,6 +893,34 @@
         </a>
       </nav>
 
+      <!-- ============ product popout (photos + description) ============ -->
+      <div class="sheet-backdrop" id="psBackdrop" hidden></div>
+      <section class="order-sheet product-sheet" id="productSheet" hidden aria-label="Product details">
+        <div class="sheet-head">
+          <div>
+            <h3 id="psName">—</h3>
+            <p class="ps-rate" id="psRate">—</p>
+          </div>
+          <button class="icon-btn" id="psClose" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <div class="ps-gallery" id="psGallery"></div>
+        <div class="ps-dots" id="psDots" hidden></div>
+        <p class="ps-desc" id="psDesc" hidden></p>
+        <div class="ps-foot">
+          <div class="stepper" id="psStepper">
+            <button class="step" data-step="-1" aria-label="Decrease quantity">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14" /></svg>
+            </button>
+            <span class="qty" id="psQty">0</span>
+            <button class="step plus" data-step="1" aria-label="Increase quantity">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
     </div>
   </div>
   <script src="api.js"></script>

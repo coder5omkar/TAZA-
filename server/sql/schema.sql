@@ -25,10 +25,22 @@ CREATE TABLE IF NOT EXISTS products (
   emoji      VARCHAR(16) DEFAULT '🥬',
   cat        ENUM('veg','fruits') NOT NULL,
   section    ENUM('kg','bunch','gram','piece_pack','dozen_piece','pack') DEFAULT NULL,
+  description VARCHAR(160) DEFAULT NULL,          -- admin's 2-line note
   unit       ENUM('kg','bunch','pack','piece','dozen','100 g') NOT NULL DEFAULT 'kg',
   rate       INT UNSIGNED NOT NULL,
   active     TINYINT(1) NOT NULL DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- product photos uploaded by the admin (files live on disk/volume, served from /uploads)
+CREATE TABLE IF NOT EXISTS product_images (
+  id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  product_id INT UNSIGNED NOT NULL,
+  path       VARCHAR(255) NOT NULL,               -- full image URL path
+  thumb      VARCHAR(255) NOT NULL,               -- 240px thumbnail URL path
+  sort_no    TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_pimg_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- daily order counter for TS·YY·MM·DD·NN ids (max 99 per day, key = YYMMDD)

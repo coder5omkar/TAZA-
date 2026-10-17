@@ -31,3 +31,6 @@ Desktop.ini
 # temp files
 *.tmp
 *.bak
+
+# uploaded photos (local dev; Railway uses a volume at UPLOADS_DIR)
+uploads/

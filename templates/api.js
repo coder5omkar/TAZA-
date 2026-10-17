@@ -31,14 +31,16 @@
   }
 
   function request(method, path, body) {
-    var headers = { 'Content-Type': 'application/json' };
+    var isForm = (typeof FormData !== 'undefined') && (body instanceof FormData);
+    var headers = {};
+    if (!isForm) headers['Content-Type'] = 'application/json';
     var t = token();
     if (t) headers.Authorization = 'Bearer ' + t;
 
     return fetch(BASE + path, {
       method: method,
       headers: headers,
-      body: body ? JSON.stringify(body) : undefined
+      body: isForm ? body : (body ? JSON.stringify(body) : undefined)
     }).then(function (res) {
       return res.json().catch(function () { return {}; }).then(function (data) {
         if (!res.ok) {
@@ -69,6 +71,11 @@
     register: function (payload) { return request('POST', '/auth/register', payload); },
     me: function () { return request('GET', '/auth/me'); },
     updateMe: function (payload) { return request('PATCH', '/auth/me', payload); },
+    avatarUpload: function (file) {
+      var fd = new FormData();
+      fd.append('image', file);
+      return request('POST', '/auth/avatar', fd);
+    },
 
     getProducts: function (cat) { return request('GET', '/products' + (cat ? '?cat=' + encodeURIComponent(cat) : '')); },
     placeOrder: function (payload) { return request('POST', '/orders', payload); },
@@ -90,6 +97,12 @@
     adminGetProducts: function () { return request('GET', '/admin/products'); },
     adminUpdateProduct: function (id, payload) { return request('PATCH', '/admin/products/' + id, payload); },
     adminDeleteProduct: function (id) { return request('DELETE', '/admin/products/' + id); },
+    adminUploadProductImage: function (id, file) {
+      var fd = new FormData();
+      fd.append('image', file);
+      return request('POST', '/admin/products/' + id + '/images', fd);
+    },
+    adminDeleteProductImage: function (imgId) { return request('DELETE', '/admin/product-images/' + imgId); },
     adminProcurement: function () { return request('GET', '/admin/procurement'); },
     adminSettings: function () { return request('GET', '/admin/settings'); },
     adminSaveSettings: function (payload) { return request('PUT', '/admin/settings', payload); },

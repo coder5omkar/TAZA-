@@ -159,6 +159,7 @@
       upi_discount: 'UPI on delivery discount (3%)',
       profile_saved: 'Profile updated ✓',
       address_saved: 'Address updated ✓',
+      avatar_updated: 'Profile photo updated ✓',
       err_required: 'Name and email are required',
       err_signin: 'Please sign in to place your order',
       err_address: 'Choose a delivery address',
@@ -350,6 +351,7 @@
       upi_discount: 'डिलीवरी पर UPI छूट (3%)',
       profile_saved: 'प्रोफ़ाइल अपडेट हुई ✓',
       address_saved: 'पता अपडेट हुआ ✓',
+      avatar_updated: 'प्रोफ़ाइल फ़ोटो अपडेट हुई ✓',
       err_required: 'नाम और ईमेल आवश्यक हैं',
       err_signin: 'ऑर्डर करने के लिए लॉग इन करें',
       err_address: 'डिलीवरी पता चुनें',
@@ -541,6 +543,7 @@
       upi_discount: 'डिलिव्हरीवर UPI सूट (3%)',
       profile_saved: 'प्रोफाइल अपडेट झाले ✓',
       address_saved: 'पत्ता अपडेट झाला ✓',
+      avatar_updated: 'प्रोफाइल फोटो अपडेट झाला ✓',
       err_required: 'नाव आणि ईमेल आवश्यक आहेत',
       err_signin: 'ऑर्डर करण्यासाठी लॉग इन करा',
       err_address: 'वितरण पत्ता निवडा',
@@ -1744,11 +1747,14 @@
     return key;
   }
 
+  /* product details popout: photos + admin description + synced stepper */
+  var HOME_PRODUCTS = {};          /* id → full product (live mode) */
+
   function rateRowHtml(p) {
     var key = nameKeyFor(p.name);
     var nameHtml = key ? '<h4 data-i18n="' + key + '">' + esc(p.name) + '</h4>' : '<h4>' + esc(p.name) + '</h4>';
     var unitKey = p.unit === '100 g' ? 'unit_100g' : 'unit_' + p.unit;
-    return '<div class="rate-row" data-price="' + p.rate + '">' +
+    return '<div class="rate-row" data-price="' + p.rate + '" data-pid="' + p.id + '">' +
       '<div class="r-top"><span class="r-emoji" aria-hidden="true">' + esc(p.emoji) + '</span>' + nameHtml + '</div>' +
       '<div class="r-bottom">' +
       '<div><p class="price r-price"><b>' + money(p.rate) + '</b><span data-i18n="' + unitKey + '"> /' + esc(p.unit) + '</span></p><em class="row-total" hidden></em></div>' +
@@ -1758,6 +1764,105 @@
       '<button class="step plus" data-step="1" aria-label="Increase quantity">' + STEP_PLUS_SVG + '</button>' +
       '</div></div></div>';
   }
+
+  /* ---- product popout sheet ---- */
+  var psSheet = $('#productSheet');
+  var psBackdrop = $('#psBackdrop');
+  var psRow = null;
+  var psTimer = null;
+
+  function closeProductSheet() {
+    if (!psSheet || psSheet.hidden) return;
+    psSheet.classList.remove('open');
+    if (psBackdrop) psBackdrop.classList.remove('open');
+    clearTimeout(psTimer);
+    psTimer = setTimeout(function () {
+      psSheet.hidden = true;
+      if (psBackdrop) psBackdrop.hidden = true;
+    }, 240);
+  }
+
+  function syncSheetQty() {
+    var qtyEl = $('#psQty');
+    if (!qtyEl || !psRow) return;
+    var rowQty = $('.qty', psRow);
+    qtyEl.textContent = rowQty ? rowQty.textContent : '0';
+  }
+
+  function openProductSheet(row) {
+    if (!psSheet || !row) return;
+    psRow = row;
+
+    var p = null;
+    var pid = row.getAttribute('data-pid');
+    if (pid && HOME_PRODUCTS[pid]) p = HOME_PRODUCTS[pid];
+
+    /* name + rate are cloned from the row so i18n + units always match */
+    var h4 = $('h4', row);
+    $('#psName').innerHTML = h4 ? h4.innerHTML : '—';
+    var priceEl = $('.price', row);
+    $('#psRate').innerHTML = priceEl ? priceEl.innerHTML : '';
+
+    var gallery = $('#psGallery');
+    var dots = $('#psDots');
+    var emojiEl = $('.r-emoji', row);
+    var images = (p && p.images) || [];
+
+    if (images.length) {
+      gallery.innerHTML = images.map(function (im) {
+        return '<div class="ps-slide"><img src="' + esc(im.url) + '" alt="" loading="lazy"></div>';
+      }).join('');
+      dots.hidden = images.length < 2;
+      dots.innerHTML = images.map(function (_, i) {
+        return '<span class="ps-dot' + (i === 0 ? ' on' : '') + '"></span>';
+      }).join('');
+      gallery.onscroll = function () {
+        var w = gallery.clientWidth || 1;
+        var idx = Math.round(gallery.scrollLeft / w);
+        $$('.ps-dot', dots).forEach(function (d, i) { d.classList.toggle('on', i === idx); });
+      };
+    } else {
+      gallery.innerHTML = '<div class="ps-slide ps-slide-emoji" aria-hidden="true">' +
+        (emojiEl ? emojiEl.textContent : '🧺') + '</div>';
+      dots.hidden = true;
+    }
+
+    var descEl = $('#psDesc');
+    var desc = (p && p.description) || '';
+    descEl.hidden = !desc;
+    descEl.textContent = desc;
+
+    syncSheetQty();
+
+    psSheet.hidden = false;
+    if (psBackdrop) psBackdrop.hidden = false;
+    requestAnimationFrame(function () {
+      psSheet.classList.add('open');
+      if (psBackdrop) psBackdrop.classList.add('open');
+    });
+  }
+
+  if (psSheet) {
+    /* the sheet's stepper mirrors the row's stepper (single source of truth = the row) */
+    psSheet.addEventListener('click', function (e) {
+      var btn = e.target.closest('.step');
+      if (!btn || !psRow) return;
+      e.stopPropagation();
+      var target = psRow.querySelector(btn.classList.contains('plus') ? '.step.plus' : '.step[data-step="-1"]');
+      if (target) target.click();
+      syncSheetQty();
+    });
+    if (psBackdrop) psBackdrop.addEventListener('click', closeProductSheet);
+    if ($('#psClose')) $('#psClose').addEventListener('click', closeProductSheet);
+  }
+
+  /* tap a product row (anywhere but its own stepper) → popout */
+  document.addEventListener('click', function (e) {
+    if (!psSheet) return;
+    var row = e.target.closest('.rate-row');
+    if (!row || e.target.closest('.stepper') || psSheet.contains(e.target)) return;
+    openProductSheet(row);
+  });
 
   function sectionFor(p) {
     if (p.cat === 'veg') {
@@ -1813,6 +1918,7 @@
       if (!ok) return;                         /* static demo tables stay */
       window.TAZA.getProducts().then(function (res) {
         var products = res.products || [];
+        products.forEach(function (p) { HOME_PRODUCTS[p.id] = p; });
         buildPane('#vegList', products.filter(function (p) { return p.cat === 'veg'; }), 'veg');
         buildPane('#fruitList', products.filter(function (p) { return p.cat === 'fruits'; }), 'fruits');
         applyLanguage(currentLang);
@@ -1867,6 +1973,18 @@
       logoutLink.addEventListener('click', function () { window.TAZA.clearSession(); });
     }
 
+    var AV_CAM = '<span class="pf-cam" aria-hidden="true">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />' +
+      '<circle cx="12" cy="13" r="4" /></svg></span>';
+
+    function paintAvatar(avatarUrl) {
+      var av = $('#pfAvatar');
+      if (!av || !avatarUrl) return;
+      av.classList.add('has-photo');
+      av.innerHTML = '<img src="' + esc(avatarUrl) + '" alt="">' + AV_CAM;
+    }
+
     function paintProfile(user) {
       if (!user) return;
       acctUser = user;
@@ -1874,12 +1992,37 @@
       var mailEl = $('.pf-info p');
       if (nameEl) { nameEl.textContent = user.name; nameEl.removeAttribute('data-i18n'); }
       if (mailEl) mailEl.textContent = user.email || '';
+      if (user.avatar) paintAvatar(user.avatar);
     }
 
     if (window.TAZA) {
       window.TAZA.available().then(function (ok) {
         if (!ok || !window.TAZA.token()) return;
         window.TAZA.me().then(function (res) { paintProfile(res.user); }).catch(function () { /* noop */ });
+      });
+    }
+
+    /* profile photo: tap the avatar -> pick from camera/gallery */
+    var avBtn = $('#pfAvatar');
+    var avInput = $('#avatarInput');
+    if (avBtn && avInput) {
+      avBtn.addEventListener('click', function () { avInput.click(); });
+      avInput.addEventListener('change', function () {
+        var file = avInput.files && avInput.files[0];
+        avInput.value = '';
+        if (!file) return;
+        if (window.TAZA && window.TAZA.token()) {
+          window.TAZA.avatarUpload(file).then(function (res) {
+            paintProfile(res.user);
+            toast(t('avatar_updated'));
+          }).catch(function (err) { toast((err && err.message) ? err.message : t('err_generic'), 3200); });
+          return;
+        }
+        /* demo (no API): show it locally */
+        try {
+          paintAvatar(URL.createObjectURL(file));
+          toast(t('avatar_updated'));
+        } catch (e) { /* noop */ }
       });
     }
 

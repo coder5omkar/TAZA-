@@ -1110,8 +1110,30 @@ input[type='search']::-webkit-search-cancel-button { display: none; }
   color: #5b21b6;
   display: grid;
   place-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
 }
 .pf-avatar svg { width: 30px; height: 30px; }
+.pf-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* small camera badge — hints the avatar is tappable */
+.pf-cam {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: var(--brand-strong, #6d28d9);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 0 2px #fff;
+}
+.pf-cam svg { width: 11px; height: 11px; }
 
 .pf-info { flex: 1; min-width: 0; }
 .pf-info h4 { font-size: 15.5px; font-weight: 600; }
@@ -1426,6 +1448,63 @@ input[type='search']::-webkit-search-cancel-button { display: none; }
 }
 
 .sheet-save { width: 100%; margin-top: 16px; }
+
+/* ---------------- Product popout (photos + description) ---------------- */
+
+.rate-row { cursor: pointer; }
+
+.ps-rate { font-size: 13px; font-weight: 600; color: var(--green-strong); }
+.ps-rate .price b { font-size: 15px; }
+.ps-rate span { font-size: 11.5px; color: var(--muted); font-weight: 500; }
+
+.ps-gallery {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  border-radius: 18px;
+  margin-top: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+.ps-slide {
+  min-width: 100%;
+  scroll-snap-align: center;
+  aspect-ratio: 4 / 3;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #f3f1f8;
+}
+.ps-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ps-slide-emoji {
+  display: grid;
+  place-items: center;
+  font-size: 84px;
+  background: linear-gradient(160deg, #f7f5fb, #eef6f0);
+  font-family: var(--emoji-font);
+}
+
+.ps-dots { display: flex; justify-content: center; gap: 5px; padding: 8px 0 2px; }
+.ps-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #d8d4e4;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.ps-dot.on { background: var(--brand-strong, #6d28d9); transform: scale(1.15); }
+
+.ps-desc {
+  margin: 8px 2px 2px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: #f7f6fb;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.ps-foot { display: flex; justify-content: flex-end; margin-top: 12px; }
+.ps-foot .stepper { transform: scale(1.12); transform-origin: right center; }
 
 /* ---------------- Toast ---------------- */
 

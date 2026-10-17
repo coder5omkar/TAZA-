@@ -80,12 +80,15 @@ router.delete('/users/:id', requireAdmin, wrap(async (req, res) => {
 /* ---------- products ---------- */
 const PRODUCT_SECTIONS = ['kg', 'bunch', 'gram', 'piece_pack', 'dozen_piece', 'pack'];
 const PRODUCT_UNITS = ['kg', 'bunch', 'pack', 'piece', 'dozen', '100 g'];
+const uploads = require('../uploads');
+const productImages = require('./products').withImages;
 
 /* GET /api/admin/products — full catalogue incl. disabled items (admin only) */
 router.get('/products', requireAdmin, wrap(async (req, res) => {
   const [products] = await db.query(
-    'SELECT id, name, emoji, cat, section, unit, rate, active FROM products ORDER BY cat ASC, name ASC'
+    'SELECT id, name, emoji, cat, section, description, unit, rate, active FROM products ORDER BY cat ASC, name ASC'
   );
+  await productImages(products);
   res.json({ products: products });
 }));
 
@@ -97,14 +100,15 @@ router.post('/products', requireAdmin, wrap(async (req, res) => {
   const unit = PRODUCT_UNITS.includes(b.unit) ? b.unit : 'kg';
   const rate = Math.max(1, parseInt(b.rate, 10) || 1);
   const emoji = String(b.emoji || '🥬').trim().slice(0, 8);
+  const description = b.description ? String(b.description).trim().slice(0, 160) : null;
   if (!name) return res.status(400).json({ error: 'Product name is required' });
 
   try {
     const [r] = await db.query(
-      'INSERT INTO products (name, emoji, cat, section, unit, rate) VALUES (?, ?, ?, ?, ?, ?)',
-      [name.slice(0, 80), emoji, cat, section, unit, rate]
+      'INSERT INTO products (name, emoji, cat, section, description, unit, rate) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [name.slice(0, 80), emoji, cat, section, description, unit, rate]
     );
-    res.status(201).json({ product: { id: r.insertId, name: name, emoji: emoji, cat: cat, section: section, unit: unit, rate: rate } });
+    res.status(201).json({ product: { id: r.insertId, name: name, emoji: emoji, cat: cat, section: section, description: description, unit: unit, rate: rate } });
   } catch (e) {
     if (e.code === 'ER_DUP_ENTRY') return res.status(409).json({ error: 'A product with this name already exists' });
     throw e;
@@ -117,18 +121,55 @@ router.patch('/products/:id', requireAdmin, wrap(async (req, res) => {
   const unit = PRODUCT_UNITS.includes(b.unit) ? b.unit : null;
   const section = PRODUCT_SECTIONS.includes(b.section) ? b.section : null;
   const emoji = b.emoji ? String(b.emoji).trim().slice(0, 8) : null;
+  /* '' clears the description; undefined leaves it unchanged */
+  const description = b.description !== undefined ? String(b.description).trim().slice(0, 160) : null;
   /* accepts true/false, 0/1 or '0'/'1' — disable/enable a product at runtime */
   const active = (b.active === true || b.active === 1 || b.active === '1') ? 1
     : (b.active === false || b.active === 0 || b.active === '0') ? 0
     : null;
-  if (rate === null && unit === null && section === null && emoji === null && active === null) {
+  if (rate === null && unit === null && section === null && emoji === null && active === null && description === null) {
     return res.status(400).json({ error: 'Nothing to update' });
   }
   const [r] = await db.query(
-    'UPDATE products SET rate = COALESCE(?, rate), unit = COALESCE(?, unit), section = COALESCE(?, section), emoji = COALESCE(?, emoji), active = COALESCE(?, active) WHERE id = ?',
-    [rate, unit, section, emoji, active, Number(req.params.id)]
+    'UPDATE products SET rate = COALESCE(?, rate), unit = COALESCE(?, unit), section = COALESCE(?, section), ' +
+    'emoji = COALESCE(?, emoji), active = COALESCE(?, active), description = COALESCE(?, description) WHERE id = ?',
+    [rate, unit, section, emoji, active, description, Number(req.params.id)]
   );
   if (!r.affectedRows) return res.status(404).json({ error: 'Product not found' });
+  res.json({ ok: true });
+}));
+
+/* POST /api/admin/products/:id/images — upload one photo (multipart "image") */
+router.post('/products/:id/images', requireAdmin, uploads.imageUpload, wrap(async (req, res) => {
+  const pid = Number(req.params.id);
+  const [[prod]] = await db.query('SELECT id, name FROM products WHERE id = ?', [pid]);
+  if (!prod) return res.status(404).json({ error: 'Product not found' });
+  if (!req.file) return res.status(400).json({ error: 'Pick a photo first' });
+
+  const [[cnt]] = await db.query('SELECT COUNT(*) n FROM product_images WHERE product_id = ?', [pid]);
+  if (cnt.n >= 5) return res.status(400).json({ error: 'Maximum 5 photos per product' });
+
+  let saved;
+  try {
+    saved = await uploads.saveImageSet('products', 'product-' + pid, req.file.buffer);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+
+  const [r] = await db.query(
+    'INSERT INTO product_images (product_id, path, thumb, sort_no) VALUES (?, ?, ?, ?)',
+    [pid, saved.path, saved.thumb, cnt.n]
+  );
+  res.status(201).json({ image: { id: r.insertId, url: saved.path, thumb: saved.thumb } });
+}));
+
+/* DELETE /api/admin/product-images/:imgId — remove one photo + its files */
+router.delete('/product-images/:imgId', requireAdmin, wrap(async (req, res) => {
+  const [[img]] = await db.query('SELECT id, path, thumb FROM product_images WHERE id = ?', [Number(req.params.imgId)]);
+  if (!img) return res.status(404).json({ error: 'Photo not found' });
+  await db.query('DELETE FROM product_images WHERE id = ?', [img.id]);
+  uploads.removeImage(img.path);
+  uploads.removeImage(img.thumb);
   res.json({ ok: true });
 }));
 

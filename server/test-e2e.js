@@ -227,6 +227,36 @@ function check(name, ok, extra) {
     cancelId + ' → cancel ' + cancelled.status + ', again ' + cancelAgain.status + ', delivered ' + cancelDelivered.status
   );
 
+  /* 15. product photos + description (admin upload) */
+  const tinyPng = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+  const mkForm = function () {
+    const fd = new FormData();
+    fd.append('image', new Blob([tinyPng], { type: 'image/png' }), 'test.png');
+    return fd;
+  };
+  const upRes = await fetch(BASE + '/api/admin/products/' + anyProd.id + '/images', {
+    method: 'POST', headers: { Authorization: 'Bearer ' + adminToken }, body: mkForm()
+  });
+  const upJson = await upRes.json().catch(function () { return {}; });
+  check('admin uploads a product photo', upRes.status === 201 && !!upJson.image && !!upJson.image.url, upJson.image && upJson.image.url);
+  const imgFetch = upJson.image ? await fetch(BASE + upJson.image.url) : { status: 0, headers: { get: function () { return ''; } } };
+  check('uploaded photo is served as an image', imgFetch.status === 200 && String(imgFetch.headers.get('content-type')).indexOf('image') !== -1, imgFetch.status + ' ' + imgFetch.headers.get('content-type'));
+  await req('PATCH', '/api/admin/products/' + anyProd.id, { description: 'Picked this morning — great for sabzi & salad.' }, adminToken);
+  const pubWithImg = await req('GET', '/api/products');
+  const enriched = (pubWithImg.data.products || []).find(function (p) { return p.id === anyProd.id; });
+  check('public product carries description + photos', !!enriched && enriched.description.length > 0 && enriched.images.length >= 1, enriched ? '"' + enriched.description.slice(0, 24) + '…", ' + enriched.images.length + ' photo(s)' : 'missing');
+  const delImg = await fetch(BASE + '/api/admin/product-images/' + (upJson.image ? upJson.image.id : 0), { method: 'DELETE', headers: { Authorization: 'Bearer ' + adminToken } });
+  await req('PATCH', '/api/admin/products/' + anyProd.id, { description: '' }, adminToken);
+  check('admin deletes the photo', delImg.status === 200);
+
+  /* 16. customer profile photo */
+  const avRes = await fetch(BASE + '/api/auth/avatar', {
+    method: 'POST', headers: { Authorization: 'Bearer ' + custToken }, body: mkForm()
+  });
+  const avJson = await avRes.json().catch(function () { return {}; });
+  const meAfter = await req('GET', '/api/auth/me', null, custToken);
+  check('customer uploads a profile photo', avRes.status === 200 && !!avJson.user && !!avJson.user.avatar && meAfter.data.user.avatar === avJson.user.avatar, avJson.user ? avJson.user.avatar : 'failed');
+
   /* summary */
   console.log('');
   console.log(results.join('\n'));

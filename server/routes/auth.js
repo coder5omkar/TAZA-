@@ -63,10 +63,32 @@ router.post('/register', wrap(async (req, res) => {
 router.get('/me', requireAuth, wrap(async (req, res) => {
   const [[user]] = await db.query(
     'SELECT id, name, email, phone, address, address_flat, address_floor, address_building, ' +
-    'address_area, address_city, address_pin, default_payment, role, status FROM users WHERE id = ?',
+    'address_area, address_city, address_pin, default_payment, avatar, role, status FROM users WHERE id = ?',
     [req.user.id]
   );
   if (!user) return res.status(404).json({ error: 'User not found' });
+  res.json({ user: user });
+}));
+
+/* POST /api/auth/avatar — upload/replace own profile photo (multipart "image") */
+const uploads = require('../uploads');
+router.post('/avatar', requireAuth, uploads.imageUpload, wrap(async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'Pick a photo first' });
+
+  const [[old]] = await db.query('SELECT avatar FROM users WHERE id = ?', [req.user.id]);
+  let saved;
+  try {
+    saved = await uploads.saveImageSet('avatars', 'avatar-' + req.user.id, req.file.buffer);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+  await db.query('UPDATE users SET avatar = ? WHERE id = ?', [saved.path, req.user.id]);
+  if (old && old.avatar) uploads.removeImage(old.avatar);
+
+  const [[user]] = await db.query(
+    'SELECT id, name, email, phone, address, default_payment, avatar, role, status FROM users WHERE id = ?',
+    [req.user.id]
+  );
   res.json({ user: user });
 }));
 
@@ -130,7 +152,7 @@ router.patch('/me', requireAuth, wrap(async (req, res) => {
 
   const [[user]] = await db.query(
     'SELECT id, name, email, phone, address, address_flat, address_floor, address_building, ' +
-    'address_area, address_city, address_pin, default_payment, role, status FROM users WHERE id = ?',
+    'address_area, address_city, address_pin, default_payment, avatar, role, status FROM users WHERE id = ?',
     [req.user.id]
   );
   res.json({ user: user });

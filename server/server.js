@@ -42,6 +42,10 @@ const root = path.join(__dirname, '..');
 app.use('/templates', express.static(path.join(root, 'templates')));
 app.use('/admin', express.static(path.join(root, 'admin')));
 
+/* uploaded photos (Railway: a mounted volume via UPLOADS_DIR) */
+const uploadsStore = require('./uploads');
+app.use('/uploads', express.static(uploadsStore.ROOT, { maxAge: '365d', immutable: true }));
+
 app.get('/', (req, res) => res.redirect('/templates/login.html'));
 
 /* ---------------- 404 + errors ---------------- */
