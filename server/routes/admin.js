@@ -204,11 +204,17 @@ router.put('/settings', requireAdmin, wrap(async (req, res) => {
   const b = req.body || {};
   const num = function (v) { return v === undefined || v === null || v === '' ? null : Math.max(0, parseInt(v, 10) || 0); };
   const flag = function (v) { return v === 0 || v === 1 || v === true || v === false ? (v ? 1 : 0) : null; };
+  const time = function (v) {
+    const s = String(v || '').trim();
+    return /^([01]\d|2[0-3]):[0-5]\d$/.test(s) ? s : null;   /* HH:MM (24h) */
+  };
 
   await db.query(
     'UPDATE settings SET store_name = COALESCE(?, store_name), support_phone = COALESCE(?, support_phone), ' +
     'delivery_fee = COALESCE(?, delivery_fee), cutoff_hour = COALESCE(?, cutoff_hour), ' +
     'morning_slot = COALESCE(?, morning_slot), evening_slot = COALESCE(?, evening_slot), ' +
+    'morning_from = COALESCE(?, morning_from), morning_to = COALESCE(?, morning_to), ' +
+    'evening_from = COALESCE(?, evening_from), evening_to = COALESCE(?, evening_to), ' +
     'upi_enabled = COALESCE(?, upi_enabled), cod_enabled = COALESCE(?, cod_enabled) WHERE id = 1',
     [
       b.store_name ? String(b.store_name).slice(0, 120) : null,
@@ -217,6 +223,10 @@ router.put('/settings', requireAdmin, wrap(async (req, res) => {
       b.cutoff_hour !== undefined ? Math.min(23, Math.max(1, parseInt(b.cutoff_hour, 10) || 22)) : null,
       flag(b.morning_slot),
       flag(b.evening_slot),
+      time(b.morning_from),
+      time(b.morning_to),
+      time(b.evening_from),
+      time(b.evening_to),
       flag(b.upi_enabled),
       flag(b.cod_enabled)
     ]

@@ -205,7 +205,7 @@
         { from: 'me', text: 'Happy to help 🌿 See you in tomorrow\'s cycle.', time: '10:05 AM' }
       ] }
     ],
-    settings: { store_name: 'TAZA-PHAL-SABZI.COM', support_phone: '+91 98200 11001', delivery_fee: 3, cutoff_hour: 22, morning_slot: 1, evening_slot: 1, upi_enabled: 0, cod_enabled: 1 }
+    settings: { store_name: 'TAZA-PHAL-SABZI.COM', support_phone: '+91 98200 11001', delivery_fee: 3, cutoff_hour: 22, morning_slot: 1, evening_slot: 1, morning_from: '08:00', morning_to: '10:00', evening_from: '19:00', evening_to: '22:00', upi_enabled: 0, cod_enabled: 1 }
   };
 
   var state = {
@@ -553,7 +553,11 @@
         '<div class="kv"><span>Fruits</span><b>' + (fruitCount || 16) + '</b></div>' +
         '<div class="kv"><span>Order cutoff</span><b>' + settings.cutoff_hour + ':00 PM daily</b></div>' +
         '<div class="kv"><span>Daily capacity</span><b>99 orders</b></div>' +
-        '<div class="kv"><span>Delivery slots</span><b>' + (settings.morning_slot ? 'Morning' : '') + (settings.morning_slot && settings.evening_slot ? ' · ' : '') + (settings.evening_slot ? 'Evening' : '') + '</b></div>' +
+        '<div class="kv"><span>Delivery slots</span><b>' +
+        (settings.morning_slot ? 'Morning ' + slotRangeText(settings.morning_from || '08:00', settings.morning_to || '10:00') : '') +
+        (settings.morning_slot && settings.evening_slot ? ' · ' : '') +
+        (settings.evening_slot ? 'Evening ' + slotRangeText(settings.evening_from || '19:00', settings.evening_to || '22:00') : '') +
+        '</b></div>' +
         '<div class="kv"><span>Payments</span><b>Cash on Delivery — collected at the door</b></div>';
     }
   }
@@ -1101,8 +1105,25 @@
     if ($('#stFee')) $('#stFee').value = s.delivery_fee;
     if ($('#stMorning')) $('#stMorning').checked = !!s.morning_slot;
     if ($('#stEvening')) $('#stEvening').checked = !!s.evening_slot;
+    if ($('#stMorningFrom')) $('#stMorningFrom').value = s.morning_from || '08:00';
+    if ($('#stMorningTo')) $('#stMorningTo').value = s.morning_to || '10:00';
+    if ($('#stEveningFrom')) $('#stEveningFrom').value = s.evening_from || '19:00';
+    if ($('#stEveningTo')) $('#stEveningTo').value = s.evening_to || '22:00';
     if ($('#stUpi')) $('#stUpi').checked = !!s.upi_enabled;
     if ($('#stCod')) $('#stCod').checked = !!s.cod_enabled;
+  }
+
+  /* '08:00' + '10:00' -> "8–10 AM" (compact customer-facing range) */
+  function slotRangeText(from, to) {
+    const parts = function (t) {
+      const p = String(t || '').split(':');
+      const h = parseInt(p[0], 10) || 0;
+      const m = parseInt(p[1], 10) || 0;
+      return { h: ((h + 11) % 12) + 1, m: m, ap: h >= 12 ? 'PM' : 'AM' };
+    };
+    const a = parts(from), b = parts(to);
+    const fmt = function (x) { return x.h + (x.m ? ':' + String(x.m).padStart(2, '0') : ''); };
+    return a.ap === b.ap ? fmt(a) + '–' + fmt(b) + ' ' + b.ap : fmt(a) + ' ' + a.ap + ' – ' + fmt(b) + ' ' + b.ap;
   }
 
   function setupSettings() {
@@ -1110,12 +1131,20 @@
     if (!form) return;
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+      var timeVal = function (id, fallback) {
+        var el = $(id);
+        return el && el.value ? el.value : fallback;
+      };
       var payload = {
         store_name: $('#stStoreName') ? $('#stStoreName').value.trim() : undefined,
         support_phone: $('#stPhone') ? $('#stPhone').value.trim() : undefined,
         delivery_fee: $('#stFee') ? parseInt($('#stFee').value, 10) : undefined,
         morning_slot: $('#stMorning') && $('#stMorning').checked ? 1 : 0,
         evening_slot: $('#stEvening') && $('#stEvening').checked ? 1 : 0,
+        morning_from: timeVal('#stMorningFrom', undefined),
+        morning_to: timeVal('#stMorningTo', undefined),
+        evening_from: timeVal('#stEveningFrom', undefined),
+        evening_to: timeVal('#stEveningTo', undefined),
         upi_enabled: 0,
         cod_enabled: 1
       };

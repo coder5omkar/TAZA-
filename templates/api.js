@@ -78,6 +78,7 @@
     },
 
     getProducts: function (cat) { return request('GET', '/products' + (cat ? '?cat=' + encodeURIComponent(cat) : '')); },
+    getSettings: function () { return request('GET', '/settings'); },
     placeOrder: function (payload) { return request('POST', '/orders', payload); },
     myOrders: function () { return request('GET', '/orders'); },
 

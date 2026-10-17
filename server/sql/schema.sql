@@ -107,6 +107,10 @@ CREATE TABLE IF NOT EXISTS settings (
   cutoff_hour   TINYINT UNSIGNED NOT NULL DEFAULT 22,   -- 10:00 PM cutoff
   morning_slot  TINYINT(1) NOT NULL DEFAULT 1,
   evening_slot  TINYINT(1) NOT NULL DEFAULT 1,
+  morning_from  VARCHAR(5) NOT NULL DEFAULT '08:00',    -- editable slot windows
+  morning_to    VARCHAR(5) NOT NULL DEFAULT '10:00',
+  evening_from  VARCHAR(5) NOT NULL DEFAULT '19:00',
+  evening_to    VARCHAR(5) NOT NULL DEFAULT '22:00',
   upi_enabled   TINYINT(1) NOT NULL DEFAULT 1,
   cod_enabled   TINYINT(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

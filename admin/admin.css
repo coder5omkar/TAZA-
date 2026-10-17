@@ -555,6 +555,31 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   color: var(--muted);
 }
 
+/* ---------- settings: delivery slot rows ---------- */
+.slot-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 9px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.slot-row:last-of-type { border-bottom: 0; }
+.slot-times {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.slot-time {
+  width: 106px;
+  height: 38px !important;
+  padding: 0 8px;
+  font-size: 13px;
+}
+
 /* settings */
 .settings-card { max-width: 680px; }
 .settings-form { display: flex; flex-direction: column; gap: 15px; padding: 18px; }

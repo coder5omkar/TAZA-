@@ -55,10 +55,21 @@
 
             <div class="field">
               <span>Delivery slots shown to customers</span>
-              <div class="stack-checks">
-                <label class="check"><input type="checkbox" id="stMorning" checked /> Morning (8–10 AM)</label>
-                <label class="check"><input type="checkbox" id="stEvening" checked /> Evening (7–10 PM)</label>
+              <div class="slot-row">
+                <label class="check"><input type="checkbox" id="stMorning" checked /> Morning</label>
+                <span class="slot-times">
+                  from <input class="input slot-time" type="time" id="stMorningFrom" value="08:00" />
+                  to <input class="input slot-time" type="time" id="stMorningTo" value="10:00" />
+                </span>
               </div>
+              <div class="slot-row">
+                <label class="check"><input type="checkbox" id="stEvening" checked /> Evening</label>
+                <span class="slot-times">
+                  from <input class="input slot-time" type="time" id="stEveningFrom" value="19:00" />
+                  to <input class="input slot-time" type="time" id="stEveningTo" value="22:00" />
+                </span>
+              </div>
+              <p class="hint">Uncheck a slot to hide it from customers — orders can no longer pick it.</p>
             </div>
 
             <div class="field">

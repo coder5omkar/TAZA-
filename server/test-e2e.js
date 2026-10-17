@@ -257,6 +257,27 @@ function check(name, ok, extra) {
   const meAfter = await req('GET', '/api/auth/me', null, custToken);
   check('customer uploads a profile photo', avRes.status === 200 && !!avJson.user && !!avJson.user.avatar && meAfter.data.user.avatar === avJson.user.avatar, avJson.user ? avJson.user.avatar : 'failed');
 
+  /* 17. delivery slots: admin timings + disabled slot enforcement */
+  const slotSet0 = await req('GET', '/api/settings');
+  check('public settings expose slot windows', slotSet0.status === 200 && slotSet0.data.morning_slot !== undefined && slotSet0.data.morning_from !== undefined, 'morning ' + slotSet0.data.morning_from + '–' + slotSet0.data.morning_to);
+
+  await req('PUT', '/api/admin/settings', { morning_slot: 1, evening_slot: 0, morning_from: '07:30', morning_to: '09:30' }, adminToken);
+  const slotSet1 = await req('GET', '/api/settings');
+  const tryEvening = await req('POST', '/api/orders', {
+    items: [{ productId: itemA.id, qty: 1 }],
+    slot: 'evening',
+    payment: 'cod',
+    address: 'QA Lane, Test City'
+  }, custToken);
+  check(
+    'disabled slot is rejected at checkout + admin times are live',
+    Number(slotSet1.data.evening_slot) === 0 && slotSet1.data.morning_from === '07:30' && tryEvening.status === 400,
+    'evening order → ' + tryEvening.status + ', morning from ' + slotSet1.data.morning_from
+  );
+
+  /* restore the default slot windows */
+  await req('PUT', '/api/admin/settings', { morning_slot: 1, evening_slot: 1, morning_from: '08:00', morning_to: '10:00', evening_from: '19:00', evening_to: '22:00' }, adminToken);
+
   /* summary */
   console.log('');
   console.log(results.join('\n'));

@@ -1506,6 +1506,14 @@ input[type='search']::-webkit-search-cancel-button { display: none; }
 .ps-foot { display: flex; justify-content: flex-end; margin-top: 12px; }
 .ps-foot .stepper { transform: scale(1.12); transform-origin: right center; }
 
+/* dynamic slot window inside the delivery-slot options */
+.slot-range {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
 /* ---------------- Toast ---------------- */
 
 .toast {

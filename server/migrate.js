@@ -200,6 +200,12 @@ const ADDRESSES = [
   );
   console.log('~ product_images table ensured');
 
+  /* v7: editable delivery-slot windows (admin can adjust timings per slot) */
+  await addCol('settings', 'morning_from', "morning_from VARCHAR(5) NOT NULL DEFAULT '08:00'");
+  await addCol('settings', 'morning_to', "morning_to VARCHAR(5) NOT NULL DEFAULT '10:00'");
+  await addCol('settings', 'evening_from', "evening_from VARCHAR(5) NOT NULL DEFAULT '19:00'");
+  await addCol('settings', 'evening_to', "evening_to VARCHAR(5) NOT NULL DEFAULT '22:00'");
+
   /* backfill sections */
   const maps = [
     ['kg', SECTION_KG], ['bunch', SECTION_BUNCH], ['gram', SECTION_GRAM],

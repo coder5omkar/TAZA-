@@ -57,10 +57,17 @@ router.post('/', requireAuth, wrap(async (req, res) => {
       return res.status(400).json({ error: 'Items are no longer available' });
     }
 
-    /* 2. settings: delivery fee + cutoff */
-    const [[settings]] = await conn.query('SELECT delivery_fee, cutoff_hour FROM settings WHERE id = 1');
+    /* 2. settings: delivery fee + cutoff + slot availability */
+    const [[settings]] = await conn.query('SELECT delivery_fee, cutoff_hour, morning_slot, evening_slot FROM settings WHERE id = 1');
     const fee = settings ? settings.delivery_fee : 3;
     const cutoff = settings ? settings.cutoff_hour : 22;
+
+    /* the requested slot must be switched on by the admin */
+    const slotOn = settings && (slot === 'morning' ? settings.morning_slot : settings.evening_slot);
+    if (!slotOn) {
+      await conn.rollback();
+      return res.status(400).json({ error: 'That delivery slot is currently unavailable — please pick another' });
+    }
 
     /* UPI orders get a 3% discount on the items subtotal */
     const discount = payment === 'upi' ? Math.round(subtotal * 0.03 * 10) / 10 : 0;

@@ -138,20 +138,20 @@
             <span data-i18n="slot_title">Delivery Slot</span>
           </h3>
 
-          <label class="addr-option active" data-slot="morning">
+          <label class="addr-option active" data-slot="morning" id="slotMorningOpt">
             <input type="radio" name="delivery-slot" checked hidden />
             <span class="addr-radio" aria-hidden="true"></span>
             <span class="addr-body">
-              <span class="addr-type" data-i18n="slot_morning">Morning (8–10 AM)</span>
+              <span class="addr-type"><span data-i18n="slot_morning">Morning</span> <em class="slot-range" id="slotRangeMorning">(8–10 AM)</em></span>
               <span class="addr-text" data-i18n="slot_sub">Delivered fresh to your door</span>
             </span>
           </label>
 
-          <label class="addr-option" data-slot="evening">
+          <label class="addr-option" data-slot="evening" id="slotEveningOpt">
             <input type="radio" name="delivery-slot" hidden />
             <span class="addr-radio" aria-hidden="true"></span>
             <span class="addr-body">
-              <span class="addr-type" data-i18n="slot_evening">Evening (7–10 PM)</span>
+              <span class="addr-type"><span data-i18n="slot_evening">Evening</span> <em class="slot-range" id="slotRangeEvening">(7–10 PM)</em></span>
               <span class="addr-text" data-i18n="slot_sub">Delivered fresh to your door</span>
             </span>
           </label>

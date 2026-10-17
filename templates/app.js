@@ -217,8 +217,9 @@
       menu_help: 'Help & Support',
       menu_logout: 'Log Out',
       slot_title: 'Delivery Slot',
-      slot_morning: 'Morning (8–10 AM)',
-      slot_evening: 'Evening (7–10 PM)',
+      slot_morning: 'Morning',
+      slot_evening: 'Evening',
+      slot_none: 'No delivery slots are open right now — please check back soon',
       slot_sub: 'Order before 10 PM · delivered next morning',
       pay_title: 'Payment Method',
       pay_cod: 'Cash on Delivery',
@@ -409,8 +410,9 @@
       menu_help: 'सहायता और समर्थन',
       menu_logout: 'लॉग आउट',
       slot_title: 'डिलीवरी समय',
-      slot_morning: 'सुबह (8–10 बजे)',
-      slot_evening: 'शाम (7–10 बजे)',
+      slot_morning: 'सुबह',
+      slot_evening: 'शाम',
+      slot_none: 'अभी कोई डिलीवरी स्लॉट उपलब्ध नहीं है — कृपया बाद में देखें',
       slot_sub: 'रात 10 बजे से पहले ऑर्डर = अगली सुबह डिलीवरी',
       pay_title: 'भुगतान विधि',
       pay_cod: 'कैश ऑन डिलीवरी',
@@ -601,8 +603,9 @@
       menu_help: 'मदत आणि समर्थन',
       menu_logout: 'लॉग आउट',
       slot_title: 'वितरण वेळ',
-      slot_morning: 'सकाळ (8–10)',
-      slot_evening: 'संध्याकाळ (7–10)',
+      slot_morning: 'सकाळ',
+      slot_evening: 'संध्याकाळ',
+      slot_none: 'सध्या कोणताही डिलिव्हरी स्लॉट उपलब्ध नाही — कृपया नंतर पहा',
       slot_sub: 'रात्री 10 पर्यंत ऑर्डर = पुढील सकाळी वितरण',
       pay_title: 'पेमेंट पद्धत',
       pay_cod: 'कॅश ऑन डिलिव्हरी',
@@ -2143,6 +2146,56 @@
       if (!ok) return;
       pollUnread();
       setInterval(pollUnread, 15000);
+    });
+  }
+
+  /* ---------- delivery slots: respect the admin's enabled slots + times ---------- */
+
+  function slotRangeText(from, to) {
+    var parts = function (t) {
+      var p = String(t || '').split(':');
+      var h = parseInt(p[0], 10) || 0;
+      var m = parseInt(p[1], 10) || 0;
+      return { h: ((h + 11) % 12) + 1, m: m, ap: h >= 12 ? 'PM' : 'AM' };
+    };
+    var a = parts(from), b = parts(to);
+    var fmt = function (x) { return x.h + (x.m ? ':' + String(x.m).padStart(2, '0') : ''); };
+    return a.ap === b.ap ? fmt(a) + '–' + fmt(b) + ' ' + b.ap : fmt(a) + ' ' + a.ap + ' – ' + fmt(b) + ' ' + b.ap;
+  }
+
+  function applySlotSettings(s) {
+    if (!s) return;
+    var mOpt = document.getElementById('slotMorningOpt');
+    var eOpt = document.getElementById('slotEveningOpt');
+    var mR = document.getElementById('slotRangeMorning');
+    var eR = document.getElementById('slotRangeEvening');
+    if (mR && s.morning_from && s.morning_to) mR.textContent = '(' + slotRangeText(s.morning_from, s.morning_to) + ')';
+    if (eR && s.evening_from && s.evening_to) eR.textContent = '(' + slotRangeText(s.evening_from, s.evening_to) + ')';
+
+    var mOn = Number(s.morning_slot) !== 0;
+    var eOn = Number(s.evening_slot) !== 0;
+    if (mOpt) mOpt.hidden = !mOn;
+    if (eOpt) eOpt.hidden = !eOn;
+
+    var card = $('.slot-card');
+    if (!card) return;
+    var active = $('.addr-option.active', card);
+    if (!active || active.hidden) {
+      var pick = mOn ? mOpt : (eOn ? eOpt : null);
+      $$('.addr-option', card).forEach(function (o) { o.classList.remove('active'); });
+      if (pick) {
+        pick.classList.add('active');
+        var inp = $('input', pick);
+        if (inp) inp.checked = true;
+      }
+    }
+    if (!mOn && !eOn) toast(t('slot_none'), 3000);
+  }
+
+  if (document.querySelector('.slot-card') && window.TAZA) {
+    window.TAZA.available().then(function (ok) {
+      if (!ok) return;
+      window.TAZA.getSettings().then(applySlotSettings).catch(function () { /* keep the defaults */ });
     });
   }
 
