@@ -1465,7 +1465,10 @@ input[type='search']::-webkit-search-cancel-button { display: none; }
   border-radius: 18px;
   margin-top: 4px;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
+.ps-gallery::-webkit-scrollbar { display: none; }
+.ps-slide-broken { display: none; }
 .ps-slide {
   min-width: 100%;
   scroll-snap-align: center;

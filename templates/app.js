@@ -1846,6 +1846,27 @@
   }
 
   if (psSheet) {
+    /* if a photo file is missing (e.g. lost before the volume existed),
+       hide the broken slide — and fall back to the emoji if ALL are missing */
+    var psGalleryEl = $('#psGallery');
+    if (psGalleryEl) {
+      psGalleryEl.addEventListener('error', function (e) {
+        var img = e.target;
+        if (!img || img.tagName !== 'IMG') return;
+        var slide = img.closest('.ps-slide');
+        if (slide) slide.classList.add('ps-slide-broken');
+        var slides = $$('.ps-slide', psGalleryEl).filter(function (s) { return s.classList.contains('ps-slide-broken'); });
+        var all = $$('.ps-slide', psGalleryEl);
+        if (all.length && slides.length === all.length) {
+          var emojiEl = psRow ? $('.r-emoji', psRow) : null;
+          psGalleryEl.innerHTML = '<div class="ps-slide ps-slide-emoji" aria-hidden="true">' +
+            (emojiEl ? emojiEl.textContent : '🧺') + '</div>';
+          var dotsEl = $('#psDots');
+          if (dotsEl) dotsEl.hidden = true;
+        }
+      }, true);
+    }
+
     /* the sheet's stepper mirrors the row's stepper (single source of truth = the row) */
     psSheet.addEventListener('click', function (e) {
       var btn = e.target.closest('.step');
