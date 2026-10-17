@@ -1005,9 +1005,9 @@
       try { demo = new URLSearchParams(window.location.search).get('bag'); } catch (e) { /* noop */ }
       if (demo === 'demo' && getBag().length === 0) {
         saveBag([
-          { id: 'fresh_fiji_apples', qty: 2, emoji: '🍎', price: 2, unit: 'unit_pack' },
-          { id: 'organic_spinach', qty: 1, emoji: '🥬', price: 3, unit: 'unit_bunch' },
-          { id: 'organic_lettuce', qty: 3, emoji: '🥬', price: 2, unit: 'unit_bunch' }
+          { id: 'fresh_fiji_apples', qty: 2, emoji: '🍎', price: 100, unit: 'unit_pack' },
+          { id: 'organic_spinach', qty: 1, emoji: '🥬', price: 20, unit: 'unit_bunch' },
+          { id: 'organic_lettuce', qty: 3, emoji: '🥬', price: 30, unit: 'unit_bunch' }
         ]);
       }
       renderCart();
@@ -1434,9 +1434,9 @@
       });
     }
 
-    /* tap an order card → details popup (reorder taps are excluded) */
+    /* tap an order card → details popup (reorder / cancel taps are excluded) */
     orderListEl.addEventListener('click', function (e) {
-      if (e.target.closest('[data-reorder]')) return;
+      if (e.target.closest('[data-reorder]') || e.target.closest('[data-cancel]')) return;
       var card = e.target.closest('.order-card');
       if (!card) return;
 

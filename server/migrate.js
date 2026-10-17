@@ -24,11 +24,11 @@ const SECTION_DOZEN_PIECE = ['Banana', 'Lemon', 'Pineapple', 'Kiwi', 'Coconut', 
 const SECTION_PACK = ['Apple', 'Strawberry', 'Cherry'];
 
 const NEW_PRODUCTS = [
-  ['Ginger', '🫚', 'veg', 'gram', '100 g', 2],
-  ['Curry Leaves', '🍃', 'veg', 'gram', '100 g', 1],
-  ['Fenugreek Leaves', '🌿', 'veg', 'bunch', 'bunch', 2],
-  ['Dill', '🌱', 'veg', 'bunch', 'bunch', 2],
-  ['Sorrel', '🥬', 'veg', 'bunch', 'bunch', 2]
+  ['Ginger', '🫚', 'veg', 'gram', '100 g', 15],
+  ['Curry Leaves', '🍃', 'veg', 'gram', '100 g', 5],
+  ['Fenugreek Leaves', '🌿', 'veg', 'bunch', 'bunch', 20],
+  ['Dill', '🌱', 'veg', 'bunch', 'bunch', 15],
+  ['Sorrel', '🥬', 'veg', 'bunch', 'bunch', 15]
 ];
 
 const ADDRESSES = [
@@ -216,8 +216,8 @@ const ADDRESSES = [
   }
   console.log('~ sections backfilled');
 
-  /* gram items: unit + rate per 100 g */
-  await conn.query("UPDATE products SET unit = '100 g', rate = 1 WHERE name IN ('Garlic', 'Coriander', 'Green Chilli')");
+  /* gram items: unit per 100 g (rates are managed by the admin — never reset here) */
+  await conn.query("UPDATE products SET unit = '100 g' WHERE name IN ('Garlic', 'Coriander', 'Green Chilli') AND unit <> '100 g'");
   console.log('~ gram items priced per 100 g');
 
   /* new products */
