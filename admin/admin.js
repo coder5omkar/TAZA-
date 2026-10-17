@@ -253,6 +253,19 @@
       '<div class="admin-user"><img src="logo.svg" alt="" /><div><b id="sidebarAdminName">Admin</b><span>Super Admin</span></div></div>' +
       '<a class="nav-item logout" id="adminLogout" href="../templates/login.html">' + ICONS.logout + '<span>Log Out</span></a>';
 
+    /* unread-messages badge on the Messages nav item (visible from every page) */
+    var msgLink = null;
+    Array.prototype.forEach.call(el.querySelectorAll('.nav-item'), function (a) {
+      if ((a.getAttribute('href') || '').indexOf('messages.html') !== -1) msgLink = a;
+    });
+    if (msgLink && !el.querySelector('#msgBadge')) {
+      var badge = document.createElement('span');
+      badge.className = 'nav-badge';
+      badge.id = 'msgBadge';
+      badge.hidden = true;
+      msgLink.appendChild(badge);
+    }
+
     /* mobile: hamburger button in the topbar + slide-in drawer (admin is used on phones) */
     var topbar = $('.topbar');
     if (topbar && !$('#navToggle')) {
@@ -295,6 +308,26 @@
   }
 
   /* ---------------- shared bits ---------------- */
+
+  /* red "new messages" badge on the sidebar Messages item — refreshed from
+     every admin page so unread chats are never missed */
+  function refreshMessagesBadge() {
+    var badge = document.getElementById('msgBadge');
+    if (!badge) return;
+    if (!LIVE) {
+      var n = 0;
+      state.conversations.forEach(function (c) { n += Number(c.unread) || 0; });
+      badge.textContent = n;
+      badge.hidden = !n;
+      return;
+    }
+    if (!window.TAZA || !window.TAZA.token()) return;
+    window.TAZA.adminUnread().then(function (res) {
+      var n = Number(res.unread) || 0;
+      badge.textContent = n;
+      badge.hidden = !n;
+    }).catch(function () { /* keep the last known count */ });
+  }
 
   var STATUS_CLASS = { 'Pending': 'pending', 'Confirmed': 'confirmed', 'On the way': 'way', 'Delivered': 'delivered', 'Rejected': 'rejected' };
 
@@ -728,11 +761,14 @@
   }
 
   var productFilter = 'All';
+  var productQuery = '';
 
   function renderProducts() {
     var tbody = $('#productsBody');
     if (!tbody) return;
+    var q = productQuery.trim().toLowerCase();
     var list = state.products.filter(function (p) {
+      if (q && String(p.name).toLowerCase().indexOf(q) === -1) return false;
       if (productFilter === 'All') return true;
       if (productFilter === 'Disabled') return Number(p.active) === 0;
       return p.cat === productFilter;
@@ -784,7 +820,10 @@
     var countEl = $('#prodCount');
     if (countEl) {
       var offCount = state.products.filter(function (p) { return Number(p.active) === 0; }).length;
-      countEl.textContent = list.length + ' products' + (productFilter !== 'Disabled' && offCount ? ' · ' + offCount + ' disabled' : '');
+      var base = q || productFilter !== 'All'
+        ? list.length + ' of ' + state.products.length + ' products'
+        : list.length + ' products';
+      countEl.textContent = base + (productFilter !== 'Disabled' && offCount ? ' · ' + offCount + ' disabled' : '');
     }
   }
 
@@ -913,10 +952,12 @@
         });
         renderThread();
         renderConvList();
+        refreshMessagesBadge();
       }).catch(function (err) { toast(err.message || 'Could not load the conversation'); });
       return;
     }
     renderThread();
+    refreshMessagesBadge();
   }
 
   /* ---------------- product photos & description (modal) ---------------- */
@@ -1054,6 +1095,7 @@
         return { id: c.id, name: c.name, status: c.status, last_text: c.last_text, last_at: c.last_at, unread: c.unread, messages: open && String(activeConvId) === String(c.id) ? open : [] };
       });
       renderConvList();
+      refreshMessagesBadge();
       if (!activeConvId && state.conversations.length) openConversation(state.conversations[0].id);
     }).catch(function (err) { toast(err.message || 'Could not load conversations'); });
   }
@@ -1470,6 +1512,41 @@
     }
   }
 
+  /* product search box — filters live as you type */
+  var prodSearchEl = $('#prodSearch');
+  if (prodSearchEl) {
+    prodSearchEl.addEventListener('input', function () {
+      productQuery = prodSearchEl.value || '';
+      renderProducts();
+    });
+  }
+
+  /* mobile: collapse the Add-Product form so the catalogue is one screen away */
+  (function () {
+    var form = $('#addProductForm');
+    var toggle = $('#addToggle');
+    if (!form || !toggle) return;
+    var isMobile = function () { return window.matchMedia('(max-width: 980px)').matches; };
+    var apply = function () {
+      var open = form.getAttribute('data-open') === '1';
+      if (isMobile()) {
+        toggle.hidden = false;
+        form.hidden = !open;
+        toggle.textContent = open ? '− Close' : '+ New item';
+      } else {
+        toggle.hidden = true;
+        form.hidden = false;
+      }
+    };
+    toggle.addEventListener('click', function () {
+      form.setAttribute('data-open', form.getAttribute('data-open') === '1' ? '0' : '1');
+      apply();
+      if (form.getAttribute('data-open') === '1' && $('#npName')) $('#npName').focus();
+    });
+    window.addEventListener('resize', apply);
+    apply();
+  })();
+
   /* ---------------- init ---------------- */
 
   function initDemo() {
@@ -1499,6 +1576,7 @@
     fillSettings(DEMO.settings);
     renderConvList();
     if ($('#convList') && state.conversations.length) openConversation(state.conversations[0].id);
+    refreshMessagesBadge();
   }
 
   function initLive(me) {
@@ -1552,6 +1630,10 @@
       window.TAZA.adminSettings().then(function (res) { fillSettings(res.settings); })
         .catch(function (err) { toast(err.message || 'Could not load settings'); });
     }
+
+    /* keep the sidebar unread badge fresh on every page */
+    refreshMessagesBadge();
+    setInterval(refreshMessagesBadge, 60000);
   }
 
   function boot() {

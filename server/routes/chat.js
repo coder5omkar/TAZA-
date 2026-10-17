@@ -65,6 +65,14 @@ router.get('/conversations', requireAdmin, wrap(async (req, res) => {
   res.json({ conversations: conversations });
 }));
 
+/* GET /api/chat/admin-unread — total unread customer messages (sidebar badge) */
+router.get('/admin-unread', requireAdmin, wrap(async (req, res) => {
+  const [[r]] = await db.query(
+    "SELECT COUNT(*) AS n FROM messages WHERE sender = 'customer' AND read_by_admin = 0"
+  );
+  res.json({ unread: r.n });
+}));
+
 /* GET /api/chat/conversations/:id */
 router.get('/conversations/:id', requireAdmin, wrap(async (req, res) => {
   const convId = Number(req.params.id);

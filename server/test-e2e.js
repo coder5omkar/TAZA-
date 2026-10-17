@@ -159,6 +159,8 @@ function check(name, ok, extra) {
   /* 8. chat round-trip */
   const c1 = await req('POST', '/api/chat/my', { text: 'Hi, is the spinach fresh today?' }, custToken);
   check('customer sends chat', c1.status === 201);
+  const admUnread = await req('GET', '/api/chat/admin-unread', null, adminToken);
+  check('admin unread counter (sidebar badge)', admUnread.status === 200 && Number(admUnread.data.unread) >= 1, 'unread ' + admUnread.data.unread);
   const convs = await req('GET', '/api/chat/conversations', null, adminToken);
   const conv = (convs.data.conversations || []).find(function (c) { return c.name === 'QA Tester'; });
   check('admin inbox shows conversation with unread', !!conv && conv.unread >= 1, conv ? 'unread ' + conv.unread : 'missing');

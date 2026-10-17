@@ -29,14 +29,15 @@
       </header>
 
       <main class="content">
-        <section class="card">
+        <section class="card" id="addCard">
           <div class="card-head">
             <div>
               <h2>Add Product</h2>
               <p class="hint">Rates are whole rupees (₹) — sections follow the landing page (KG / Bunch / Gram / Piece & Pack …)</p>
             </div>
+            <button class="btn ghost small" id="addToggle" type="button" hidden>+ New item</button>
           </div>
-          <form class="form-grid" id="addProductForm">
+          <form class="form-grid" id="addProductForm" hidden>
             <label class="field">
               <span>Name</span>
               <input class="input" id="npName" placeholder="e.g. Green Peas" />
@@ -81,15 +82,18 @@
               <h2>Product Catalogue</h2>
               <p class="hint" id="prodCount">34 products</p>
             </div>
-            <div class="chips" id="productFilters">
-              <button class="chip active" data-filter="All">All</button>
-              <button class="chip" data-filter="veg">Vegetables</button>
-              <button class="chip" data-filter="fruits">Fruits</button>
-              <button class="chip" data-filter="Disabled">Disabled</button>
+            <div class="head-actions">
+              <input class="input prod-search" id="prodSearch" type="search" placeholder="Search products…" />
+              <div class="chips" id="productFilters">
+                <button class="chip active" data-filter="All">All</button>
+                <button class="chip" data-filter="veg">Vegetables</button>
+                <button class="chip" data-filter="fruits">Fruits</button>
+                <button class="chip" data-filter="Disabled">Disabled</button>
+              </div>
             </div>
           </div>
           <div class="table-wrap">
-            <table class="table">
+            <table class="table products-table">
               <thead>
                 <tr><th>Product</th><th>Category</th><th>Section</th><th>Unit</th><th>Rate</th><th>Actions</th></tr>
               </thead>

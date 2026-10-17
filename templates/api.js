@@ -108,6 +108,7 @@
     adminSettings: function () { return request('GET', '/admin/settings'); },
     adminSaveSettings: function (payload) { return request('PUT', '/admin/settings', payload); },
     adminConversations: function () { return request('GET', '/chat/conversations'); },
+    adminUnread: function () { return request('GET', '/chat/admin-unread'); },
     adminConversation: function (id) { return request('GET', '/chat/conversations/' + id); },
     adminReply: function (id, text) { return request('POST', '/chat/conversations/' + id, { text: text }); }
   };
