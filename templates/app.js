@@ -1212,7 +1212,7 @@
   var liveOrders = {};
   var liveOrderArr = [];
   var historyLive = false;
-  var historyFilter = 'all';
+  var historyFilter = 'ongoing';       /* land on active orders first */
 
   if (orderListEl) {
     var LOCALES = { en: 'en-IN', hi: 'hi-IN', mr: 'mr-IN' };
@@ -1484,7 +1484,7 @@
     }
 
     window.TAZA.available().then(function (ok) {
-      if (!ok) return;                    /* static demo (file://) — keep the demo cards */
+      if (!ok) { applyHistoryFilter(historyFilter); return; }   /* static demo — still land on Ongoing */
       if (!window.TAZA.token()) { showOrderState('signin'); return; }
       loadOrders();
     });
