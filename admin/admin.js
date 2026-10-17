@@ -945,7 +945,7 @@
       '<label class="btn ghost small pimg-add" for="pimgFile">' + ICONS.camera + '<span>Add photo</span></label>' +
       '<input type="file" id="pimgFile" accept="image/*" hidden>' +
       '<div class="pimg-desc">' +
-      '<span class="pimg-label">Description (shown on the product)</span>' +
+      '<span class="pimg-label">Description — saves when you tap Save (or close this panel)</span>' +
       '<textarea id="pimgDesc" maxlength="160" rows="2" placeholder="e.g. Fresh from the farm — picked this morning. Great for sabzi &amp; salad."></textarea>' +
       '<div class="pimg-desc-foot"><span id="pimgCount">0/160</span>' +
       '<button class="btn primary small" data-act="pimg-save-desc">Save description</button></div>' +
@@ -1001,12 +1001,41 @@
     $('#pimgWrap').hidden = false;
   }
 
+  /* save the description — also runs automatically when the panel is closed,
+     so typed text is never lost by forgetting the Save button */
+  function saveImageDescription(onDone) {
+    var prod = currentProduct(pimgProductId);
+    if (!prod) { if (onDone) onDone(); return; }
+    var el = $('#pimgDesc');
+    var desc = (el ? el.value : '').trim().slice(0, 160);
+    if (desc === (prod.description || '')) { if (onDone) onDone(); return; }
+
+    if (!LIVE) {
+      prod.description = desc;
+      renderProducts();
+      toast('Description saved (demo)');
+      if (onDone) onDone();
+      return;
+    }
+    window.TAZA.adminUpdateProduct(prod.id, { description: desc }).then(function () {
+      prod.description = desc;
+      renderProducts();
+      toast('Description saved ✓');
+      if (onDone) onDone();
+    }).catch(function (err) { toast(err.message || 'Could not save the description'); });
+  }
+
   function openImageModal(id) {
     pimgProductId = id;
     renderImageModal();
   }
 
   function closeImageModal() {
+    /* if the description was edited but not saved, save it now */
+    var wrapEl = $('#pimgWrap');
+    if (pimgProductId && wrapEl && !wrapEl.hidden && $('#pimgDesc')) {
+      saveImageDescription();
+    }
     pimgProductId = null;
     var w = $('#pimgWrap');
     if (w) w.hidden = true;
@@ -1293,23 +1322,7 @@
     if (act === 'prod-images') { openImageModal(id); return; }
     if (act === 'pimg-close') { closeImageModal(); return; }
 
-    if (act === 'pimg-save-desc') {
-      var dProd = currentProduct(pimgProductId);
-      if (!dProd) return;
-      var desc = ($('#pimgDesc').value || '').trim();
-      if (!LIVE) {
-        dProd.description = desc;
-        renderProducts();
-        toast('Description saved (demo)');
-        return;
-      }
-      window.TAZA.adminUpdateProduct(dProd.id, { description: desc }).then(function () {
-        dProd.description = desc;
-        renderProducts();
-        toast('Description saved ✓');
-      }).catch(function (err) { toast(err.message || 'Could not save the description'); });
-      return;
-    }
+    if (act === 'pimg-save-desc') { saveImageDescription(); return; }
 
     if (act === 'prod-img-del') {
       var imgId = btn.getAttribute('data-img');
